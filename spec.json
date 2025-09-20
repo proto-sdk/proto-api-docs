@@ -1,0 +1,20 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Proto API",
+    "description": "The Proto API serves as a means to access information from the mining device and make necessary adjustments to its settings.",
+    "contact": {
+      "email": "mining.support@block.xyz"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/license/mit"
+    },
+    "version": "1.2.1"
+  },
+  "servers": [
+    {
+      "url": "https://your-miner.local/api/v1",
+      "description": "Local Mining Device"
+    }
+  ],
