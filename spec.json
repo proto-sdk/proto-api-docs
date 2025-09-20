@@ -1,0 +1,447 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Proto API",
+    "description": "The Proto API serves as a means to access information from the mining device and make necessary adjustments to its settings.",
+    "contact": {
+      "email": "mining.support@block.xyz"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/license/mit"
+    },
+    "version": "1.2.1"
+  },
+  "servers": [
+    {
+      "url": "https://virtserver.swaggerhub.com/kkurucz/mining_development_kit_api/1.0.0",
+      "description": "SwaggerHub API Auto Mocking"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Mining",
+      "description": "Mining functionality control and configuration"
+    },
+    {
+      "name": "System",
+      "description": "System-wide information and control"
+    },
+    {
+      "name": "Network",
+      "description": "Network configuration information"
+    },
+    {
+      "name": "Errors",
+      "description": "System errors and warnings"
+    },
+    {
+      "name": "Pools",
+      "description": "Mining pool configuration"
+    },
+    {
+      "name": "Cooling",
+      "description": "Cooling system control"
+    },
+    {
+      "name": "Authentication",
+      "description": "Authentication and authorization"
+    },
+    {
+      "name": "Hashboards",
+      "description": "Hashboard and ASIC information"
+    },
+    {
+      "name": "Hashrate",
+      "description": "Hashrate statistics"
+    },
+    {
+      "name": "Temperature",
+      "description": "Temperature monitoring"
+    },
+    {
+      "name": "Power",
+      "description": "Power consumption data"
+    },
+    {
+      "name": "Efficiency",
+      "description": "Mining efficiency metrics"
+    },
+    {
+      "name": "Hardware",
+      "description": "Hardware component information"
+    },
+    {
+      "name": "PSUs",
+      "description": "Power supply information"
+    },
+    {
+      "name": "Fans",
+      "description": "Cooling fan control and monitoring"
+    }
+  ],
+  "paths": {
+    "/api/v1/pools": {
+      "get": {
+        "tags": ["Pools"],
+        "summary": "List all configured pools",
+        "description": "Returns the full list of currently configured mining pools",
+        "operationId": "listPools",
+        "responses": {
+          "200": {
+            "description": "List of pools successfully retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PoolsList"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Pools"],
+        "summary": "Configure mining pools",
+        "description": "Configure up to three mining pools",
+        "operationId": "createPools",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PoolConfig"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Pools successfully configured"
+          }
+        },
+        "security": [{"BearerAuth": []}]
+      }
+    },
+    "/api/v1/mining/start": {
+      "post": {
+        "tags": ["Mining"],
+        "summary": "Start mining",
+        "description": "Start mining operations",
+        "operationId": "startMining",
+        "responses": {
+          "202": {
+            "description": "Mining start command accepted"
+          }
+        },
+        "security": [{"BearerAuth": []}]
+      }
+    },
+    "/api/v1/mining/stop": {
+      "post": {
+        "tags": ["Mining"],
+        "summary": "Stop mining",
+        "description": "Stop mining operations",
+        "operationId": "stopMining",
+        "responses": {
+          "202": {
+            "description": "Mining stop command accepted"
+          }
+        },
+        "security": [{"BearerAuth": []}]
+      }
+    },
+    "/api/v1/hashboards": {
+      "get": {
+        "tags": ["Hashboards"],
+        "summary": "List all hashboards",
+        "description": "Get information about all hashboards",
+        "operationId": "getAllHashboards",
+        "responses": {
+          "200": {
+            "description": "List of hashboards successfully retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HashboardsInfo"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/hashboards/{hb_sn}": {
+      "get": {
+        "tags": ["Hashboards"],
+        "summary": "Get hashboard status",
+        "description": "Get status for a specific hashboard",
+        "operationId": "getHashboardStatus",
+        "parameters": [
+          {
+            "name": "hb_sn",
+            "in": "path",
+            "description": "Hashboard serial number",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Hashboard status successfully retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HashboardStats"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/hashboards/{hb_sn}/logs": {
+      "get": {
+        "tags": ["Hashboards"],
+        "summary": "Get hashboard logs",
+        "description": "Get logs for a specific hashboard",
+        "operationId": "getHashboardLogs",
+        "parameters": [
+          {
+            "name": "hb_sn",
+            "in": "path",
+            "description": "Hashboard serial number",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lines",
+            "in": "query",
+            "description": "Number of log lines to retrieve",
+            "schema": {
+              "type": "integer",
+              "default": 100,
+              "maximum": 500
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Hashboard logs successfully retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LogsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Login",
+        "description": "Authenticate and get access token",
+        "operationId": "login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthTokens"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/logout": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Logout",
+        "description": "Invalidate current session",
+        "operationId": "logout",
+        "responses": {
+          "200": {
+            "description": "Successfully logged out"
+          }
+        },
+        "security": [{"BearerAuth": []}]
+      }
+    },
+    "/api/v1/auth/change-password": {
+      "put": {
+        "tags": ["Authentication"],
+        "summary": "Change password",
+        "description": "Change current password",
+        "operationId": "changePassword",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password successfully changed"
+          }
+        },
+        "security": [{"BearerAuth": []}]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "PoolsList": {
+        "type": "object",
+        "properties": {
+          "pools": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Pool"
+            }
+          }
+        }
+      },
+      "Pool": {
+        "type": "object",
+        "required": ["url", "username", "password"],
+        "properties": {
+          "url": {
+            "type": "string",
+            "example": "stratum+tcp://pool.example.com:4334"
+          },
+          "username": {
+            "type": "string",
+            "example": "miner.001"
+          },
+          "password": {
+            "type": "string",
+            "example": "x"
+          }
+        }
+      },
+      "PoolConfig": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Pool"
+        },
+        "maxItems": 3
+      },
+      "HashboardsInfo": {
+        "type": "object",
+        "properties": {
+          "hashboards": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "serial_number": {
+                  "type": "string"
+                },
+                "slot": {
+                  "type": "integer"
+                },
+                "asic_count": {
+                  "type": "integer"
+                },
+                "firmware_version": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "HashboardStats": {
+        "type": "object",
+        "properties": {
+          "serial_number": {
+            "type": "string"
+          },
+          "slot": {
+            "type": "integer"
+          },
+          "hashrate": {
+            "type": "number"
+          },
+          "temperature": {
+            "type": "number"
+          }
+        }
+      },
+      "LogsResponse": {
+        "type": "object",
+        "properties": {
+          "lines": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "LoginRequest": {
+        "type": "object",
+        "required": ["password"],
+        "properties": {
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "AuthTokens": {
+        "type": "object",
+        "properties": {
+          "access_token": {
+            "type": "string"
+          },
+          "refresh_token": {
+            "type": "string"
+          }
+        }
+      },
+      "ChangePasswordRequest": {
+        "type": "object",
+        "required": ["current_password", "new_password"],
+        "properties": {
+          "current_password": {
+            "type": "string"
+          },
+          "new_password": {
+            "type": "string",
+            "minLength": 8
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}
