@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proto API Documentation</title>
+    <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5.9.0/swagger-ui.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="header">
+        <h1>Proto API Documentation</h1>
+        <p>Complete Control and Monitoring Interface for Professional Mining Operations</p>
+        <span class="version">v1.2.1</span>
+    </header>
+
+    <main class="main-content">
+        <section class="features">
+            <div class="feature-card">
+                <h3>Mining Control</h3>
+                <p>Start, stop, and configure mining operations with precise power target control.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Real-time Monitoring</h3>
+                <p>Track hashrate, temperature, and power consumption across all hashboards.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Pool Management</h3>
+                <p>Configure and manage multiple mining pools with automatic failover support.</p>
+            </div>
+        </section>
+
+        <section class="api-docs">
+            <div id="swagger-ui"></div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Contact: mining.support@block.xyz</p>
+    </footer>
+
+    <script src="https://unpkg.com/swagger-ui-dist@5.9.0/swagger-ui-bundle.js"></script>
+    <script src="https://unpkg.com/swagger-ui-dist@5.9.0/swagger-ui-standalone-preset.js"></script>
+    <script>
+        window.onload = function() {
+            const ui = SwaggerUIBundle({
+                url: "spec.json",
+                dom_id: '#swagger-ui',
+                deepLinking: true,
+                presets: [
+                    SwaggerUIBundle.presets.apis,
+                    SwaggerUIBundle.SwaggerUIStandalonePreset
+                ],
+                layout: "BaseLayout",
+                docExpansion: "list",
+                defaultModelsExpandDepth: 3,
+                defaultModelExpandDepth: 3,
+                displayRequestDuration: true,
+                tryItOutEnabled: true,
+                filter: true,
+                theme: {
+                    colors: {
+                        primary: '#FF6B35'
+                    }
+                }
+            });
+        };
+    </script>
+</body>
+</html>
