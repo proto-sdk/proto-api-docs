@@ -1,0 +1,8 @@
+# GitHub Pages configuration
+# Ensure no custom domain is used
+domain: proto-sdk.github.io
+url: https://proto-sdk.github.io
+baseurl: /proto-api-docs
+
+# Disable Jekyll processing since we have static files
+plugins: []
