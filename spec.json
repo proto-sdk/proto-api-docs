@@ -18,3 +18,310 @@
       "description": "Local Mining Device"
     }
   ],
+  "tags": [
+    {
+      "name": "Mining Operations",
+      "description": "Control and configure mining functionality"
+    },
+    {
+      "name": "Pool Management",
+      "description": "Configure and manage mining pools"
+    },
+    {
+      "name": "Performance",
+      "description": "Monitor hashrate, temperature, and power"
+    },
+    {
+      "name": "System",
+      "description": "System-wide controls and information"
+    }
+  ],
+  "paths": {
+    "/mining/start": {
+      "post": {
+        "tags": ["Mining Operations"],
+        "summary": "Start Mining",
+        "description": "Start mining operations with current configuration",
+        "responses": {
+          "202": {
+            "description": "Mining operations starting",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                },
+                "example": {
+                  "message": "Mining operations are starting"
+                }
+              }
+            }
+          }
+        },
+        "security": [{"BearerAuth": []}]
+      }
+    },
+    "/mining/stop": {
+      "post": {
+        "tags": ["Mining Operations"],
+        "summary": "Stop Mining",
+        "description": "Safely stop mining operations",
+        "responses": {
+          "202": {
+            "description": "Mining operations stopping",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                },
+                "example": {
+                  "message": "Mining operations are stopping"
+                }
+              }
+            }
+          }
+        },
+        "security": [{"BearerAuth": []}]
+      }
+    },
+    "/mining/status": {
+      "get": {
+        "tags": ["Mining Operations"],
+        "summary": "Get Mining Status",
+        "description": "Get current mining status including hashrate, power, and temperature",
+        "responses": {
+          "200": {
+            "description": "Current mining status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MiningStatus"
+                },
+                "example": {
+                  "status": "running",
+                  "hashrate": 110.5,
+                  "power": 3450,
+                  "temperature": 65
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pools": {
+      "get": {
+        "tags": ["Pool Management"],
+        "summary": "List Mining Pools",
+        "description": "Get list of configured mining pools",
+        "responses": {
+          "200": {
+            "description": "List of configured pools",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PoolsList"
+                },
+                "example": {
+                  "pools": [
+                    {
+                      "url": "stratum+tcp://us-east.mining-pool.com:3333",
+                      "username": "worker1",
+                      "password": "x"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Pool Management"],
+        "summary": "Configure Mining Pools",
+        "description": "Configure up to three mining pools with automatic failover",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PoolConfig"
+              },
+              "example": [
+                {
+                  "url": "stratum+tcp://us-east.mining-pool.com:3333",
+                  "username": "worker1",
+                  "password": "x"
+                }
+              ]
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Pools configured successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                },
+                "example": {
+                  "message": "Mining pools configured successfully"
+                }
+              }
+            }
+          }
+        },
+        "security": [{"BearerAuth": []}]
+      }
+    },
+    "/performance/hashrate": {
+      "get": {
+        "tags": ["Performance"],
+        "summary": "Get Hashrate History",
+        "description": "Get historical hashrate data",
+        "parameters": [
+          {
+            "name": "duration",
+            "in": "query",
+            "description": "Time period for historical data",
+            "schema": {
+              "type": "string",
+              "enum": ["1h", "24h", "7d", "30d"],
+              "default": "24h"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Historical hashrate data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PerformanceData"
+                },
+                "example": {
+                  "data": [
+                    {
+                      "timestamp": 1632825600,
+                      "value": 110.5
+                    }
+                  ],
+                  "unit": "TH/s"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "MiningStatus": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["running", "stopped", "error"],
+            "description": "Current mining status"
+          },
+          "hashrate": {
+            "type": "number",
+            "format": "float",
+            "description": "Current hashrate in TH/s"
+          },
+          "power": {
+            "type": "number",
+            "format": "float",
+            "description": "Current power consumption in watts"
+          },
+          "temperature": {
+            "type": "number",
+            "format": "float",
+            "description": "Current temperature in Celsius"
+          }
+        }
+      },
+      "PoolsList": {
+        "type": "object",
+        "properties": {
+          "pools": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Pool"
+            },
+            "description": "List of configured mining pools"
+          }
+        }
+      },
+      "Pool": {
+        "type": "object",
+        "required": ["url", "username"],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "Pool URL (stratum+tcp://)"
+          },
+          "username": {
+            "type": "string",
+            "description": "Worker username"
+          },
+          "password": {
+            "type": "string",
+            "description": "Worker password (usually 'x')"
+          }
+        }
+      },
+      "PoolConfig": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Pool"
+        },
+        "maxItems": 3,
+        "description": "Pool configuration (up to 3 pools)"
+      },
+      "PerformanceData": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "timestamp": {
+                  "type": "integer",
+                  "description": "Unix timestamp"
+                },
+                "value": {
+                  "type": "number",
+                  "format": "float",
+                  "description": "Measured value"
+                }
+              }
+            }
+          },
+          "unit": {
+            "type": "string",
+            "description": "Unit of measurement"
+          }
+        }
+      },
+      "MessageResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Response message"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Authentication using JWT tokens"
+      }
+    }
+  }
+}
