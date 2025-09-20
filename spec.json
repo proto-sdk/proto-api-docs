@@ -14,7 +14,7 @@
   },
   "servers": [
     {
-      "url": "https://virtserver.swaggerhub.com/mining_development_kit_api/1.2.1",
+      "url": "https://virtserver.swaggerhub.com/kkurucz/mining_development_kit_api/1.0.0",
       "description": "API Auto Mocking"
     }
   ],
