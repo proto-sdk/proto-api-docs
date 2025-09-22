@@ -131,6 +131,107 @@ footer p {
     opacity: 0.9;
 }
 
+/* Enhanced Swagger UI Text Visibility */
+
+/* 1. Proto API title in the API spec */
+.swagger-ui .info .title {
+    color: var(--text-color) !important;
+}
+
+/* 2. Proto API description */
+.swagger-ui .info .description p,
+.swagger-ui .info .description {
+    color: var(--text-color) !important;
+}
+
+/* 3. Endpoint group descriptions */
+.swagger-ui .opblock-tag-section .opblock-tag p,
+.swagger-ui .opblock-tag-section .opblock-tag small {
+    color: var(--text-color) !important;
+}
+
+/* 4. Endpoint paths */
+.swagger-ui .opblock .opblock-summary-path,
+.swagger-ui .opblock .opblock-summary-path a {
+    color: var(--text-color) !important;
+}
+
+/* 5. Schema titles - highlighted in orange */
+.swagger-ui .model-title {
+    color: var(--accent-color) !important;
+    font-weight: bold;
+}
+
+.swagger-ui .model-box .model-title {
+    color: var(--accent-color) !important;
+}
+
+.swagger-ui .models h4,
+.swagger-ui .models h5,
+.swagger-ui section.models h4,
+.swagger-ui section.models h4 span,
+.swagger-ui .model-container h4 span {
+    color: var(--accent-color) !important;
+}
+
+/* 6. Schema parameter descriptions and drop-down icons */
+.swagger-ui .model .property,
+.swagger-ui .model .property.primitive,
+.swagger-ui .model-toggle,
+.swagger-ui .model-toggle:after {
+    color: var(--text-color) !important;
+}
+
+.swagger-ui table tbody tr td,
+.swagger-ui table thead tr th,
+.swagger-ui table thead tr td {
+    color: var(--text-color) !important;
+}
+
+.swagger-ui .parameter__name,
+.swagger-ui .parameter__type,
+.swagger-ui .parameter__deprecated,
+.swagger-ui .parameter__in {
+    color: var(--text-color) !important;
+}
+
+.swagger-ui .prop-type,
+.swagger-ui .prop-format {
+    color: var(--text-color) !important;
+}
+
+/* Additional white text for better visibility */
+.swagger-ui .scheme-container,
+.swagger-ui .scheme-container .schemes > label,
+.swagger-ui select,
+.swagger-ui label,
+.swagger-ui .tab li,
+.swagger-ui .opblock-description-wrapper p,
+.swagger-ui .opblock-external-docs-wrapper p,
+.swagger-ui .opblock-title_normal p {
+    color: var(--text-color) !important;
+}
+
+/* Response descriptions */
+.swagger-ui .responses-inner h4,
+.swagger-ui .responses-inner h5,
+.swagger-ui .response-col_status,
+.swagger-ui .response-col_description {
+    color: var(--text-color) !important;
+}
+
+/* Model expand/collapse arrows */
+.swagger-ui .model-toggle:after,
+.swagger-ui .model-box .model-toggle:after {
+    color: var(--text-color) !important;
+}
+
+.swagger-ui .arrow,
+.swagger-ui .expand-operation svg,
+.swagger-ui .collapse-operation svg {
+    fill: var(--text-color) !important;
+}
+
 @media (max-width: 768px) {
     .header {
         padding: 1.5rem;
