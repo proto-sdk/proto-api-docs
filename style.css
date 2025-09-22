@@ -174,14 +174,36 @@ footer p {
     color: var(--accent-color) !important;
 }
 
-/* 6. Schema parameter descriptions and drop-down icons */
+/* 6. Schema content - ALL text in white */
 .swagger-ui .model .property,
-.swagger-ui .model .property.primitive {
+.swagger-ui .model .property.primitive,
+.swagger-ui .model-box,
+.swagger-ui .model-box .model,
+.swagger-ui .model-box .model .property,
+.swagger-ui .model-box .model .property.primitive,
+.swagger-ui .model .description,
+.swagger-ui .model .property-row,
+.swagger-ui .model-example,
+.swagger-ui .model .model-title__text {
     color: var(--text-color) !important;
 }
 
-/* Schema drop-down icons - highlighted in orange */
-.swagger-ui .model-toggle,
+/* Schema example values and descriptions in white */
+.swagger-ui .renderedMarkdown p,
+.swagger-ui .renderedMarkdown,
+.swagger-ui .model .property-row .property__name,
+.swagger-ui .model .property-row .property__type,
+.swagger-ui .model-box .example,
+.swagger-ui .model-box .model .property-row {
+    color: var(--text-color) !important;
+}
+
+/* Schema dropdown arrow icons - highlighted in orange */
+.swagger-ui .model-toggle {
+    color: var(--accent-color) !important;
+    border-color: var(--accent-color) !important;
+}
+
 .swagger-ui .model-toggle:after {
     color: var(--accent-color) !important;
 }
@@ -222,6 +244,15 @@ footer p {
 .swagger-ui .response-col_status,
 .swagger-ui .response-col_description {
     color: var(--text-color) !important;
+}
+
+/* Virtual server text - black for visibility */
+.swagger-ui .servers select,
+.swagger-ui .servers-title,
+.swagger-ui .servers label,
+.swagger-ui .servers .server-container {
+    color: #000000 !important;
+    background-color: #ffffff;
 }
 
 /* Model expand/collapse arrows - now orange to match Schema styling */
