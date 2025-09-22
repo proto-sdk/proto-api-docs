@@ -198,14 +198,14 @@ footer p {
     color: var(--text-color) !important;
 }
 
-/* Schema dropdown arrow icons - highlighted in orange */
+/* Schema dropdown arrow icons - white to match endpoint definitions */
 .swagger-ui .model-toggle {
-    color: var(--accent-color) !important;
-    border-color: var(--accent-color) !important;
+    color: var(--text-color) !important;
+    border-color: var(--text-color) !important;
 }
 
 .swagger-ui .model-toggle:after {
-    color: var(--accent-color) !important;
+    color: var(--text-color) !important;
 }
 
 .swagger-ui table tbody tr td,
@@ -255,16 +255,22 @@ footer p {
     background-color: #ffffff;
 }
 
-/* Model expand/collapse arrows - now orange to match Schema styling */
+/* Model expand/collapse arrows - white to match endpoint definitions */
 .swagger-ui .model-toggle:after,
-.swagger-ui .model-box .model-toggle:after {
-    color: var(--accent-color) !important;
+.swagger-ui .model-box .model-toggle:after,
+.swagger-ui .model-toggle:before {
+    color: var(--text-color) !important;
 }
 
+/* All expand/collapse arrows and icons - white */
 .swagger-ui .arrow,
 .swagger-ui .expand-operation svg,
-.swagger-ui .collapse-operation svg {
+.swagger-ui .collapse-operation svg,
+.swagger-ui .model-toggle svg,
+.swagger-ui .model .model-toggle,
+.swagger-ui .model .model-toggle:after {
     fill: var(--text-color) !important;
+    color: var(--text-color) !important;
 }
 
 @media (max-width: 768px) {
