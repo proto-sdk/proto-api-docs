@@ -308,6 +308,24 @@ footer p {
     color: var(--text-color) !important;
 }
 
+/* Force model toggle SVG arrows to be white - comprehensive override */
+.swagger-ui .model-toggle svg,
+.swagger-ui .model-toggle svg *,
+.swagger-ui .model-toggle svg path,
+.swagger-ui .model-toggle path,
+.swagger-ui button.model-box-control svg,
+.swagger-ui button.model-box-control svg path,
+.swagger-ui .model-box-control svg,
+.swagger-ui .model-box-control svg path {
+    fill: var(--text-color) !important;
+    stroke: var(--text-color) !important;
+}
+
+/* Override the background image arrow with filter */
+.swagger-ui .model-toggle:after {
+    filter: invert(1) !important;
+}
+
 @media (max-width: 768px) {
     .header {
         padding: 1.5rem;
