@@ -206,6 +206,19 @@ footer p {
 
 .swagger-ui .model-toggle:after {
     color: var(--text-color) !important;
+    content: "▼" !important;
+}
+
+.swagger-ui .model-toggle.collapsed:after {
+    content: "▶" !important;
+}
+
+/* Override any SVG or path elements in dropdown arrows */
+.swagger-ui .model-toggle svg,
+.swagger-ui .model-toggle svg path,
+.swagger-ui .model-toggle svg polygon {
+    fill: var(--text-color) !important;
+    stroke: var(--text-color) !important;
 }
 
 .swagger-ui table tbody tr td,
@@ -269,6 +282,28 @@ footer p {
 .swagger-ui .model-toggle svg,
 .swagger-ui .model .model-toggle,
 .swagger-ui .model .model-toggle:after {
+    fill: var(--text-color) !important;
+    color: var(--text-color) !important;
+}
+
+/* Force all arrow paths and polygons to be white */
+.swagger-ui svg:not(.arrow__fill) path,
+.swagger-ui svg:not(.arrow__fill) polygon {
+    fill: var(--text-color) !important;
+}
+
+/* Specific targeting for model arrows */
+.swagger-ui .model-box button.model-box-control svg,
+.swagger-ui .model-box button.model-box-control path {
+    fill: var(--text-color) !important;
+}
+
+/* Override default arrow styling */
+.swagger-ui .arrow__fill {
+    fill: var(--text-color) !important;
+}
+
+.swagger-ui .arrow {
     fill: var(--text-color) !important;
     color: var(--text-color) !important;
 }
