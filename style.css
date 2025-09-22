@@ -176,10 +176,14 @@ footer p {
 
 /* 6. Schema parameter descriptions and drop-down icons */
 .swagger-ui .model .property,
-.swagger-ui .model .property.primitive,
+.swagger-ui .model .property.primitive {
+    color: var(--text-color) !important;
+}
+
+/* Schema drop-down icons - highlighted in orange */
 .swagger-ui .model-toggle,
 .swagger-ui .model-toggle:after {
-    color: var(--text-color) !important;
+    color: var(--accent-color) !important;
 }
 
 .swagger-ui table tbody tr td,
@@ -220,10 +224,10 @@ footer p {
     color: var(--text-color) !important;
 }
 
-/* Model expand/collapse arrows */
+/* Model expand/collapse arrows - now orange to match Schema styling */
 .swagger-ui .model-toggle:after,
 .swagger-ui .model-box .model-toggle:after {
-    color: var(--text-color) !important;
+    color: var(--accent-color) !important;
 }
 
 .swagger-ui .arrow,
