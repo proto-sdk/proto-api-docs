@@ -198,27 +198,25 @@ footer p {
     color: var(--text-color) !important;
 }
 
-/* Schema dropdown arrow icons - white to match endpoint definitions */
+/* Schema dropdown arrow icons - hidden */
 .swagger-ui .model-toggle {
     color: var(--text-color) !important;
     border-color: var(--text-color) !important;
 }
 
 .swagger-ui .model-toggle:after {
-    color: var(--text-color) !important;
-    content: "▼" !important;
+    display: none !important;
 }
 
 .swagger-ui .model-toggle.collapsed:after {
-    content: "▶" !important;
+    display: none !important;
 }
 
-/* Override any SVG or path elements in dropdown arrows */
+/* Hide any SVG or path elements in dropdown arrows */
 .swagger-ui .model-toggle svg,
 .swagger-ui .model-toggle svg path,
 .swagger-ui .model-toggle svg polygon {
-    fill: var(--text-color) !important;
-    stroke: var(--text-color) !important;
+    display: none !important;
 }
 
 .swagger-ui table tbody tr td,
@@ -268,47 +266,32 @@ footer p {
     background-color: #ffffff;
 }
 
-/* Model expand/collapse arrows - white to match endpoint definitions */
+/* Hide all model toggle arrows and icons */
 .swagger-ui .model-toggle:after,
 .swagger-ui .model-box .model-toggle:after,
 .swagger-ui .model-toggle:before {
-    color: var(--text-color) !important;
+    display: none !important;
 }
 
-/* All expand/collapse arrows and icons - white */
-.swagger-ui .arrow,
-.swagger-ui .expand-operation svg,
-.swagger-ui .collapse-operation svg,
+/* Hide all expand/collapse arrows and icons */
 .swagger-ui .model-toggle svg,
-.swagger-ui .model .model-toggle,
 .swagger-ui .model .model-toggle:after {
-    fill: var(--text-color) !important;
-    color: var(--text-color) !important;
+    display: none !important;
 }
 
-/* Force all arrow paths and polygons to be white */
-.swagger-ui svg:not(.arrow__fill) path,
-.swagger-ui svg:not(.arrow__fill) polygon {
-    fill: var(--text-color) !important;
+/* Hide all arrow paths and polygons */
+.swagger-ui .model-toggle svg path,
+.swagger-ui .model-toggle svg polygon {
+    display: none !important;
 }
 
-/* Specific targeting for model arrows */
+/* Hide specific model arrows */
 .swagger-ui .model-box button.model-box-control svg,
 .swagger-ui .model-box button.model-box-control path {
-    fill: var(--text-color) !important;
+    display: none !important;
 }
 
-/* Override default arrow styling */
-.swagger-ui .arrow__fill {
-    fill: var(--text-color) !important;
-}
-
-.swagger-ui .arrow {
-    fill: var(--text-color) !important;
-    color: var(--text-color) !important;
-}
-
-/* Force model toggle SVG arrows to be white - comprehensive override */
+/* Hide model toggle SVG arrows - comprehensive override */
 .swagger-ui .model-toggle svg,
 .swagger-ui .model-toggle svg *,
 .swagger-ui .model-toggle svg path,
@@ -317,13 +300,7 @@ footer p {
 .swagger-ui button.model-box-control svg path,
 .swagger-ui .model-box-control svg,
 .swagger-ui .model-box-control svg path {
-    fill: var(--text-color) !important;
-    stroke: var(--text-color) !important;
-}
-
-/* Override the background image arrow with filter */
-.swagger-ui .model-toggle:after {
-    filter: invert(1) !important;
+    display: none !important;
 }
 
 @media (max-width: 768px) {
