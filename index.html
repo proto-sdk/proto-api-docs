@@ -4,6 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Proto API Documentation</title>
+    
+    <!-- Force canonical URL -->
+    <link rel="canonical" href="https://proto-sdk.github.io/proto-api-docs/">
+    <meta property="og:url" content="https://proto-sdk.github.io/proto-api-docs/">
+    
+    <!-- Prevent any custom domain caching -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
     <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5.9.0/swagger-ui.css">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -42,6 +52,11 @@
     <script src="https://unpkg.com/swagger-ui-dist@5.9.0/swagger-ui-bundle.js"></script>
     <script src="https://unpkg.com/swagger-ui-dist@5.9.0/swagger-ui-standalone-preset.js"></script>
     <script>
+        // Force canonical URL to prevent any domain redirects
+        if (window.location.hostname !== 'proto-sdk.github.io') {
+            window.location.replace('https://proto-sdk.github.io/proto-api-docs/');
+        }
+        
         window.onload = function() {
             const ui = SwaggerUIBundle({
                 url: "spec.json",

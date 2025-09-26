@@ -1,5 +1,5 @@
-# GitHub Pages configuration
-# Explicitly disable custom domain and force GitHub Pages default
+# GitHub Pages configuration - FORCE GITHUB PAGES DEFAULT DOMAIN ONLY
+# Explicitly disable ALL custom domains and force GitHub Pages default
 domain: proto-sdk.github.io
 url: https://proto-sdk.github.io
 baseurl: /proto-api-docs
@@ -7,5 +7,9 @@ baseurl: /proto-api-docs
 # Disable Jekyll processing since we have static files
 plugins: []
 
-# Explicitly disable custom domain
+# Force GitHub Pages settings
 enforce_ssl: true
+github: [metadata]
+
+# Explicitly prevent custom domain usage
+custom_domain: false

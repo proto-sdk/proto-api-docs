@@ -1,1 +1,3 @@
-
+# Disable Jekyll processing for GitHub Pages
+# This ensures static files are served directly without Jekyll processing
+# Updated to force GitHub Pages to recognize domain changes
