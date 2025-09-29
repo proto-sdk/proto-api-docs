@@ -156,25 +156,49 @@ footer p {
     color: var(--text-color) !important;
 }
 
-/* 5. Schema titles - highlighted in orange */
+/* 5. Schema section headers and titles */
 .swagger-ui .model-title {
     color: var(--accent-color) !important;
     font-weight: bold;
+    background: transparent !important;
 }
 
 .swagger-ui .model-box .model-title {
     color: var(--accent-color) !important;
+    background: transparent !important;
 }
 
 .swagger-ui .models h4,
 .swagger-ui .models h5,
 .swagger-ui section.models h4,
 .swagger-ui section.models h4 span,
-.swagger-ui .model-container h4 span {
+.swagger-ui .model-container h4 span,
+.swagger-ui .models-control {
+    color: var(--accent-color) !important;
+    background: transparent !important;
+}
+
+/* Schemas section header */
+.swagger-ui .models-control,
+.swagger-ui .models-control .model-btn {
+    background: var(--secondary-color) !important;
+    border: 1px solid var(--accent-color) !important;
     color: var(--accent-color) !important;
 }
 
-/* 6. Schema content - ALL text in white */
+/* Make Schemas section collapsible like endpoints */
+.swagger-ui .models.is-open {
+    display: block;
+}
+
+.swagger-ui .models {
+    background: var(--primary-color) !important;
+    border: 1px solid var(--accent-color);
+    border-radius: 4px;
+    margin: 20px 0;
+}
+
+/* 6. Schema content - Remove white backgrounds and keep text white */
 .swagger-ui .model .property,
 .swagger-ui .model .property.primitive,
 .swagger-ui .model-box,
@@ -186,6 +210,25 @@ footer p {
 .swagger-ui .model-example,
 .swagger-ui .model .model-title__text {
     color: var(--text-color) !important;
+    background: transparent !important;
+}
+
+/* Remove white highlight/background from schema definitions */
+.swagger-ui .model-box {
+    background: var(--secondary-color) !important;
+    border: 1px solid var(--accent-color) !important;
+}
+
+.swagger-ui .model {
+    background: transparent !important;
+}
+
+.swagger-ui .model-wrapper {
+    background: transparent !important;
+}
+
+.swagger-ui .prop {
+    background: transparent !important;
 }
 
 /* Schema example values and descriptions in white */
@@ -196,44 +239,75 @@ footer p {
 .swagger-ui .model-box .example,
 .swagger-ui .model-box .model .property-row {
     color: var(--text-color) !important;
+    background: transparent !important;
 }
 
-/* Schema dropdown arrow icons - hidden */
-.swagger-ui .model-toggle {
+/* Schema property rows */
+.swagger-ui .model .property-row {
+    background: transparent !important;
     color: var(--text-color) !important;
-    border-color: var(--text-color) !important;
 }
 
+/* Remove any remaining white backgrounds */
+.swagger-ui .model-container,
+.swagger-ui .models-container,
+.swagger-ui .model-box .model-container {
+    background: transparent !important;
+}
+
+/* Schema toggle buttons - make them visible and functional */
+.swagger-ui .model-toggle {
+    background: var(--accent-color) !important;
+    color: var(--primary-color) !important;
+    border: none !important;
+    padding: 2px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.swagger-ui .model-toggle:hover {
+    background: var(--hover-color) !important;
+}
+
+/* Schema toggle arrow styling */
 .swagger-ui .model-toggle:after {
-    display: none !important;
+    content: "▼";
+    display: inline-block;
+    margin-left: 4px;
+    transition: transform 0.2s;
 }
 
 .swagger-ui .model-toggle.collapsed:after {
-    display: none !important;
+    transform: rotate(-90deg);
 }
 
-/* Hide any SVG or path elements in dropdown arrows */
-.swagger-ui .model-toggle svg,
-.swagger-ui .model-toggle svg path,
-.swagger-ui .model-toggle svg polygon {
-    display: none !important;
+/* Hide SVG arrows but keep custom arrow */
+.swagger-ui .model-toggle svg {
+    display: none;
+}
+
+/* Ensure schema properties are readable */
+.swagger-ui .prop-type {
+    color: #61affe !important;
+}
+
+.swagger-ui .prop-format {
+    color: #aaa !important;
 }
 
 .swagger-ui table tbody tr td,
 .swagger-ui table thead tr th,
 .swagger-ui table thead tr td {
     color: var(--text-color) !important;
+    background: var(--secondary-color) !important;
 }
 
 .swagger-ui .parameter__name,
 .swagger-ui .parameter__type,
 .swagger-ui .parameter__deprecated,
 .swagger-ui .parameter__in {
-    color: var(--text-color) !important;
-}
-
-.swagger-ui .prop-type,
-.swagger-ui .prop-format {
     color: var(--text-color) !important;
 }
 
@@ -247,6 +321,7 @@ footer p {
 .swagger-ui .opblock-external-docs-wrapper p,
 .swagger-ui .opblock-title_normal p {
     color: var(--text-color) !important;
+    background: transparent !important;
 }
 
 /* Response descriptions */
@@ -266,41 +341,37 @@ footer p {
     background-color: #ffffff;
 }
 
-/* Hide all model toggle arrows and icons */
-.swagger-ui .model-toggle:after,
-.swagger-ui .model-box .model-toggle:after,
-.swagger-ui .model-toggle:before {
-    display: none !important;
+/* Make collapsible sections work properly */
+.swagger-ui .model-box {
+    margin: 10px 0;
+    transition: all 0.3s ease;
 }
 
-/* Hide all expand/collapse arrows and icons */
-.swagger-ui .model-toggle svg,
-.swagger-ui .model .model-toggle:after {
-    display: none !important;
+.swagger-ui .model-box.collapsed .model {
+    display: none;
 }
 
-/* Hide all arrow paths and polygons */
-.swagger-ui .model-toggle svg path,
-.swagger-ui .model-toggle svg polygon {
-    display: none !important;
+/* Ensure proper spacing and visibility */
+.swagger-ui section.models {
+    padding: 20px;
+    background: var(--secondary-color) !important;
+    border-radius: 8px;
+    margin-top: 30px;
 }
 
-/* Hide specific model arrows */
-.swagger-ui .model-box button.model-box-control svg,
-.swagger-ui .model-box button.model-box-control path {
-    display: none !important;
+/* Schema section title */
+.swagger-ui section.models h4 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--accent-color);
 }
 
-/* Hide model toggle SVG arrows - comprehensive override */
-.swagger-ui .model-toggle svg,
-.swagger-ui .model-toggle svg *,
-.swagger-ui .model-toggle svg path,
-.swagger-ui .model-toggle path,
-.swagger-ui button.model-box-control svg,
-.swagger-ui button.model-box-control svg path,
-.swagger-ui .model-box-control svg,
-.swagger-ui .model-box-control svg path {
-    display: none !important;
+/* Remove any white overlays or highlights */
+.swagger-ui .highlight-code,
+.swagger-ui .microlight {
+    background: var(--secondary-color) !important;
+    color: var(--text-color) !important;
 }
 
 @media (max-width: 768px) {
