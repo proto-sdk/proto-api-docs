@@ -338,7 +338,142 @@ footer p {
 .swagger-ui .servers label,
 .swagger-ui .servers .server-container {
     color: #000000 !important;
-    background-color: #ffffff;
+    background-color: #ffffff !important;
+}
+
+/* COMPREHENSIVE FIX: Remove ALL white backgrounds from Schema/Model sections */
+
+/* Override all Swagger UI default white backgrounds */
+.swagger-ui .model-box,
+.swagger-ui .model,
+.swagger-ui .models,
+.swagger-ui .model-container,
+.swagger-ui .models-container,
+.swagger-ui .model .property,
+.swagger-ui .model .property.primitive,
+.swagger-ui .model-wrapper,
+.swagger-ui .model-box .model,
+.swagger-ui .model-box .model-container,
+.swagger-ui .model-box .model .property,
+.swagger-ui .model-box .model .property.primitive,
+.swagger-ui .model .property-row,
+.swagger-ui .model-box .model .property-row,
+.swagger-ui .prop,
+.swagger-ui .prop-type,
+.swagger-ui .prop-format,
+.swagger-ui .renderedMarkdown,
+.swagger-ui .renderedMarkdown p,
+.swagger-ui .model-example,
+.swagger-ui .model .description,
+.swagger-ui .model .property-row .property__name,
+.swagger-ui .model .property-row .property__type,
+.swagger-ui .model-box .example,
+.swagger-ui .parameter__name,
+.swagger-ui .parameter__type,
+.swagger-ui .parameter__deprecated,
+.swagger-ui .parameter__in,
+.swagger-ui .response-col_status,
+.swagger-ui .response-col_description,
+.swagger-ui .response-col_links,
+.swagger-ui .opblock-body pre,
+.swagger-ui .opblock-body pre.microlight,
+.swagger-ui textarea.curl,
+.swagger-ui .highlight-code,
+.swagger-ui .microlight,
+.swagger-ui .renderedMarkdown pre,
+.swagger-ui .renderedMarkdown pre code,
+.swagger-ui .model-hint,
+.swagger-ui .model .property.primitive,
+.swagger-ui .model .external-docs,
+.swagger-ui table.model tbody tr td,
+.swagger-ui .model table tbody tr td,
+.swagger-ui .model-box table tbody tr td {
+    background: transparent !important;
+    background-color: transparent !important;
+    color: var(--text-color) !important;
+}
+
+/* Specific overrides for nested elements */
+.swagger-ui .model-box .prop-type,
+.swagger-ui .model-box .prop-format,
+.swagger-ui .model .prop-type,
+.swagger-ui .model .prop-format {
+    color: #61affe !important;
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+/* Override inline code blocks */
+.swagger-ui .markdown code,
+.swagger-ui .renderedMarkdown code,
+.swagger-ui .model .property code,
+.swagger-ui code {
+    background: var(--secondary-color) !important;
+    background-color: var(--secondary-color) !important;
+    color: #ff6b35 !important;
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+
+/* Override pre blocks */
+.swagger-ui pre,
+.swagger-ui .model pre {
+    background: var(--secondary-color) !important;
+    background-color: var(--secondary-color) !important;
+    color: var(--text-color) !important;
+}
+
+/* Ensure model titles stay orange */
+.swagger-ui .model-title,
+.swagger-ui .model-title__text {
+    color: var(--accent-color) !important;
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+/* Remove any box shadows that might create white appearance */
+.swagger-ui .model-box,
+.swagger-ui .model,
+.swagger-ui .model-container {
+    box-shadow: none !important;
+}
+
+/* Ensure proper borders without white backgrounds */
+.swagger-ui .model-box {
+    border: 1px solid var(--accent-color) !important;
+    background: var(--secondary-color) !important;
+}
+
+/* FORCE OVERRIDE: Use !important on every property to override Swagger UI defaults */
+.swagger-ui * {
+    --swagger-ui-background: transparent !important;
+}
+
+/* Target specific Swagger UI model elements with higher specificity */
+body .swagger-ui .models.is-open .model-container,
+body .swagger-ui .models .model-container,
+body .swagger-ui section.models .model-container,
+body .swagger-ui section.models.is-open .model-container {
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+/* Override any inline styles */
+.swagger-ui [style*="background: white"],
+.swagger-ui [style*="background-color: white"],
+.swagger-ui [style*="background:#fff"],
+.swagger-ui [style*="background-color:#fff"],
+.swagger-ui [style*="background: #fff"],
+.swagger-ui [style*="background-color: #fff"],
+.swagger-ui [style*="background:white"],
+.swagger-ui [style*="background-color:white"] {
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+/* Ensure all text in models/schemas is white */
+.swagger-ui .model *:not(.prop-type):not(.prop-format):not(.model-title) {
+    color: var(--text-color) !important;
 }
 
 /* Make collapsible sections work properly */
