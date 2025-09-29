@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "Mining Development Kit API",
+    "title": "Proto API",
     "description": "The Mining Development Kit API serves as a means to access information from the mining device and make necessary adjustments to its settings.",
     "contact": {
       "email": "mining.support@block.xyz"
