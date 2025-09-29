@@ -239,6 +239,32 @@ footer p {
     background-color: #ffffff;
 }
 
+/* Media type fields - black background with white text */
+.swagger-ui .opblock-section-header .tab-header .content-type,
+.swagger-ui .opblock-section-header h4,
+.swagger-ui .opblock-section-header label,
+.swagger-ui .content-type,
+.swagger-ui .opblock-body select,
+.swagger-ui .response-control-media-type select,
+.swagger-ui .response-control-media-type__accept-message,
+.swagger-ui .response-control-media-type--accept-controller select,
+.swagger-ui .opblock-section-header .tab-header .content-type select {
+    background: #000000 !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--accent-color) !important;
+}
+
+/* Media type dropdown styling */
+.swagger-ui .opblock-section-header .tab-header .content-type select option,
+.swagger-ui select option {
+    background: #000000 !important;
+    color: var(--text-color) !important;
+}
+
+.swagger-ui .opblock-section-header label span {
+    color: var(--text-color) !important;
+}
+
 /* Make ALL dropdown icons/arrows white */
 .swagger-ui .arrow,
 .swagger-ui .expand-operation svg,
@@ -267,6 +293,62 @@ footer p {
 
 /* Make collapse/expand arrows white */
 .swagger-ui .opblock .opblock-summary-control .arrow svg {
+    fill: var(--text-color) !important;
+}
+
+/* Specific fix for Schema dropdown icons - ensure they're white, not duplicated */
+.swagger-ui .model-toggle {
+    position: relative;
+}
+
+.swagger-ui .model-toggle:before,
+.swagger-ui .model-toggle:after {
+    display: none !important; /* Remove any pseudo-element arrows */
+}
+
+.swagger-ui .model-toggle svg {
+    fill: var(--text-color) !important;
+    display: inline-block !important;
+}
+
+.swagger-ui .model-toggle svg path {
+    fill: var(--text-color) !important;
+}
+
+/* Schema section expand/collapse arrows */
+.swagger-ui .models .model-container .model-toggle svg,
+.swagger-ui .model-box .model-toggle svg {
+    fill: var(--text-color) !important;
+}
+
+/* Remove any duplicate arrow icons */
+.swagger-ui .model-toggle .arrow {
+    display: none !important;
+}
+
+/* Ensure only one arrow icon shows */
+.swagger-ui .model-box-control svg:not(:first-child) {
+    display: none !important;
+}
+
+/* Override Swagger UI's default black arrows in schemas */
+.swagger-ui .model-box button.model-box-control {
+    background: transparent !important;
+    border: 1px solid var(--accent-color) !important;
+}
+
+.swagger-ui .model-box button.model-box-control svg {
+    fill: var(--text-color) !important;
+    width: 20px !important;
+    height: 20px !important;
+}
+
+.swagger-ui .model-box button.model-box-control svg path {
+    fill: var(--text-color) !important;
+}
+
+/* Ensure schema toggle buttons have white icons */
+.swagger-ui button svg {
     fill: var(--text-color) !important;
 }
 
