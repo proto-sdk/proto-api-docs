@@ -52,33 +52,48 @@
     <script src="https://unpkg.com/swagger-ui-dist@5.9.0/swagger-ui-bundle.js"></script>
     <script src="https://unpkg.com/swagger-ui-dist@5.9.0/swagger-ui-standalone-preset.js"></script>
     <script>
-        // Force canonical URL to prevent any domain redirects
-        if (window.location.hostname !== 'proto-sdk.github.io') {
-            window.location.replace('https://proto-sdk.github.io/proto-api-docs/');
-        }
-        
         window.onload = function() {
-            const ui = SwaggerUIBundle({
-                url: "spec.json",
-                dom_id: '#swagger-ui',
-                deepLinking: true,
-                presets: [
-                    SwaggerUIBundle.presets.apis,
-                    SwaggerUIBundle.SwaggerUIStandalonePreset
-                ],
-                layout: "BaseLayout",
-                docExpansion: "list",
-                defaultModelsExpandDepth: 3,
-                defaultModelExpandDepth: 3,
-                displayRequestDuration: true,
-                tryItOutEnabled: true,
-                filter: true,
-                theme: {
-                    colors: {
-                        primary: '#FF6B35'
+            console.log('Loading Swagger UI...');
+            
+            // Fetch the spec first to ensure it loads
+            fetch('spec.json')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to load spec.json');
                     }
-                }
-            });
+                    return response.json();
+                })
+                .then(spec => {
+                    console.log('Spec loaded, initializing Swagger UI...');
+                    
+                    const ui = SwaggerUIBundle({
+                        spec: spec,
+                        dom_id: '#swagger-ui',
+                        deepLinking: true,
+                        presets: [
+                            SwaggerUIBundle.presets.apis,
+                            SwaggerUIBundle.SwaggerUIStandalonePreset
+                        ],
+                        layout: "BaseLayout",
+                        docExpansion: "list",
+                        defaultModelsExpandDepth: 2,
+                        defaultModelExpandDepth: 2,
+                        displayRequestDuration: true,
+                        tryItOutEnabled: true,
+                        filter: true,
+                        persistAuthorization: true,
+                        showCommonExtensions: true,
+                        showExtensions: true
+                    });
+                    
+                    window.ui = ui;
+                    console.log('Swagger UI initialized');
+                })
+                .catch(error => {
+                    console.error('Error loading API documentation:', error);
+                    document.getElementById('swagger-ui').innerHTML = 
+                        '<div style="color: red; padding: 20px;">Error loading API documentation: ' + error.message + '</div>';
+                });
         };
     </script>
 </body>
