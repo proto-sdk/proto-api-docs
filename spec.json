@@ -1,5 +1,5 @@
 {
-  "openapi": "3.1.1",
+  "openapi": "3.0.3",
   "info": {
     "title": "Mining Development Kit API",
     "description": "The Mining Development Kit API serves as a means to access information from the mining device and make necessary adjustments to its settings.",
@@ -2317,14 +2317,14 @@
                       "hashrate": {
                         "unit": "TH/s",
                         "values": [
-                          95.00,
-                          94.50,
-                          94.80
+                          95.0,
+                          94.5,
+                          94.8
                         ],
                         "aggregates": {
-                          "min": 94.00,
+                          "min": 94.0,
                           "avg": 94.75,
-                          "max": 95.50
+                          "max": 95.5
                         }
                       },
                       "temperature": {
@@ -2347,14 +2347,14 @@
                         "hashrate": {
                           "unit": "TH/s",
                           "values": [
-                            31.50,
+                            31.5,
                             31.45,
                             31.52
                           ],
                           "aggregates": {
-                            "min": 31.00,
+                            "min": 31.0,
                             "avg": 31.49,
-                            "max": 32.00
+                            "max": 32.0
                           }
                         },
                         "temperature": {
@@ -2377,13 +2377,13 @@
                           "unit": "TH/s",
                           "values": [
                             31.75,
-                            31.70,
+                            31.7,
                             31.78
                           ],
                           "aggregates": {
-                            "min": 31.50,
+                            "min": 31.5,
                             "avg": 31.74,
-                            "max": 32.10
+                            "max": 32.1
                           }
                         },
                         "temperature": {
@@ -2407,12 +2407,12 @@
                           "values": [
                             31.75,
                             31.35,
-                            31.50
+                            31.5
                           ],
                           "aggregates": {
-                            "min": 31.00,
+                            "min": 31.0,
                             "avg": 31.53,
-                            "max": 31.90
+                            "max": 31.9
                           }
                         },
                         "temperature": {
@@ -4534,14 +4534,14 @@
                 "hashrate": {
                   "unit": "TH/s",
                   "values": [
-                    95.00,
-                    94.50,
-                    94.80
+                    95.0,
+                    94.5,
+                    94.8
                   ],
                   "aggregates": {
-                    "min": 94.00,
+                    "min": 94.0,
                     "avg": 94.75,
-                    "max": 95.50
+                    "max": 95.5
                   }
                 },
                 "temperature": {
@@ -4564,14 +4564,14 @@
                   "hashrate": {
                     "unit": "TH/s",
                     "values": [
-                      31.50,
+                      31.5,
                       31.45,
                       31.52
                     ],
                     "aggregates": {
-                      "min": 31.00,
+                      "min": 31.0,
                       "avg": 31.49,
-                      "max": 32.00
+                      "max": 32.0
                     }
                   },
                   "temperature": {
@@ -4652,9 +4652,9 @@
               "type": "number"
             },
             "example": [
-              95.00,
-              94.50,
-              94.80
+              95.0,
+              94.5,
+              94.8
             ]
           },
           "aggregates": {
@@ -4669,7 +4669,7 @@
           "min": {
             "type": "number",
             "description": "Minimum value in the series",
-            "example": 94.00
+            "example": 94.0
           },
           "avg": {
             "type": "number",
@@ -4679,7 +4679,7 @@
           "max": {
             "type": "number",
             "description": "Maximum value in the series",
-            "example": 95.50
+            "example": 95.5
           }
         }
       }
