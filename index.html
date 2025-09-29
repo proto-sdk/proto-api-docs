@@ -45,6 +45,8 @@
     <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@4.5.0/swagger-ui-standalone-preset.js"></script>
     <script>
     window.onload = function() {
+        console.log('Initializing Swagger UI with Try It Out enabled...');
+        
         // Initialize SwaggerUI
         const ui = SwaggerUIBundle({
             url: "spec.json",
@@ -59,8 +61,21 @@
             ],
             layout: "StandaloneLayout",
             docExpansion: "list",
-            defaultModelsExpandDepth: 2,
-            defaultModelExpandDepth: 2
+            defaultModelsExpandDepth: 1,
+            defaultModelExpandDepth: 1,
+            displayRequestDuration: true,
+            filter: true,
+            showExtensions: true,
+            showCommonExtensions: true,
+            tryItOutEnabled: true,
+            persistAuthorization: true,
+            displayOperationId: false,
+            defaultModelRendering: "model",
+            showMutatedRequest: true,
+            supportedSubmitMethods: [
+                "get", "put", "post", "delete", "options", "head", "patch", "trace"
+            ],
+            validatorUrl: null
         });
         window.ui = ui;
     };
