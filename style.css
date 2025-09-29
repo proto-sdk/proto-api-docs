@@ -387,32 +387,6 @@ footer p {
     display: none !important;
 }
 
-/* Additional fixes for dropdown arrows to be white */
-.swagger-ui .opblock .opblock-summary-control .arrow {
-    fill: var(--text-color) !important;
-}
-
-.swagger-ui .opblock .opblock-summary-control svg {
-    fill: var(--text-color) !important;
-}
-
-/* Model expand/collapse arrows white */
-.swagger-ui .model-toggle::after {
-    color: var(--text-color) !important;
-}
-
-/* Ensure dropdown triangles are white */
-.swagger-ui select {
-    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%23ffffff' d='M10 12l-5-5h10z'/%3E%3C/svg%3E") !important;
-}
-
-/* Highlight example values in schemas */
-.swagger-ui .model-example pre,
-.swagger-ui .example pre {
-    background: #1a1a1a !important;
-    border-left: 3px solid #49cc90 !important;
-}
-
 /* Remove white backgrounds from Schema sections */
 .swagger-ui .model-box {
     background: var(--secondary-color) !important;
@@ -439,6 +413,100 @@ footer p {
     background: transparent !important;
 }
 
+/* Fix Schema dropdown icons to match endpoint dropdown icons */
+/* Remove the orange underscore and use white downward arrow */
+.swagger-ui .model-toggle {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 10px 0 0 !important;
+    width: 24px !important;
+    height: 24px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+}
+
+/* Remove the underscore text content */
+.swagger-ui .model-toggle:after {
+    content: "" !important;
+    display: none !important;
+}
+
+.swagger-ui .model-toggle:before {
+    content: "" !important;
+    display: none !important;
+}
+
+/* Add white downward arrow using SVG background like endpoints */
+.swagger-ui .model-toggle {
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath d='M13.418 7.859a.695.695 0 0 1 .978 0 .68.68 0 0 1 0 .969l-3.908 3.83a.697.697 0 0 1-.979 0l-3.908-3.83a.68.68 0 0 1 0-.969.695.695 0 0 1 .978 0L10 11l3.418-3.141z' fill='%23ffffff'/%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    background-size: 20px 20px !important;
+    transition: transform 0.3s !important;
+}
+
+/* Rotate arrow when collapsed */
+.swagger-ui .model-toggle.collapsed {
+    transform: rotate(-90deg) !important;
+}
+
+/* Apply same styling to model-box-control buttons */
+.swagger-ui .model-box button.model-box-control {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    width: 24px !important;
+    height: 24px !important;
+}
+
+/* Hide any SVG children to prevent duplicates */
+.swagger-ui .model-toggle svg,
+.swagger-ui .model-box-control svg {
+    display: none !important;
+}
+
+/* Apply same arrow style to schemas within endpoints */
+.swagger-ui .opblock .model-toggle,
+.swagger-ui .response-col_description .model-toggle,
+.swagger-ui .opblock-body .model-toggle {
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath d='M13.418 7.859a.695.695 0 0 1 .978 0 .68.68 0 0 1 0 .969l-3.908 3.83a.697.697 0 0 1-.979 0l-3.908-3.83a.68.68 0 0 1 0-.969.695.695 0 0 1 .978 0L10 11l3.418-3.141z' fill='%23ffffff'/%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    background-size: 20px 20px !important;
+}
+
+/* Ensure all model toggles have consistent styling */
+.swagger-ui .models .model-container .model-toggle,
+.swagger-ui section.models .model-toggle,
+.swagger-ui .model-box .model-toggle {
+    color: transparent !important;
+    font-size: 0 !important;
+    line-height: 0 !important;
+}
+
+/* Remove any text content from toggle buttons */
+.swagger-ui .model-toggle {
+    text-indent: -9999px !important;
+    overflow: hidden !important;
+}
+
+/* Additional fixes for dropdown arrows to be white */
+.swagger-ui .opblock .opblock-summary-control .arrow {
+    fill: var(--text-color) !important;
+}
+
+.swagger-ui .opblock .opblock-summary-control svg {
+    fill: var(--text-color) !important;
+}
+
+/* Ensure dropdown triangles are white */
+.swagger-ui select {
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%23ffffff' d='M10 12l-5-5h10z'/%3E%3C/svg%3E") !important;
+}
+
 /* Ensure schema text is readable */
 .swagger-ui .model * {
     color: var(--text-color) !important;
@@ -447,19 +515,6 @@ footer p {
 /* Keep property types in their distinct color */
 .swagger-ui .prop-type {
     color: #61affe !important;
-}
-
-/* Remove excessive nesting and dropdowns */
-.swagger-ui .model-toggle {
-    background: transparent !important;
-    border: 1px solid var(--accent-color) !important;
-    color: var(--accent-color) !important;
-    padding: 0 5px;
-    margin: 0 5px;
-}
-
-.swagger-ui .model-toggle:after {
-    content: "";
 }
 
 /* Simplify schema display */
