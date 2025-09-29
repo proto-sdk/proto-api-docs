@@ -239,6 +239,98 @@ footer p {
     background-color: #ffffff;
 }
 
+/* Make ALL dropdown icons/arrows white */
+.swagger-ui .arrow,
+.swagger-ui .expand-operation svg,
+.swagger-ui .expand-methods svg,
+.swagger-ui .model-toggle svg,
+.swagger-ui .model-box-control svg,
+.swagger-ui svg.arrow,
+.swagger-ui .opblock .opblock-summary-control svg,
+.swagger-ui .opblock-tag svg,
+.swagger-ui .expand-control svg {
+    fill: var(--text-color) !important;
+}
+
+/* Make dropdown arrow paths white */
+.swagger-ui svg path,
+.swagger-ui .arrow path,
+.swagger-ui .expand-operation svg path,
+.swagger-ui .model-toggle svg path {
+    fill: var(--text-color) !important;
+}
+
+/* Ensure all SVG icons are white */
+.swagger-ui .svg-assets {
+    filter: invert(1);
+}
+
+/* Make collapse/expand arrows white */
+.swagger-ui .opblock .opblock-summary-control .arrow svg {
+    fill: var(--text-color) !important;
+}
+
+/* Syntax highlight 'example:' in Schema definitions */
+.swagger-ui .model .property.example,
+.swagger-ui .model-example,
+.swagger-ui .example,
+.swagger-ui span:contains("example") {
+    color: #49cc90 !important;
+    font-weight: bold;
+}
+
+.swagger-ui .model .property-row .property__name:contains("example") {
+    color: #49cc90 !important;
+}
+
+/* Hide the Swagger spec.json banner/download link */
+.swagger-ui .info .download-url-wrapper {
+    display: none !important;
+}
+
+.swagger-ui .info hgroup.main a {
+    display: none !important;
+}
+
+.swagger-ui .topbar {
+    display: none !important;
+}
+
+.swagger-ui .download-url-input {
+    display: none !important;
+}
+
+/* Hide the spec link in the info section */
+.swagger-ui .info .link {
+    display: none !important;
+}
+
+/* Additional fixes for dropdown arrows to be white */
+.swagger-ui .opblock .opblock-summary-control .arrow {
+    fill: var(--text-color) !important;
+}
+
+.swagger-ui .opblock .opblock-summary-control svg {
+    fill: var(--text-color) !important;
+}
+
+/* Model expand/collapse arrows white */
+.swagger-ui .model-toggle::after {
+    color: var(--text-color) !important;
+}
+
+/* Ensure dropdown triangles are white */
+.swagger-ui select {
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%23ffffff' d='M10 12l-5-5h10z'/%3E%3C/svg%3E") !important;
+}
+
+/* Highlight example values in schemas */
+.swagger-ui .model-example pre,
+.swagger-ui .example pre {
+    background: #1a1a1a !important;
+    border-left: 3px solid #49cc90 !important;
+}
+
 /* Remove white backgrounds from Schema sections */
 .swagger-ui .model-box {
     background: var(--secondary-color) !important;
