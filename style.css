@@ -564,20 +564,141 @@ footer p {
     background-color: var(--hover-color) !important;
 }
 
+/* Enhanced Mobile Responsiveness */
 @media (max-width: 768px) {
+    /* Header adjustments */
     .header {
-        padding: 1.5rem;
-    }
-
-    .header h1 {
-        font-size: 2rem;
-    }
-
-    .main-content {
         padding: 1rem;
     }
-
+    
+    .header h1 {
+        font-size: 1.75rem;
+    }
+    
+    .header p {
+        font-size: 1rem;
+    }
+    
+    /* Main content padding */
+    .main-content {
+        padding: 1rem;
+        max-width: 100%;
+    }
+    
+    /* Feature cards - single column on mobile */
     .features {
         grid-template-columns: 1fr;
+        gap: 1rem;
     }
+    
+    .feature-card {
+        padding: 1rem;
+    }
+    
+    /* API docs section */
+    .api-docs {
+        padding: 1rem;
+    }
+    
+    /* Swagger UI mobile optimizations */
+    .swagger-ui .wrapper {
+        padding: 0;
+    }
+    
+    .swagger-ui .opblock {
+        margin: 0 0 8px;
+    }
+    
+    .swagger-ui .opblock-summary {
+        padding: 8px;
+    }
+    
+    /* Make buttons touch-friendly */
+    .swagger-ui .btn {
+        min-height: 44px;
+        padding: 10px 15px;
+        font-size: 14px;
+    }
+    
+    /* Prevent horizontal scroll in tables */
+    .swagger-ui table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+    
+    /* Code blocks responsive */
+    .swagger-ui pre {
+        overflow-x: auto;
+        max-width: 100%;
+    }
+    
+    /* Response examples */
+    .swagger-ui .response-col_description {
+        overflow-x: auto;
+    }
+    
+    /* Footer adjustments */
+    footer {
+        padding: 1rem;
+        margin-top: 2rem;
+    }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+    .header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .header .version {
+        font-size: 0.875rem;
+        padding: 0.2rem 0.75rem;
+    }
+    
+    /* Stack operation method and path */
+    .swagger-ui .opblock-summary-method,
+    .swagger-ui .opblock-summary-path {
+        display: block;
+        width: 100%;
+    }
+    
+    /* Adjust font sizes for better readability */
+    .swagger-ui {
+        font-size: 14px;
+    }
+    
+    .swagger-ui .opblock-tag {
+        font-size: 16px;
+    }
+}
+
+/* Prevent zoom on input focus (iOS) */
+@media (max-width: 768px) {
+    input, select, textarea {
+        font-size: 16px !important;
+    }
+}
+
+/* Improve touch targets */
+.swagger-ui .expand-operation,
+.swagger-ui .authorization__btn,
+.swagger-ui .btn-group {
+    min-height: 44px;
+}
+
+/* Make dropdowns more mobile-friendly */
+.swagger-ui select {
+    min-height: 44px;
+    font-size: 16px;
+}
+
+/* Touch device specific styles */
+.touch-device .swagger-ui .btn {
+    cursor: pointer;
+    -webkit-tap-highlight-color: rgba(255, 107, 53, 0.3);
+}
+
+.touch-device .stat-card {
+    -webkit-tap-highlight-color: rgba(255, 107, 53, 0.3);
 }

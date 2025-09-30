@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="theme-color" content="#1a1a1a">
     <title>Proto API Documentation</title>
     
     <!-- Swagger UI CSS -->
@@ -79,6 +82,19 @@
         });
         window.ui = ui;
     };
+    
+    // Add touch-friendly interactions
+    if ('ontouchstart' in window) {
+        document.body.classList.add('touch-device');
+    }
+    
+    // Prevent double-tap zoom on buttons
+    document.addEventListener('touchend', function(e) {
+        if (e.target.tagName === 'BUTTON' || e.target.classList.contains('btn')) {
+            e.preventDefault();
+            e.target.click();
+        }
+    });
     </script>
 </body>
 </html>
