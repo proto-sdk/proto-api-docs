@@ -3,7 +3,7 @@
   "info": {
     "title": "Proto API",
     "description": "The Proto API serves as a means to access information from the mining device and make necessary adjustments to its settings.",
-    "version": "1.4.0",
+    "version": "1.4.1",
     "contact": {
       "email": "mining.support@block.xyz"
     },
@@ -14,7 +14,7 @@
   },
   "servers": [
     {
-      "url": "https://virtserver.swaggerhub.com/mining_development_kit_api/1.4.0",
+      "url": "https://virtserver.swaggerhub.com/mining_development_kit_api/1.4.1",
       "description": "SwaggerHub API Auto Mocking"
     }
   ],
@@ -175,7 +175,9 @@
         },
         "security": [
           {
-            "BearerAuth": []
+            "BearerAuth": [
+
+            ]
           }
         ]
       }
@@ -283,7 +285,9 @@
         },
         "security": [
           {
-            "BearerAuth": []
+            "BearerAuth": [
+
+            ]
           }
         ]
       },
@@ -332,7 +336,9 @@
         },
         "security": [
           {
-            "BearerAuth": []
+            "BearerAuth": [
+
+            ]
           }
         ]
       }
@@ -470,7 +476,9 @@
         },
         "security": [
           {
-            "BearerAuth": []
+            "BearerAuth": [
+
+            ]
           }
         ]
       }
@@ -564,7 +572,9 @@
         },
         "security": [
           {
-            "BearerAuth": []
+            "BearerAuth": [
+
+            ]
           }
         ]
       }
@@ -760,7 +770,9 @@
         },
         "security": [
           {
-            "BearerAuth": []
+            "BearerAuth": [
+
+            ]
           }
         ]
       }
@@ -795,7 +807,9 @@
         },
         "security": [
           {
-            "BearerAuth": []
+            "BearerAuth": [
+
+            ]
           }
         ]
       }
@@ -830,7 +844,9 @@
         },
         "security": [
           {
-            "BearerAuth": []
+            "BearerAuth": [
+
+            ]
           }
         ]
       }
@@ -862,7 +878,9 @@
         },
         "security": [
           {
-            "BearerAuth": []
+            "BearerAuth": [
+
+            ]
           }
         ]
       }
@@ -908,7 +926,9 @@
         },
         "security": [
           {
-            "BearerAuth": []
+            "BearerAuth": [
+
+            ]
           }
         ]
       }
@@ -1045,7 +1065,9 @@
         },
         "security": [
           {
-            "BearerAuth": []
+            "BearerAuth": [
+
+            ]
           }
         ]
       },
@@ -1106,7 +1128,9 @@
         },
         "security": [
           {
-            "BearerAuth": []
+            "BearerAuth": [
+
+            ]
           }
         ]
       }
@@ -1177,7 +1201,9 @@
         },
         "security": [
           {
-            "BearerAuth": []
+            "BearerAuth": [
+
+            ]
           }
         ]
       }
@@ -1248,7 +1274,9 @@
         },
         "security": [
           {
-            "BearerAuth": []
+            "BearerAuth": [
+
+            ]
           }
         ]
       }
@@ -2053,7 +2081,9 @@
         },
         "security": [
           {
-            "BearerAuth": []
+            "BearerAuth": [
+
+            ]
           }
         ]
       }
@@ -2128,7 +2158,9 @@
         },
         "security": [
           {
-            "BearerAuth": []
+            "BearerAuth": [
+
+            ]
           }
         ]
       }
@@ -3503,10 +3535,17 @@
           }
         },
         "example": {
-          "hashboards-info": [],
-          "psus-info": [],
-          "fans-info": [],
-          "cb-info": {}
+          "hashboards-info": [
+
+          ],
+          "psus-info": [
+
+          ],
+          "fans-info": [
+
+          ],
+          "cb-info": {
+          }
         }
       },
       "HashboardInfo": {
@@ -3584,8 +3623,10 @@
         },
         "example": {
           "hb_sn": "HB001001",
-          "firmware": {},
-          "bootloader": {},
+          "firmware": {
+          },
+          "bootloader": {
+          },
           "api_version": "1.0",
           "board": "PROTO0_B",
           "chip_id": "ABC123",
@@ -3707,7 +3748,9 @@
             "input_power": 3868,
             "output_power": 4000
           },
-          "temperatures": []
+          "temperatures": [
+
+          ]
         }
       },
       "SystemInfo_systeminfo": {
