@@ -4478,6 +4478,15 @@
           }
         }
       },
+      "PerformanceMode": {
+        "type": "string",
+        "description": "The performance mode the miner will operate in. Modes:\n - MaximumHashrate: Will run at the power target to maximum hashrate.\n - Efficiency: Will run at or below the power target to optimize J/TH.",
+        "example": "MaximumHashrate",
+        "enum": [
+          "MaximumHashrate",
+          "Efficiency"
+        ]
+      },
       "SystemTagConfig": {
         "type": "object",
         "description": "Configuration for setting a system tag",
