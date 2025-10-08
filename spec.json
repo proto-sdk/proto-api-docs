@@ -82,12 +82,20 @@
     {
       "name": "Fans",
       "description": "The fans endpoint group provides information about the cooling fans in the mining device."
-    },
     {
       "name": "Time Series",
       "description": "The time series endpoint provides unified access to historical data for multiple metrics including hashrate, temperature, power, and efficiency in a single request."
     },
     {
+      "name": "Telemetry",
+      "description": "The telemetry endpoint provides real-time access to current system metrics and operational data, with support for brief and extended detail levels."
+    },
+    {
+      "name": "System Tag",
+      "description": "The system tag endpoint group provides functionality to set and retrieve custom identification tags for the mining device."
+    }
+  ],
+  "paths": {
       "name": "Telemetry",
       "description": "The telemetry endpoint provides current (real-time) values for all metrics available in the timeseries endpoint, with support for brief and extended detail levels."
     },
@@ -2454,6 +2462,123 @@
           }
         }
       }
+    },
+    "/api/v1/system/tag": {
+      "get": {
+        "tags": [
+          "System Tag"
+        ],
+        "description": "Get the current system tag value.",
+        "operationId": "GetSystemTag",
+        "responses": {
+          "200": {
+            "description": "Successfully returned the system tag.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemTagResponse"
+                },
+                "example": {
+                  "tag": "rack-1-miner-3"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "System Tag"
+        ],
+        "description": "Set a custom system tag for the mining device.",
+        "operationId": "SetSystemTag",
+        "requestBody": {
+          "description": "System tag configuration",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SystemTagConfig"
+              },
+              "example": {
+                "tag": "rack-1-miner-3"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "The system tag has been successfully updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemTagResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/telemetry": {
+      "get": {
+        "tags": [
+          "Telemetry"
+        ],
+        "description": "Get current telemetry data for the mining device. This endpoint provides real-time access to all available metrics.",
+        "operationId": "GetTelemetry",
+        "parameters": [
+          {
+            "name": "detail",
+            "in": "query",
+            "description": "Level of detail for the telemetry data. Brief includes essential metrics, while extended includes all available metrics.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "brief",
+                "extended"
+              ],
+              "default": "brief"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully returned current telemetry data.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TelemetryData"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -4357,8 +4482,95 @@
         "example": "MaximumHashrate",
         "enum": [
           "MaximumHashrate",
-          "Efficiency"
+          }
+        }
+      },
+      "SystemTagConfig": {
+        "type": "object",
+        "description": "Configuration for setting a system tag",
+        "properties": {
+          "tag": {
+            "type": "string",
+            "description": "Custom identifier tag for the mining device",
+            "example": "rack-1-miner-3",
+            "minLength": 1,
+            "maxLength": 64
+          }
+        },
+        "required": [
+          "tag"
         ]
+      },
+      "SystemTagResponse": {
+        "type": "object",
+        "description": "Response containing the current system tag",
+        "properties": {
+          "tag": {
+            "type": "string",
+            "description": "Current system tag value",
+            "example": "rack-1-miner-3"
+          }
+        }
+      },
+      "TelemetryData": {
+        "type": "object",
+        "description": "Current telemetry data for the mining device",
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 timestamp when the data was collected",
+            "example": "2024-01-15T10:30:00Z"
+          },
+          "mining": {
+            "type": "object",
+            "description": "Current mining status and performance metrics",
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": [
+                  "Mining",
+                  "Stopped",
+                  "Starting",
+                  "Stopping",
+                  "Error"
+                ],
+                "example": "Mining"
+              },
+              "hashrate": {
+                "type": "number",
+                "description": "Current hashrate in TH/s",
+                "example": 95.5
+              },
+              "power": {
+                "type": "number",
+                "description": "Current power consumption in watts",
+                "example": 3200
+              },
+              "efficiency": {
+                "type": "number",
+                "description": "Current efficiency in J/TH",
+                "example": 33.5
+              }
+            }
+          },
+          "temperatures": {
+            "type": "object",
+            "description": "Current temperature readings",
+            "properties": {
+              "average": {
+                "type": "number",
+                "description": "Average temperature across all sensors in Celsius",
+                "example": 65.5
+              },
+              "max": {
+                "type": "number",
+                "description": "Maximum temperature reading in Celsius",
+                "example": 68.2
+              }
+            }
+          }
+        }
       },
       "TimeSeriesRequest": {
         "description": "Request parameters for time series data query",
