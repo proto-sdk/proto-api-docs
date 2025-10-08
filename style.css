@@ -387,10 +387,33 @@ footer p {
     display: none !important;
 }
 
-/* Remove white backgrounds from Schema sections */
+/* Remove white backgrounds and borders from Schema sections */
 .swagger-ui .model-box {
     background: var(--secondary-color) !important;
-    border: 1px solid #444 !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* Remove all borders and white lines from schema elements */
+.swagger-ui .model-container,
+.swagger-ui .model-box,
+.swagger-ui .model,
+.swagger-ui .model .property,
+.swagger-ui .model .property-row,
+.swagger-ui .prop,
+.swagger-ui .prop-type,
+.swagger-ui .model-example,
+.swagger-ui .model .description,
+.swagger-ui .model-title,
+.swagger-ui .models .model-container,
+.swagger-ui section.models .model-container {
+    border: none !important;
+    border-top: none !important;
+    border-bottom: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    box-shadow: none !important;
+    outline: none !important;
 }
 
 .swagger-ui .model {
