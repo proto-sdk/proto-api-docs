@@ -1,0 +1,21 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "Mining Development Kit API",
+    "description": "The Proto API serves as a means to access information from the mining device and make necessary adjustments to its settings.",
+    "contact": {
+      "email": "mining.support@block.xyz"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/license/mit"
+    },
+    "version": "1.4.1"
+  },
+  "servers": [
+    {
+      "url": "https://virtserver.swaggerhub.com/mining_development_kit_api/1.4.1",
+      "description": "SwaggerHub API Auto Mocking"
+    }
+  ]
+}

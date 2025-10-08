@@ -1,9 +1,9 @@
 {
-  "openapi": "3.1.1",
+  "openapi": "3.0.3",
   "info": {
-    "title": "Mining Development Kit API",
+    "title": "Proto API",
     "description": "The Proto API serves as a means to access information from the mining device and make necessary adjustments to its settings.",
-    "version": "1.4.1",
+    "version": "1.4.0",
     "contact": {
       "email": "mining.support@block.xyz"
     },
@@ -14,7 +14,7 @@
   },
   "servers": [
     {
-      "url": "https://virtserver.swaggerhub.com/mining_development_kit_api/1.4.1",
+      "url": "https://virtserver.swaggerhub.com/mining_development_kit_api/1.4.0",
       "description": "SwaggerHub API Auto Mocking"
     }
   ],
@@ -86,14 +86,6 @@
     {
       "name": "Time Series",
       "description": "The time series endpoint provides unified access to historical data for multiple metrics including hashrate, temperature, power, and efficiency in a single request."
-    },
-    {
-      "name": "Telemetry",
-      "description": "The telemetry endpoint provides current (real-time) values for all metrics available in the timeseries endpoint, with support for brief and extended detail levels."
-    },
-    {
-      "name": "System Tag",
-      "description": "The system tag endpoint group provides a simple way to set and retrieve a custom tag for the mining device."
     }
   ],
   "paths": {
