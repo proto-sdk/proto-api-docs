@@ -6,7 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="theme-color" content="#1a1a1a">
-    <title>Proto API Documentation</title>
+    <title>Mining Development Kit API Documentation</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="favicon.ico">
@@ -20,7 +20,7 @@
 </head>
 <body>
     <header class="header">
-        <h1>Proto API Documentation</h1>
+        <h1>Mining Development Kit API Documentation</h1>
         <p>Complete Control and Monitoring Interface for Professional Mining Operations</p>
         <span class="version">v1.5.0</span>
     </header>
