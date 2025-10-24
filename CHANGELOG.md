@@ -5,6 +5,18 @@ All notable changes to the Proto API documentation will be documented in this fi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.1] - 2024-10-24
+
+### Changed
+- Updated virtual server URL version from 1.5.0 to 1.0.0 for SwaggerHub API Auto Mocking compatibility
+- Virtual server URL now points to: `https://virtserver.swaggerhub.com/mining_development_kit_api/1.0.0`
+
+### Technical Notes
+- This change only affects the mock server URL version number
+- API specification version remains at 1.5.0
+- All endpoints, schemas, and functionality remain unchanged
+- Change improves compatibility with SwaggerHub's auto-mocking service
+
 ## [1.5.0] - 2024-10-10
 
 ### Added
