@@ -3419,8 +3419,8 @@
             "description": "The protocol being used for communication with the mining pool.",
             "enum": [
               "Unknown",
-              "StratumV1",
-              "StratumV2"
+              "Stratum V1",
+              "Stratum V2"
             ]
           },
           "accepted": {

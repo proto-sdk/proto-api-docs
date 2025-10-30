@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added (post-1.6.0 patch)
 - Pools: Added hashrate field to Pool schema with HashrateWindow items (duration_minutes, hashrate_ths)
+- Pools: Protocol enum labels changed to "Stratum V1" and "Stratum V2" (spaced) for display consistency
 - Time Series: Clarified description to explicitly include ASIC and PSU levels
 - Telemetry: Ensured level parameter enum includes miner, hashboard, psu, asic
 
