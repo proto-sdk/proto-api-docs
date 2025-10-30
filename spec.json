@@ -2515,7 +2515,7 @@
         "tags": [
           "Time Series"
         ],
-        "description": "The time series endpoint provides unified access to historical data for multiple metrics and levels. It allows querying hashrate, temperature, power, and efficiency data for both miner and hashboard levels in a single request with flexible time ranges and aggregation options.",
+        "description": "The time series endpoint provides unified access to historical data for multiple metrics and levels. It allows querying hashrate, temperature, power, and efficiency data for miner, hashboard, ASIC, and PSU levels in a single request with flexible time ranges and aggregation options.",
         "operationId": "GetTimeSeries",
         "requestBody": {
           "description": "Time series query parameters",
@@ -3232,6 +3232,31 @@
             "type": "number",
             "description": "The total difficulty of all rejected shares by the pool.",
             "example": 134000.0
+          },
+          "hashrate": {
+            "type": "array",
+            "description": "Hashrate calculated over different time windows. This field provides a flexible array format for future extensions.",
+            "items": {
+              "$ref": "#/components/schemas/HashrateWindow"
+            },
+            "example": [
+              {
+                "duration_minutes": 5,
+                "hashrate_ths": 120.5
+              },
+              {
+                "duration_minutes": 10,
+                "hashrate_ths": 118.3
+              },
+              {
+                "duration_minutes": 60,
+                "hashrate_ths": 115.7
+              },
+              {
+                "duration_minutes": 180,
+                "hashrate_ths": 116.2
+              }
+            ]
           }
         }
       },
@@ -5748,6 +5773,26 @@
           "hotspotTemp",
           "ambientTemp",
           "averageTemp"
+        ]
+      },
+      "HashrateWindow": {
+        "description": "Hashrate calculated over a specific time window",
+        "type": "object",
+        "properties": {
+          "duration_minutes": {
+            "type": "integer",
+            "description": "Duration of the time window in minutes",
+            "example": 5
+          },
+          "hashrate_ths": {
+            "type": "number",
+            "description": "Hashrate in TH/s over the time window",
+            "example": 120.5
+          }
+        },
+        "required": [
+          "duration_minutes",
+          "hashrate_ths"
         ]
       }
     },

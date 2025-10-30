@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+
+### Added (post-1.6.0 patch)
+- Pools: Added hashrate field to Pool schema with HashrateWindow items (duration_minutes, hashrate_ths)
+- Time Series: Clarified description to explicitly include ASIC and PSU levels
+- Telemetry: Ensured level parameter enum includes miner, hashboard, psu, asic
+
 ## [1.6.0] - 2025-10-30
 
 ### Added
