@@ -6,7 +6,7 @@
 
   async function init() {
     try {
-      const res = await fetch('/spec.json');
+      const res = await fetch('spec.json');
       spec = await res.json();
       console.log('Spec loaded:', spec.info.version);
       createUI();
