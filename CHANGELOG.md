@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.5.1] - 2024-10-24
 
+
+## [1.6.0] - 2025-10-30
+
+### Added
+- Expanded API spec under Tags and below with updated endpoints and schemas you provided (Pools, Authentication, System, Mining, Hashboards, Hashrate, Temperature, Power, Efficiency, Cooling, Network, Errors, System Tag, Telemetry, Time Series, Hardware, PSUs, Fans)
+- Telemetry: Added support for psu level via level=psu and clarified level semantics (miner, hashboard, asic implicitly includes hashboard, psu)
+- Time Series: Added PSU level configuration and response shape
+
+### Changed
+- Bumped API version to 1.6.0 in spec.json and UI header
+- Normalized temperature unit to "°C" in MetricUnit enum for consistency
+
+### Compatibility
+- OpenAPI remains 3.0.3; Swagger UI remains v5.10.5
+- All existing UI styling, dark theme, and Try It Out functionality preserved
+- No breaking changes for existing endpoints; new fields/levels are additive
+
 ### Changed
 - Updated virtual server URL version from 1.5.0 to 1.0.0 for SwaggerHub API Auto Mocking compatibility
 - Virtual server URL now points to: `https://virtserver.swaggerhub.com/mining_development_kit_api/1.0.0`

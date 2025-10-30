@@ -1,0 +1,493 @@
+{
+  "tags": [
+    {
+      "name": "Mining",
+      "description": "The mining endpoint group allows for control and configuration of mining functionality."
+    },
+    {
+      "name": "System",
+      "description": "The system endpoint group exposes information and actions related to the overall miner system."
+    },
+    {
+      "name": "Network",
+      "description": "The network endpoint group provides information on the network configuration of the miner."
+    },
+    {
+      "name": "Errors",
+      "description": "The errors endpoint group provides active system errors (severity level errors or warnings) to surface to the UI."
+    },
+    {
+      "name": "Pools",
+      "description": "The pools endpoint group allows users to configure the list of pools the miner will connect to."
+    },
+    {
+      "name": "Cooling",
+      "description": "The cooling endpoint group provides information and control over the cooling system of the miner."
+    },
+    {
+      "name": "Authentication",
+      "description": "The authentication endpoint group contains functions related to changing the password, and other authentication-related actions."
+    },
+    {
+      "name": "Hashboards",
+      "description": "The hashboards endpoint group provides information related to the various hashboards or ASICs on those hashboards in the system."
+    },
+    {
+      "name": "Hashrate",
+      "description": "The hashrate endpoint group provides historical hashrate information for the entire miner, individual hashboards, or individual ASICs."
+    },
+    {
+      "name": "Temperature",
+      "description": "The temperature endpoint group provides historical temperature information for the entire miner, individual hashboards, or individual ASICs."
+    },
+    {
+      "name": "Power",
+      "description": "The power endpoint group provides historical power information for the entire miner or individual hashboards."
+    },
+    {
+      "name": "Efficiency",
+      "description": "The efficiency endpoint group provides historical efficiency information for the entire miner or individual hashboards."
+    },
+    {
+      "name": "System Information",
+      "description": "The system information endpoint group provides status and configuration details about the mining device system."
+    },
+    {
+      "name": "Hardware",
+      "description": "The hardware endpoint group provides information about the physical hardware components of the mining device."
+    },
+    {
+      "name": "PSUs",
+      "description": "The PSUs endpoint group provides information about the power supply units in the mining device."
+    },
+    {
+      "name": "Fans",
+      "description": "The fans endpoint group provides information about the cooling fans in the mining device."
+    },
+    {
+      "name": "Time Series",
+      "description": "The time series endpoint provides unified access to historical data for multiple metrics including hashrate, temperature, power, and efficiency in a single request."
+    },
+    {
+      "name": "Telemetry",
+      "description": "The telemetry endpoint provides current (real-time) values for all metrics available in the timeseries endpoint, with support for brief and extended detail levels."
+    },
+    {
+      "name": "System Tag",
+      "description": "The system tag endpoint group provides a simple way to set and retrieve a custom tag for the mining device."
+    }
+  ],
+  "paths": {
+    "/api/v1/pools": {
+      "get": {
+        "tags": [
+          "Pools"
+        ],
+        "description": "The get pools endpoint returns the full list of currently configured pools.",
+        "operationId": "ListPools",
+        "responses": {
+          "200": {
+            "description": "The list of pools was successfully returned.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PoolsList"
+                },
+                "example": {
+                  "pools": [
+                    {
+                      "url": "stratum+tcp://pool.example.com:4334",
+                      "username": "miner.001",
+                      "password": "x"
+                    },
+                    {
+                      "url": "stratum+tcp://backup.pool.com:4334",
+                      "username": "miner.001",
+                      "password": "x"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Pools"
+        ],
+        "description": "The post pools endpoint allows up to three pools to be configured, replacing the previous pool configuration.",
+        "operationId": "CreatePools",
+        "requestBody": {
+          "description": "Pool configuration data for creating or updating pools",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PoolConfig"
+              },
+              "example": [
+                {
+                  "url": "stratum+tcp://pool.example.com:4334",
+                  "username": "miner.001",
+                  "password": "x"
+                }
+              ]
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The pool configuration has been successfully created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/pools/{id}": {
+      "get": {
+        "tags": [
+          "Pools"
+        ],
+        "description": "Get configuration for a specific pool by ID",
+        "operationId": "GetPool",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The pool ID to retrieve",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Configuration for a single pool was returned.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PoolResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Pools"
+        ],
+        "description": "Using this pool configuration endpoint, users can edit the properties of an existing pool.",
+        "operationId": "EditPool",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The pool ID to update",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Updated pool configuration data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PoolConfig_inner"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "The pool configuration has been successfully updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PoolConfigResponse"
+                },
+                "example": [
+                  {
+                    "message": "Pool configuration updated successfully"
+                  }
+                ]
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Pools"
+        ],
+        "description": "Delete a specific pool configuration by ID",
+        "operationId": "DeletePool",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The pool ID to delete",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The pool configuration has been successfully deleted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/pools/test-connection": {
+      "post": {
+        "tags": [
+          "Pools"
+        ],
+        "description": "Used to test a pool connection",
+        "operationId": "TestPoolConnection",
+        "requestBody": {
+          "description": "Pool connection configuration data for testing connectivity",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TestConnection"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Connection test passed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "description": "Unable to establish connection.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/password": {
+      "put": {
+        "tags": [
+          "Authentication"
+        ],
+        "description": "The password endpoint allows users to set a password during onboarding",
+        "operationId": "SetPassword",
+        "requestBody": {
+          "description": "Password data for setting the initial device password",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordRequest"
+              },
+              "example": {
+                "password": "newSecurePassword123"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Password successfully set.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    }
+    
+    
+  },
+  "components": {
+    "schemas": {
+      "Error": {
+        "description": "Error information with code and message details",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Error code.",
+            "example": "INCORRECT_ARGS"
+          },
+          "message": {
+            "type": "string",
+            "description": "Error message.",
+            "example": "Arguments are incorrect for query."
+          }
+        }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "Bad request.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/MessageResponse"
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Unauthorized.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/MessageResponse"
+            }
+          }
+        }
+      },
+      "Forbidden": {
+        "description": "Forbidden.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/MessageResponse"
+            }
+          }
+        }
+      },
+      "UnprocessableEntity": {
+        "description": "Unprocessable entity.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/MessageResponse"
+            }
+          }
+        }
+      },
+      "InternalServerError": {
+        "description": "Internal server error.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/MessageResponse"
+            }
+          }
+        }
+      }
+    }
+  }
+}

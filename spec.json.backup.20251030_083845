@@ -10,7 +10,7 @@
       "name": "MIT",
       "url": "https://opensource.org/license/mit"
     },
-    "version": "1.6.0"
+    "version": "1.5.0"
   },
   "servers": [
     {
@@ -1581,12 +1581,12 @@
                       {
                         "timestamp": 1642780800,
                         "temperature": 65.5,
-                        "unit": "°C"
+                        "unit": "\u00b0C"
                       },
                       {
                         "timestamp": 1642784400,
                         "temperature": 67.2,
-                        "unit": "°C"
+                        "unit": "\u00b0C"
                       }
                     ]
                   }
@@ -2603,7 +2603,7 @@
                         }
                       },
                       "temperature": {
-                        "unit": "°C",
+                        "unit": "\u00b0C",
                         "values": [
                           65.5,
                           65.7,
@@ -2633,7 +2633,7 @@
                           }
                         },
                         "temperature": {
-                          "unit": "°C",
+                          "unit": "\u00b0C",
                           "values": [
                             66.0,
                             66.2,
@@ -2662,7 +2662,7 @@
                           }
                         },
                         "temperature": {
-                          "unit": "°C",
+                          "unit": "\u00b0C",
                           "values": [
                             65.0,
                             65.1,
@@ -2691,7 +2691,7 @@
                           }
                         },
                         "temperature": {
-                          "unit": "°C",
+                          "unit": "\u00b0C",
                           "values": [
                             65.5,
                             65.6,
@@ -2734,20 +2734,16 @@
           {
             "name": "level",
             "in": "query",
-            "description": "Comma-separated list of data types to include (e.g. ?level=miner,psu,hashboard). If not specified, defaults to 'miner'. Options: miner (miner-level aggregated data), hashboard (per-hashboard metrics), psu (per-PSU metrics), asic (ASIC-level data within hashboards, implicitly includes hashboard).",
+            "description": "Controls which metrics are included: miner (aggregated data only), hashboard (includes per-hashboard metrics), or asic (full detail with ASIC data)",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "miner",
-                  "hashboard",
-                  "psu",
-                  "asic"
-                ]
-              },
-              "description": "Data types to include in response. Defaults to 'miner' if not specified."
+              "type": "string",
+              "enum": [
+                "miner",
+                "hashboard",
+                "asic"
+              ],
+              "default": "miner"
             }
           }
         ],
@@ -2771,7 +2767,7 @@
                         },
                         "temperature": {
                           "value": 65.5,
-                          "unit": "°C"
+                          "unit": "\u00b0C"
                         },
                         "power": {
                           "value": 3250,
@@ -2795,7 +2791,7 @@
                         },
                         "temperature": {
                           "value": 65.5,
-                          "unit": "°C"
+                          "unit": "\u00b0C"
                         },
                         "power": {
                           "value": 3250,
@@ -2815,7 +2811,7 @@
                             "unit": "TH/s"
                           },
                           "temperature": {
-                            "unit": "°C",
+                            "unit": "\u00b0C",
                             "inlet": 45.2,
                             "outlet": 68.5,
                             "average": 56.85
@@ -2845,7 +2841,7 @@
                             "unit": "TH/s"
                           },
                           "temperature": {
-                            "unit": "°C",
+                            "unit": "\u00b0C",
                             "inlet": 44.8,
                             "outlet": 67.9,
                             "average": 56.35
@@ -2875,7 +2871,7 @@
                             "unit": "TH/s"
                           },
                           "temperature": {
-                            "unit": "°C",
+                            "unit": "\u00b0C",
                             "inlet": 45.5,
                             "outlet": 69.1,
                             "average": 57.3
@@ -2911,7 +2907,7 @@
                         },
                         "temperature": {
                           "value": 65.5,
-                          "unit": "°C"
+                          "unit": "\u00b0C"
                         },
                         "power": {
                           "value": 3250,
@@ -2931,7 +2927,7 @@
                             "unit": "TH/s"
                           },
                           "temperature": {
-                            "unit": "°C",
+                            "unit": "\u00b0C",
                             "inlet": 45.2,
                             "outlet": 68.5,
                             "average": 56.85
@@ -2961,7 +2957,7 @@
                               ]
                             },
                             "temperature": {
-                              "unit": "°C",
+                              "unit": "\u00b0C",
                               "values": [
                                 72.5,
                                 73.0
@@ -5114,48 +5110,6 @@
               "type",
               "fields"
             ]
-          },
-          {
-            "type": "object",
-            "description": "PSU-level configuration",
-            "properties": {
-              "type": {
-                "type": "string",
-                "enum": [
-                  "psu"
-                ],
-                "description": "PSU level type"
-              },
-              "fields": {
-                "type": "array",
-                "description": "List of data types to retrieve for PSU level",
-                "items": {
-                  "$ref": "#/components/schemas/PsuFieldType"
-                },
-                "minItems": 1,
-                "example": [
-                  "inputVoltage",
-                  "outputPower",
-                  "hotspotTemp"
-                ]
-              },
-              "indexes": {
-                "type": "array",
-                "description": "Optional array of zero-based PSU indexes to filter data. If omitted, returns all available PSUs",
-                "items": {
-                  "type": "integer",
-                  "minimum": 0
-                },
-                "example": [
-                  0,
-                  1
-                ]
-              }
-            },
-            "required": [
-              "type",
-              "fields"
-            ]
           }
         ]
       },
@@ -5212,26 +5166,6 @@
                     "$ref": "#/components/schemas/TimeSeriesMetricData"
                   }
                 }
-              },
-              "psus": {
-                "type": "array",
-                "description": "Array of PSU-level data with zero-based indexing (present when 'psu' in levels)",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "index": {
-                      "type": "integer",
-                      "description": "Zero-based index of the PSU"
-                    },
-                    "serial_number": {
-                      "type": "string",
-                      "description": "Serial number of the PSU"
-                    }
-                  },
-                  "additionalProperties": {
-                    "$ref": "#/components/schemas/TimeSeriesMetricData"
-                  }
-                }
               }
             },
             "example": {
@@ -5250,7 +5184,7 @@
                   }
                 },
                 "temperature": {
-                  "unit": "°C",
+                  "unit": "\u00b0C",
                   "values": [
                     65.5,
                     65.7,
@@ -5280,7 +5214,7 @@
                     }
                   },
                   "temperature": {
-                    "unit": "°C",
+                    "unit": "\u00b0C",
                     "values": [
                       66.0,
                       66.2,
@@ -5422,7 +5356,7 @@
                   "unit": "TH/s"
                 },
                 "temperature": {
-                  "unit": "°C",
+                  "unit": "\u00b0C",
                   "inlet": 45.2,
                   "outlet": 68.5,
                   "average": 56.85
@@ -5452,7 +5386,7 @@
                     ]
                   },
                   "temperature": {
-                    "unit": "°C",
+                    "unit": "\u00b0C",
                     "values": [
                       72.5,
                       73.0
@@ -5461,17 +5395,11 @@
                 }
               }
             ]
-          },
-          "psus": {
-            "type": "array",
-            "description": "Array of per-PSU telemetry data. Included when level=psu is specified.",
-            "items": {
-              "$ref": "#/components/schemas/PsuTelemetry"
-            }
           }
         },
         "required": [
-          "timestamp"
+          "timestamp",
+          "miner"
         ]
       },
       "MinerTelemetry": {
@@ -5504,7 +5432,7 @@
           },
           "temperature": {
             "value": 65.5,
-            "unit": "°C"
+            "unit": "\u00b0C"
           },
           "power": {
             "value": 3250,
@@ -5606,7 +5534,7 @@
         "type": "string",
         "enum": [
           "TH/s",
-          "°C",
+          "C",
           "W",
           "J/TH",
           "V",
@@ -5650,104 +5578,6 @@
         "required": [
           "unit",
           "values"
-        ]
-      },
-      "PsuInputOutputMetric": {
-        "type": "object",
-        "description": "PSU metric with input and output values",
-        "properties": {
-          "unit": {
-            "$ref": "#/components/schemas/MetricUnit"
-          },
-          "input": {
-            "type": "number",
-            "description": "Input value"
-          },
-          "output": {
-            "type": "number",
-            "description": "Output value"
-          }
-        },
-        "required": [
-          "unit",
-          "input",
-          "output"
-        ]
-      },
-      "PsuTemperature": {
-        "type": "object",
-        "description": "PSU temperature measurements",
-        "properties": {
-          "unit": {
-            "$ref": "#/components/schemas/MetricUnit"
-          },
-          "hotspot": {
-            "type": "number",
-            "description": "Hotspot temperature value"
-          },
-          "ambient": {
-            "type": "number",
-            "description": "Ambient temperature value"
-          },
-          "average": {
-            "type": "number",
-            "description": "Average temperature value of all temperature sensors on PSU"
-          }
-        },
-        "required": [
-          "unit",
-          "hotspot",
-          "ambient",
-          "average"
-        ]
-      },
-      "PsuTelemetry": {
-        "type": "object",
-        "description": "Individual PSU telemetry metrics",
-        "properties": {
-          "index": {
-            "type": "integer",
-            "description": "PSU index"
-          },
-          "serial_number": {
-            "type": "string",
-            "description": "PSU serial number",
-            "example": "PSU001234"
-          },
-          "voltage": {
-            "$ref": "#/components/schemas/PsuInputOutputMetric"
-          },
-          "current": {
-            "$ref": "#/components/schemas/PsuInputOutputMetric"
-          },
-          "power": {
-            "$ref": "#/components/schemas/PsuInputOutputMetric"
-          },
-          "temperature": {
-            "$ref": "#/components/schemas/PsuTemperature"
-          }
-        },
-        "required": [
-          "index",
-          "voltage",
-          "current",
-          "power",
-          "temperature"
-        ]
-      },
-      "PsuFieldType": {
-        "type": "string",
-        "description": "Available field types for PSU-level data",
-        "enum": [
-          "outputVoltage",
-          "outputCurrent",
-          "outputPower",
-          "inputVoltage",
-          "inputCurrent",
-          "inputPower",
-          "hotspotTemp",
-          "ambientTemp",
-          "averageTemp"
         ]
       }
     },
