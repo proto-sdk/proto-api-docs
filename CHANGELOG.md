@@ -7,22 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
-### Added (post-1.6.0 patch)
-- Pools: Added hashrate field to Pool schema with HashrateWindow items (duration_minutes, hashrate_ths)
-- Pools: Protocol enum labels changed to "Stratum V1" and "Stratum V2" (spaced) for display consistency
-- Time Series: Clarified description to explicitly include ASIC and PSU levels
-- Telemetry: Ensured level parameter enum includes miner, hashboard, psu, asic
-
 ## [1.6.0] - 2025-10-30
 
 ### Added
-- Expanded API spec under Tags and below with updated endpoints and schemas you provided (Pools, Authentication, System, Mining, Hashboards, Hashrate, Temperature, Power, Efficiency, Cooling, Network, Errors, System Tag, Telemetry, Time Series, Hardware, PSUs, Fans)
+- **Proto API Assistant**: Interactive chatbot widget for instant API documentation queries
+  - Search endpoints by keyword, tag, or path
+  - View full operation details with examples
+  - Explore schema definitions
+  - Generate cURL commands with authentication headers
+  - Client-side only, no backend required
+  - Mobile-responsive with orange accent theme
+- Expanded API spec under Tags and below with updated endpoints and schemas (Pools, Authentication, System, Mining, Hashboards, Hashrate, Temperature, Power, Efficiency, Cooling, Network, Errors, System Tag, Telemetry, Time Series, Hardware, PSUs, Fans)
+- Pools: Added hashrate field to Pool schema with HashrateWindow items (duration_minutes, hashrate_ths)
+- Pools: Protocol enum labels changed to "Stratum V1" and "Stratum V2" (spaced) for display consistency
 - Telemetry: Added support for psu level via level=psu and clarified level semantics (miner, hashboard, asic implicitly includes hashboard, psu)
 - Time Series: Added PSU level configuration and response shape
 
 ### Changed
 - Bumped API version to 1.6.0 in spec.json and UI header
 - Normalized temperature unit to "°C" in MetricUnit enum for consistency
+- Updated contact email from mining.support@block.xyz to mining@block.xyz
 
 
 ### Technical Notes
@@ -104,4 +108,4 @@ Complete endpoint coverage including:
 
 This changelog begins with version 1.5.0 as the baseline. This version represents a major milestone in the Proto API documentation, providing comprehensive coverage of all mining device control and monitoring capabilities.
 
-For technical support or questions about the API, please contact: mining.support@block.xyz
+For technical support or questions about the API, please contact: mining@block.xyz

@@ -4,7 +4,12 @@ Interactive API documentation for the Proto mining device API. This documentatio
 
 ## Features
 
-- Complete API reference
+- **Proto API Assistant**: Interactive chatbot for instant API documentation queries
+  - Search endpoints by keyword, tag, or path
+  - View operation details with examples
+  - Explore schema definitions
+  - Generate cURL commands
+- Complete API reference with 43 endpoints
 - Interactive "Try it now" functionality
 - Dark theme optimized for readability
 - Mobile responsive design
@@ -22,9 +27,11 @@ Interactive API documentation for the Proto mining device API. This documentatio
 ## Getting Started
 
 1. Visit the [API Documentation](https://proto-sdk.github.io/proto-api-docs)
-2. Browse available endpoints by category
-3. Click "Try it now" on any endpoint to test it
-4. View request/response details in real-time
+2. Click the 💬 button in the bottom-right to open the Proto API Assistant
+3. Ask questions like "find pools", "schema Pool", or "curl PUT /api/v1/mining/target"
+4. Browse available endpoints by category
+5. Click "Try it now" on any endpoint to test it
+6. View request/response details in real-time
 
 ## Local Development
 
@@ -47,4 +54,4 @@ MIT License
 
 ## Contact
 
-For support or inquiries, contact mining.support@block.xyz
+For support or inquiries, contact mining@block.xyz
