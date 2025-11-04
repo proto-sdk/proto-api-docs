@@ -750,3 +750,27 @@ footer p {
 .touch-device .stat-card {
     -webkit-tap-highlight-color: rgba(255, 107, 53, 0.3);
 }
+
+/* Hide the Servers section */
+.swagger-ui .servers {
+    display: none !important;
+}
+
+.swagger-ui .servers-title {
+    display: none !important;
+}
+
+.swagger-ui .scheme-container {
+    display: none !important;
+}
+
+/* Move filter closer to header by reducing top margin */
+.swagger-ui .filter-container {
+    margin-top: 10px !important;
+    margin-bottom: 20px !important;
+}
+
+/* Reduce space between info section and operations */
+.swagger-ui .information-container {
+    margin-bottom: 20px !important;
+}
