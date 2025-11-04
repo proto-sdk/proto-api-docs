@@ -14,8 +14,14 @@
   },
   "servers": [
     {
-      "url": "https://virtserver.swaggerhub.com/kkurucz/mining_development_kit_api/1.0.0",
-      "description": "SwaggerHub API Auto Mocking"
+      "url": "http://{miner_ip}",
+      "description": "Proto Mining Device",
+      "variables": {
+        "miner_ip": {
+          "default": "192.168.1.100",
+          "description": "IP address or hostname of your Proto mining device"
+        }
+      }
     }
   ],
   "tags": [
