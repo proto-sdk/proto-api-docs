@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+## [1.6.1] - 2025-11-04
+
+### Changed
+- **Tags Structure**: Updated API specification with comprehensive 19-tag organization system
+  - Added detailed descriptions for all endpoint groups
+  - Improved API documentation organization and navigation
+  - Enhanced Swagger UI tag grouping for better user experience
+- **Hardware Endpoint**: Updated `/api/v1/hardware` GET endpoint with multi-tag support
+  - Now tagged with: Hardware, PSUs, Hashboards, Fans
+  - Improves discoverability across related hardware component categories
+  - Maintains backward compatibility with existing functionality
+
+### Technical Notes
+- No breaking changes to API functionality
+- All endpoints, schemas, and responses remain unchanged
+- Update improves documentation clarity and navigation only
+- Backup created: spec.json.backup.20251104_074912
+
 ## [1.6.0] - 2025-10-30
 
 ### Added
