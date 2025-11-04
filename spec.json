@@ -1811,8 +1811,7 @@
     "/api/v1/hardware/psus": {
       "get": {
         "tags": [
-          "PSUs",
-          "Power"
+          "PSUs"
         ],
         "description": "The get power supplies endpoint returns the full list of currently configured power supplies.",
         "operationId": "ListPowerSupplies",
