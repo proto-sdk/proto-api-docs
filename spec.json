@@ -14,7 +14,7 @@
   },
   "servers": [
     {
-      "url": "https://virtserver.swaggerhub.com/kkurucz/mining_development_kit_api/1.0.0",
+      "url": "https://virtserver.swaggerhub.com/proto-team/mining-development_kit_api/1.0.0",
       "description": "SwaggerHub API Auto Mocking"
     }
   ],
@@ -665,6 +665,13 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/SystemStatuses"
+                },
+                "example": {
+                  "onboarded": true,
+                  "device_id": "proto-device-12345",
+                  "status": "operational",
+                  "uptime_seconds": 86400,
+                  "firmware_version": "1.6.0"
                 }
               }
             }
@@ -1204,6 +1211,10 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/UnlockResponse"
+                },
+                "example": {
+                  "unlocked": false,
+                  "unlock_available": true
                 }
               }
             }
@@ -2457,6 +2468,11 @@
                       "message": "Telemetry is enabled"
                     }
                   }
+                },
+                "example": {
+                  "telemetry_enabled": true,
+                  "reporting_interval_seconds": 300,
+                  "endpoint": "https://telemetry.example.com/api/v1/data"
                 }
               }
             }
@@ -3227,6 +3243,16 @@
                       ]
                     }
                   }
+                },
+                "example": {
+                  "timestamp": "2025-11-04T15:30:00Z",
+                  "device_id": "proto-device-12345",
+                  "hashrate_ths": 14.2,
+                  "power_w": 2850,
+                  "efficiency_jth": 200.7,
+                  "temperature_avg_c": 65.5,
+                  "uptime_seconds": 86400,
+                  "status": "operational"
                 }
               }
             }
