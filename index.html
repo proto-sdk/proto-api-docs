@@ -59,7 +59,7 @@
     window.onload = function() {
         console.log('Initializing Swagger UI - Documentation Only Mode (Try It Out disabled)...');
         
-        // Initialize SwaggerUI
+        // Initialize SwaggerUI with enhanced schema interaction
         const ui = SwaggerUIBundle({
             url: "spec.json",
             dom_id: '#swagger-ui',
@@ -73,8 +73,8 @@
             ],
             layout: "StandaloneLayout",
             docExpansion: "list",
-            defaultModelsExpandDepth: 1,
-            defaultModelExpandDepth: 1,
+            defaultModelsExpandDepth: 1,  // 1 = show models section, schemas collapsed
+            defaultModelExpandDepth: 5,   // When clicked, expand 5 levels deep
             displayRequestDuration: false,
             filter: true,
             showExtensions: true,
@@ -85,7 +85,12 @@
             defaultModelRendering: "example",
             showMutatedRequest: false,
             supportedSubmitMethods: [],
-            validatorUrl: null
+            validatorUrl: null,
+            // Enhanced for smoother interactions
+            syntaxHighlight: {
+                activate: true,
+                theme: "monokai"
+            }
         });
         window.ui = ui;
     };

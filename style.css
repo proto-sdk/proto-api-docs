@@ -728,6 +728,472 @@ footer p {
     }
 }
 
+/* ============================================
+   SMOOTH SCHEMA ANIMATIONS & INTERACTIONS
+   ============================================ */
+
+/* Smooth transitions for all expandable elements */
+.swagger-ui .model-container,
+.swagger-ui .model-box,
+.swagger-ui .model-box-control,
+.swagger-ui .models-control,
+.swagger-ui .opblock-body,
+.swagger-ui .responses-wrapper,
+.swagger-ui .response-col_description {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Larger clickable area for schema expand/collapse */
+.swagger-ui .model-toggle {
+    cursor: pointer !important;
+    padding: 8px 12px !important;
+    margin: -8px -12px !important;
+    transition: background-color 0.2s ease !important;
+}
+
+.swagger-ui .model-toggle:hover {
+    background-color: rgba(255, 107, 53, 0.1) !important;
+    border-radius: 4px !important;
+}
+
+/* Make entire model title row clickable */
+.swagger-ui .model-box .model-title {
+    cursor: pointer !important;
+    padding: 12px !important;
+    margin: -12px !important;
+    transition: all 0.2s ease !important;
+    border-radius: 4px !important;
+}
+
+.swagger-ui .model-box .model-title:hover {
+    background-color: rgba(255, 107, 53, 0.08) !important;
+}
+
+/* Smooth arrow rotation animation */
+.swagger-ui .model-toggle::after,
+.swagger-ui .model-box-control::after {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Enhanced expand/collapse button visibility */
+.swagger-ui .model-box-control {
+    min-width: 24px !important;
+    min-height: 24px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    padding: 4px !important;
+    border-radius: 4px !important;
+    transition: all 0.2s ease !important;
+}
+
+.swagger-ui .model-box-control:hover {
+    background-color: rgba(255, 107, 53, 0.15) !important;
+    transform: scale(1.1) !important;
+}
+
+/* Smooth content reveal animation */
+.swagger-ui .model-box {
+    overflow: hidden !important;
+    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Better visual feedback for interactive elements */
+.swagger-ui .model-container:hover {
+    background-color: rgba(255, 255, 255, 0.02) !important;
+    transition: background-color 0.2s ease !important;
+}
+
+/* Smooth schema property expansion */
+.swagger-ui .property-row {
+    transition: all 0.2s ease !important;
+}
+
+.swagger-ui .property-row:hover {
+    background-color: rgba(255, 107, 53, 0.05) !important;
+}
+
+/* Enhanced Models section toggle */
+.swagger-ui .models-control {
+    padding: 12px !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    border-radius: 4px !important;
+}
+
+.swagger-ui .models-control:hover {
+    background-color: rgba(255, 107, 53, 0.1) !important;
+    transform: translateX(2px) !important;
+}
+
+/* Smooth accordion animation for operations */
+.swagger-ui .opblock {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.swagger-ui .opblock.is-open {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Better touch targets for mobile */
+@media (max-width: 768px) {
+    .swagger-ui .model-toggle,
+    .swagger-ui .model-box-control,
+    .swagger-ui .models-control {
+        min-width: 44px !important;
+        min-height: 44px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+    
+    .swagger-ui .model-box .model-title {
+        padding: 16px !important;
+        margin: -16px !important;
+    }
+}
+
+/* Smooth fade-in for expanded content */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.swagger-ui .model-box.is-open > .model-box-content {
+    animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Enhanced response section animations */
+.swagger-ui .responses-wrapper {
+    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.3s ease !important;
+}
+
+/* Smooth parameter section expansion */
+.swagger-ui .parameters-col_description {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* ============================================
+   SCHEMA SECTION FIXES & STYLING
+   ============================================ */
+
+/* 1. Fix schema title truncation - allow full width */
+.swagger-ui .model-box .model-title,
+.swagger-ui .model-container > .model-box > .model-title,
+.swagger-ui .model-title,
+.swagger-ui section.models .model-title {
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    display: block !important;
+}
+
+.swagger-ui .model-title > span,
+.swagger-ui .model-title span,
+.swagger-ui section.models .model-title span {
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    display: inline !important;
+    max-width: none !important;
+}
+
+/* Force all text in model titles to wrap */
+.swagger-ui section.models h4 span,
+.swagger-ui section.models .model-container span {
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+}
+
+/* Fix title truncation when schema is expanded/clicked */
+.swagger-ui .model-box.is-open .model-title,
+.swagger-ui .model-container.is-open .model-title,
+.swagger-ui section.models .model-box .model-title {
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    max-width: 100% !important;
+}
+
+.swagger-ui .model-box.is-open .model-title span,
+.swagger-ui .model-container.is-open .model-title span {
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+}
+
+/* Ensure expanded state shows full title */
+.swagger-ui section.models .model-container .model-title,
+.swagger-ui section.models .model-box .model-title {
+    max-width: 100% !important;
+    width: 100% !important;
+}
+
+/* Fix any flex containers that might constrain title width */
+.swagger-ui .model-title-wrapper,
+.swagger-ui .model-title-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 1 1 auto !important;
+}
+
+/* 2. Remove bold text from Schemas section */
+.swagger-ui .model-container .model-title,
+.swagger-ui .model-box .model-title,
+.swagger-ui .models-control,
+.swagger-ui section.models h4,
+.swagger-ui section.models .model-container {
+    font-weight: normal !important;
+}
+
+.swagger-ui .model-title span {
+    font-weight: normal !important;
+}
+
+/* 3. Remove white highlight from Schemas drop-down icon */
+.swagger-ui .model-toggle,
+.swagger-ui .model-toggle:after,
+.swagger-ui .model-toggle:before,
+.swagger-ui .model-box-control,
+.swagger-ui .model-box-control:after,
+.swagger-ui .model-box-control:before,
+.swagger-ui .models-control:after,
+.swagger-ui .models-control:before,
+.swagger-ui section.models .model-toggle,
+.swagger-ui section.models .model-box-control {
+    background-color: transparent !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    outline: none !important;
+}
+
+/* Remove white background on hover for dropdown icons */
+.swagger-ui .model-toggle:hover,
+.swagger-ui .model-box-control:hover,
+.swagger-ui section.models .model-toggle:hover,
+.swagger-ui section.models .model-box-control:hover {
+    background-color: transparent !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+/* Ensure no white highlight on the arrow/chevron itself */
+.swagger-ui .model-toggle svg,
+.swagger-ui .model-box-control svg,
+.swagger-ui section.models svg {
+    background-color: transparent !important;
+    background: transparent !important;
+    fill: currentColor !important;
+}
+
+/* Remove any white circles or backgrounds around arrows */
+.swagger-ui .model-toggle span,
+.swagger-ui .model-box-control span {
+    background-color: transparent !important;
+    background: transparent !important;
+}
+
+/* Target the actual arrow elements */
+.swagger-ui section.models button,
+.swagger-ui section.models button:hover,
+.swagger-ui section.models button:focus,
+.swagger-ui section.models button:active {
+    background-color: transparent !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    outline: none !important;
+}
+
+/* ============================================
+   SCHEMA SECTION LAYOUT & SPACING IMPROVEMENTS
+   ============================================ */
+
+/* Fix crowding in expanded schemas - add proper spacing */
+.swagger-ui .model-box {
+    margin-bottom: 15px !important;
+    padding: 15px !important;
+}
+
+/* Add spacing between schema properties */
+.swagger-ui .model-box .property-row {
+    padding: 10px 0 !important;
+    margin: 5px 0 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+.swagger-ui .model-box .property-row:last-child {
+    border-bottom: none !important;
+}
+
+/* Improve spacing for nested models */
+.swagger-ui .model-box .model-box {
+    margin-top: 10px !important;
+    margin-left: 20px !important;
+    padding: 10px !important;
+    border-left: 2px solid rgba(255, 107, 53, 0.3) !important;
+}
+
+/* Add breathing room to property names and types */
+.swagger-ui .property-row .prop-name {
+    padding-right: 15px !important;
+    min-width: 150px !important;
+}
+
+.swagger-ui .property-row .prop-type {
+    padding-left: 15px !important;
+}
+
+/* Improve schema container spacing */
+.swagger-ui .model-container {
+    margin-bottom: 20px !important;
+    padding: 10px 0 !important;
+}
+
+/* Add spacing to schema title area */
+.swagger-ui .model-title {
+    padding: 12px 15px !important;
+    margin-bottom: 10px !important;
+}
+
+/* Improve readability of expanded content */
+.swagger-ui .model-box-content {
+    padding: 15px !important;
+    line-height: 1.6 !important;
+}
+
+/* Add spacing between property descriptions */
+.swagger-ui .prop-format,
+.swagger-ui .prop-enum {
+    margin-top: 5px !important;
+    padding-left: 10px !important;
+}
+
+/* Improve array and object type spacing */
+.swagger-ui .model-box table {
+    margin: 10px 0 !important;
+}
+
+.swagger-ui .model-box table td {
+    padding: 8px 12px !important;
+}
+
+/* Add spacing for required/optional indicators */
+.swagger-ui .property-row .star {
+    margin-right: 5px !important;
+}
+
+/* Improve schema description spacing */
+.swagger-ui .model-box .model-box-description {
+    padding: 10px 0 !important;
+    margin-bottom: 15px !important;
+    line-height: 1.5 !important;
+}
+
+/* Fix crowding in deeply nested schemas */
+.swagger-ui .model-box .model-box .model-box {
+    margin-left: 15px !important;
+    padding-left: 15px !important;
+}
+
+/* Add visual separation between schema sections */
+.swagger-ui section.models .model-container {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    padding-bottom: 15px !important;
+    margin-bottom: 15px !important;
+}
+
+.swagger-ui section.models .model-container:last-child {
+    border-bottom: none !important;
+}
+
+/* Improve Models section header */
+.swagger-ui section.models h4 {
+    padding: 15px 0 !important;
+    margin-bottom: 20px !important;
+    font-size: 1.2em !important;
+}
+
+/* Add spacing to schema examples */
+.swagger-ui .model-example {
+    margin-top: 15px !important;
+    padding: 15px !important;
+}
+
+/* ============================================
+   REMOVE BOLD FROM SCHEMA EXAMPLES
+   Match formatting with response examples
+   ============================================ */
+
+/* Remove bold from all schema example text */
+.swagger-ui section.models .model-example,
+.swagger-ui section.models .model-example pre,
+.swagger-ui section.models .model-example code,
+.swagger-ui section.models .model-example span,
+.swagger-ui section.models .example,
+.swagger-ui section.models .example pre,
+.swagger-ui section.models .example code {
+    font-weight: normal !important;
+}
+
+/* Match response example styling */
+.swagger-ui section.models .model-example pre code,
+.swagger-ui section.models .example pre code {
+    font-weight: normal !important;
+    font-family: monospace !important;
+}
+
+/* Remove bold from property names in examples */
+.swagger-ui section.models .model-example .property,
+.swagger-ui section.models .example .property {
+    font-weight: normal !important;
+}
+
+/* Remove bold from JSON keys in schema examples */
+.swagger-ui section.models .model-example .hljs-attr,
+.swagger-ui section.models .model-example .hljs-string,
+.swagger-ui section.models .model-example .hljs-number,
+.swagger-ui section.models .example .hljs-attr,
+.swagger-ui section.models .example .hljs-string,
+.swagger-ui section.models .example .hljs-number {
+    font-weight: normal !important;
+}
+
+/* Ensure all text in model section examples is normal weight */
+.swagger-ui section.models * {
+    font-weight: normal !important;
+}
+
+/* But keep the model title itself visible (not bold, but normal) */
+.swagger-ui section.models .model-title {
+    font-weight: normal !important;
+}
+
+/* Improve property row hover state with proper spacing */
+.swagger-ui .property-row:hover {
+    background-color: rgba(255, 107, 53, 0.05) !important;
+    padding-left: 10px !important;
+    margin-left: -10px !important;
+    border-radius: 4px !important;
+}
+
 /* Improve touch targets */
 .swagger-ui .expand-operation,
 .swagger-ui .authorization__btn,
@@ -773,4 +1239,564 @@ footer p {
 /* Reduce space between info section and operations */
 .swagger-ui .information-container {
     margin-bottom: 20px !important;
+}
+
+/* ============================================
+   FLUID SCHEMA CLICK BEHAVIOR & READABILITY
+   ============================================ */
+
+/* Make schema titles more readable with better contrast */
+.swagger-ui .model-title {
+    font-size: 15px !important;
+    line-height: 1.6 !important;
+    letter-spacing: 0.3px !important;
+    color: var(--accent-color) !important;
+}
+
+/* Smoother, more fluid click animations */
+.swagger-ui .model-container {
+    transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+}
+
+.swagger-ui .model-box {
+    transition: max-height 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                opacity 0.25s ease,
+                transform 0.25s ease !important;
+}
+
+/* Fluid expand/collapse with smooth reveal */
+.swagger-ui .model-box.is-open {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+}
+
+.swagger-ui .model-box:not(.is-open) {
+    opacity: 0.95 !important;
+    transform: translateY(-2px) !important;
+}
+
+/* Ultra-smooth arrow rotation */
+.swagger-ui .model-toggle {
+    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                background-color 0.2s ease !important;
+}
+
+.swagger-ui .model-toggle.collapsed {
+    transform: rotate(-90deg) !important;
+}
+
+.swagger-ui .model-toggle:not(.collapsed) {
+    transform: rotate(0deg) !important;
+}
+
+/* Improved readability for schema properties */
+.swagger-ui .property-row {
+    line-height: 1.8 !important;
+    padding: 12px 8px !important;
+    transition: all 0.2s ease !important;
+}
+
+/* Better text contrast and spacing */
+.swagger-ui .prop-name {
+    font-size: 14px !important;
+    letter-spacing: 0.2px !important;
+    color: var(--text-color) !important;
+}
+
+.swagger-ui .prop-type {
+    font-size: 13px !important;
+    letter-spacing: 0.2px !important;
+}
+
+/* Smoother hover states */
+.swagger-ui .model-container:hover {
+    background-color: rgba(255, 107, 53, 0.03) !important;
+    transition: background-color 0.2s ease !important;
+}
+
+.swagger-ui .property-row:hover {
+    background-color: rgba(255, 107, 53, 0.06) !important;
+    padding-left: 12px !important;
+    transition: all 0.2s ease !important;
+}
+
+/* Fluid content reveal animation */
+@keyframes smoothExpand {
+    from {
+        opacity: 0;
+        max-height: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        max-height: 5000px;
+        transform: translateY(0);
+    }
+}
+
+.swagger-ui .model-box-content {
+    animation: smoothExpand 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+}
+
+/* Improve text readability with better spacing */
+.swagger-ui .model-box .model {
+    line-height: 1.7 !important;
+    padding: 8px 0 !important;
+}
+
+/* Better visual feedback on click */
+.swagger-ui .model-title:active {
+    transform: scale(0.99) !important;
+    transition: transform 0.1s ease !important;
+}
+
+/* Smoother nested model expansion */
+.swagger-ui .model-box .model-box {
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+    margin-top: 12px !important;
+}
+
+/* ============================================
+   SMALLER MEDIA TYPE FIELD IN ENDPOINTS
+   ============================================ */
+
+/* Reduce Media type dropdown size */
+.swagger-ui .opblock-section-header .tab-header .content-type {
+    max-width: 250px !important;
+    font-size: 13px !important;
+}
+
+.swagger-ui .opblock-section-header .tab-header .content-type select {
+    max-width: 250px !important;
+    font-size: 13px !important;
+    padding: 6px 10px !important;
+    height: 32px !important;
+}
+
+/* Reduce Media type label size */
+.swagger-ui .opblock-section-header label {
+    font-size: 12px !important;
+    margin-right: 8px !important;
+}
+
+/* Compact the entire media type control area */
+.swagger-ui .response-control-media-type {
+    max-width: 280px !important;
+}
+
+.swagger-ui .response-control-media-type select {
+    max-width: 250px !important;
+    font-size: 13px !important;
+    padding: 6px 10px !important;
+    height: 32px !important;
+}
+
+/* Reduce spacing around media type field */
+.swagger-ui .response-control-media-type__accept-message {
+    font-size: 12px !important;
+    margin: 5px 0 !important;
+}
+
+/* Make media type dropdown more compact */
+.swagger-ui .opblock-body select {
+    max-width: 250px !important;
+    font-size: 13px !important;
+    padding: 6px 10px !important;
+    height: 32px !important;
+}
+
+/* Reduce media type section header size */
+.swagger-ui .opblock-section-header h4 {
+    font-size: 13px !important;
+}
+
+/* Compact the tab header area */
+.swagger-ui .opblock-section-header .tab-header {
+    padding: 8px 12px !important;
+}
+
+/* Smaller media type options in dropdown */
+.swagger-ui .opblock-section-header .tab-header .content-type select option {
+    font-size: 13px !important;
+    padding: 4px 8px !important;
+}
+
+/* ============================================
+   COMPREHENSIVE SCHEMA SECTION FIX
+   Based on Screenshot 2025-11-04 at 3.42.42 PM
+   ============================================ */
+
+/* Reset and clean base styling for schema containers */
+.swagger-ui section.models .model-container {
+    background: transparent !important;
+    border: none !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* Schema title row - perfect layout */
+.swagger-ui section.models .model-container > span {
+    display: flex !important;
+    align-items: flex-start !important;
+    padding: 10px 0 !important;
+    cursor: pointer !important;
+    gap: 8px !important;
+    width: 100% !important;
+}
+
+/* Dropdown arrow - visible and properly positioned */
+.swagger-ui section.models .model-toggle {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 16px !important;
+    height: 20px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    cursor: pointer !important;
+    background: transparent !important;
+    border: none !important;
+    flex-shrink: 0 !important;
+    position: relative !important;
+    top: 2px !important;
+}
+
+/* Create visible dropdown arrow */
+.swagger-ui section.models .model-toggle::before {
+    content: "▶" !important;
+    display: block !important;
+    color: var(--text-color) !important;
+    font-size: 10px !important;
+    line-height: 1 !important;
+    text-align: center !important;
+    transition: transform 0.2s ease !important;
+    width: 16px !important;
+    height: 16px !important;
+}
+
+/* Rotate arrow when expanded */
+.swagger-ui section.models .model-toggle:not(.collapsed)::before {
+    transform: rotate(90deg) !important;
+}
+
+.swagger-ui section.models .model-toggle.collapsed::before {
+    transform: rotate(0deg) !important;
+}
+
+/* Schema title - base styling */
+.swagger-ui section.models .model-title {
+    display: block !important;
+    color: var(--text-color) !important;
+    font-size: 14px !important;
+    font-weight: normal !important;
+    line-height: 1.4 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    flex: 1 !important;
+    min-width: 0 !important;
+}
+
+/* Collapsed state - truncate long titles */
+.swagger-ui section.models .model-container.collapsed .model-title {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+.swagger-ui section.models .model-container.collapsed .model-title span {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    display: inline !important;
+}
+
+/* Expanded state - show full title with wrapping */
+.swagger-ui section.models .model-container:not(.collapsed) .model-title {
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    word-wrap: break-word !important;
+    word-break: break-word !important;
+}
+
+.swagger-ui section.models .model-container:not(.collapsed) .model-title span {
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    word-wrap: break-word !important;
+    word-break: break-word !important;
+    display: inline !important;
+}
+
+/* Schema title span - ensure proper display */
+.swagger-ui section.models .model-title span {
+    max-width: 100% !important;
+}
+
+/* Schema content box */
+.swagger-ui section.models .model-box {
+    background: transparent !important;
+    border: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Collapsed state - hide content */
+.swagger-ui section.models .model-container.collapsed .model-box {
+    display: none !important;
+}
+
+/* Expanded state - show content with indent */
+.swagger-ui section.models .model-container:not(.collapsed) .model-box {
+    display: block !important;
+    padding: 10px 0 10px 24px !important;
+    margin-top: 8px !important;
+}
+
+/* Schemas section header */
+.swagger-ui section.models h4 {
+    color: var(--text-color) !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    margin-bottom: 16px !important;
+    padding: 0 !important;
+}
+
+/* Hover effect */
+.swagger-ui section.models .model-container > span:hover {
+    background-color: rgba(255, 107, 53, 0.05) !important;
+    border-radius: 4px !important;
+    margin: 0 -4px !important;
+    padding: 10px 4px !important;
+}
+
+/* Remove conflicting animations */
+.swagger-ui section.models .model-container,
+.swagger-ui section.models .model-box,
+.swagger-ui section.models .model-toggle {
+    animation: none !important;
+}
+
+/* Last item - no border */
+.swagger-ui section.models .model-container:last-child {
+    border-bottom: none !important;
+}
+
+/* Remove any duplicate arrows or icons */
+.swagger-ui section.models .model-toggle svg,
+.swagger-ui section.models .model-toggle img {
+    display: none !important;
+}
+
+/* Ensure no background on toggle */
+.swagger-ui section.models .model-toggle:hover,
+.swagger-ui section.models .model-toggle:focus,
+.swagger-ui section.models .model-toggle:active {
+    background: transparent !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+/* ============================================
+   FINAL POLISH - REMOVE HIGHLIGHTS & BOLD TEXT
+   ============================================ */
+
+/* 1. Remove white highlight from Schemas dropdown icons and text when clicked */
+.swagger-ui section.models .model-toggle:focus,
+.swagger-ui section.models .model-toggle:active,
+.swagger-ui section.models .model-toggle:focus-visible {
+    background: transparent !important;
+    box-shadow: none !important;
+    outline: none !important;
+    border: none !important;
+}
+
+.swagger-ui section.models .model-title:focus,
+.swagger-ui section.models .model-title:active,
+.swagger-ui section.models .model-title:focus-visible {
+    background: transparent !important;
+    box-shadow: none !important;
+    outline: none !important;
+    border: none !important;
+}
+
+.swagger-ui section.models .model-container > span:focus,
+.swagger-ui section.models .model-container > span:active,
+.swagger-ui section.models .model-container > span:focus-visible {
+    background-color: rgba(255, 107, 53, 0.05) !important;
+    box-shadow: none !important;
+    outline: none !important;
+    border: none !important;
+}
+
+/* Remove any focus rings or highlights */
+.swagger-ui section.models * {
+    -webkit-tap-highlight-color: transparent !important;
+    -webkit-focus-ring-color: transparent !important;
+}
+
+.swagger-ui section.models button:focus,
+.swagger-ui section.models button:active,
+.swagger-ui section.models span:focus,
+.swagger-ui section.models span:active {
+    outline: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+}
+
+/* 2. Remove bold text from all Schemas titles, descriptions, and examples */
+.swagger-ui section.models .model-title,
+.swagger-ui section.models .model-title span,
+.swagger-ui section.models h4,
+.swagger-ui section.models h5,
+.swagger-ui section.models .model-box,
+.swagger-ui section.models .model-box *,
+.swagger-ui section.models .property,
+.swagger-ui section.models .prop-name,
+.swagger-ui section.models .prop-type,
+.swagger-ui section.models .description,
+.swagger-ui section.models .model-example,
+.swagger-ui section.models .model-example *,
+.swagger-ui section.models pre,
+.swagger-ui section.models code,
+.swagger-ui section.models .example,
+.swagger-ui section.models .example * {
+    font-weight: normal !important;
+}
+
+/* Ensure JSON keys and values in examples are not bold */
+.swagger-ui section.models .hljs-attr,
+.swagger-ui section.models .hljs-string,
+.swagger-ui section.models .hljs-number,
+.swagger-ui section.models .hljs-literal,
+.swagger-ui section.models .hljs-keyword {
+    font-weight: normal !important;
+}
+
+/* Remove bold from property rows */
+.swagger-ui section.models .property-row,
+.swagger-ui section.models .property-row * {
+    font-weight: normal !important;
+}
+
+/* Keep only the main "Schemas" header at 600 weight */
+.swagger-ui section.models > h4:first-child {
+    font-weight: 600 !important;
+}
+
+/* 3. Make Schemas dropdown more smooth */
+.swagger-ui section.models .model-container {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.swagger-ui section.models .model-box {
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.3s ease,
+                padding 0.3s ease !important;
+    overflow: hidden !important;
+}
+
+.swagger-ui section.models .model-toggle::before {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Smooth expand animation */
+.swagger-ui section.models .model-container:not(.collapsed) .model-box {
+    animation: smoothExpand 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+@keyframes smoothExpand {
+    from {
+        opacity: 0;
+        max-height: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+    to {
+        opacity: 1;
+        max-height: 3000px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+}
+
+/* Smooth collapse animation */
+.swagger-ui section.models .model-container.collapsed .model-box {
+    max-height: 0 !important;
+    opacity: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.2s ease,
+                padding 0.3s ease !important;
+}
+
+/* Smooth hover transition */
+.swagger-ui section.models .model-container > span {
+    transition: background-color 0.2s ease !important;
+}
+
+/* 4. Reduce Media type field size by 50% */
+.swagger-ui .opblock-section-header .tab-header .content-type {
+    max-width: 125px !important;
+    font-size: 11px !important;
+}
+
+.swagger-ui .opblock-section-header .tab-header .content-type select {
+    max-width: 125px !important;
+    font-size: 11px !important;
+    padding: 4px 8px !important;
+    height: 28px !important;
+}
+
+.swagger-ui .opblock-section-header label {
+    font-size: 10px !important;
+    margin-right: 6px !important;
+}
+
+.swagger-ui .response-control-media-type {
+    max-width: 140px !important;
+}
+
+.swagger-ui .response-control-media-type select {
+    max-width: 125px !important;
+    font-size: 11px !important;
+    padding: 4px 8px !important;
+    height: 28px !important;
+}
+
+.swagger-ui .response-control-media-type__accept-message {
+    font-size: 10px !important;
+    margin: 4px 0 !important;
+}
+
+.swagger-ui .opblock-body select {
+    max-width: 125px !important;
+    font-size: 11px !important;
+    padding: 4px 8px !important;
+    height: 28px !important;
+}
+
+.swagger-ui .opblock-section-header h4 {
+    font-size: 11px !important;
+}
+
+.swagger-ui .opblock-section-header .tab-header {
+    padding: 6px 10px !important;
+}
+
+.swagger-ui .opblock-section-header .tab-header .content-type select option {
+    font-size: 11px !important;
+    padding: 3px 6px !important;
+}
+
+/* Reduce Media type label text */
+.swagger-ui .opblock-section-header label span {
+    font-size: 10px !important;
+}
+
+/* Make the entire media type control area more compact */
+.swagger-ui .response-control-media-type--accept-controller {
+    max-width: 140px !important;
 }
