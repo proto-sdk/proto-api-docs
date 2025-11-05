@@ -776,61 +776,10 @@ footer p {
 }
 
 /* ============================================
-   SMOOTH SCHEMA ANIMATIONS & COMPACT MEDIA TYPE
+   COMPACT MEDIA TYPE FIELD
    ============================================ */
 
-/* 1. Smooth Schema expand/collapse animations */
-.swagger-ui .model-container {
-    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
-}
-
-.swagger-ui .model-box {
-    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-                opacity 0.35s ease,
-                transform 0.35s ease !important;
-    overflow: hidden !important;
-}
-
-/* Smooth expand animation */
-.swagger-ui .model-box:not([style*="display: none"]) {
-    animation: smoothSchemaExpand 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
-}
-
-@keyframes smoothSchemaExpand {
-    from {
-        opacity: 0;
-        transform: translateY(-8px);
-        max-height: 0;
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-        max-height: 5000px;
-    }
-}
-
-/* Smooth arrow rotation */
-.swagger-ui .model-toggle,
-.swagger-ui .model-box-control {
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-}
-
-/* Smooth hover transitions */
-.swagger-ui .model-container:hover {
-    transition: background-color 0.25s ease !important;
-}
-
-.swagger-ui .property-row {
-    transition: background-color 0.2s ease,
-                padding 0.2s ease !important;
-}
-
-/* Smooth nested model expansion */
-.swagger-ui .model-box .model-box {
-    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
-}
-
-/* 2. Reduce Media type field size by 50% */
+/* Reduce Media type field size by 50% */
 .swagger-ui .opblock-section-header .tab-header .content-type {
     max-width: 125px !important;
     font-size: 11px !important;
