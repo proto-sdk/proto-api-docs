@@ -3359,6 +3359,11 @@
           },
           "performance_mode": {
             "$ref": "#/components/schemas/PerformanceMode"
+          },
+          "balance_bays": {
+            "type": "boolean",
+            "description": "If enabled, will keep power evenly distributed across bays to balance power phases.",
+            "example": false
           }
         }
       },
@@ -3372,6 +3377,11 @@
           },
           "performance_mode": {
             "$ref": "#/components/schemas/PerformanceMode"
+          },
+          "balance_bays": {
+            "type": "boolean",
+            "description": "Phase balancing configuration state.",
+            "example": false
           },
           "power_target_min_watts": {
             "type": "integer",
