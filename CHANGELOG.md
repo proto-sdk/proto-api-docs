@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+## [1.6.2] - 2025-11-13
+
+### Fixed
+- **Tags Cleanup**: Removed unused 'Fans' tag from API specification
+  - 'Fans' tag had no associated endpoints (0 endpoints)
+  - Fan functionality is available through `/api/v1/cooling` endpoint (tagged as 'Cooling')
+  - Reduced tag count from 19 to 18 active tags
+  - Improves API documentation accuracy and cleanliness
+  - All existing endpoints and functionality remain unchanged
+
+### Technical Notes
+- No breaking changes to API functionality
+- Swagger UI now displays only tags with active endpoints
+- Validated: spec.json is valid OpenAPI 3.0.3
+- Backup created: spec.json.backup.20251113_094915
+
 ## [1.6.1] - 2025-11-04
 
 ### Changed
@@ -15,7 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Improved API documentation organization and navigation
   - Enhanced Swagger UI tag grouping for better user experience
 - **Hardware Endpoint**: Updated `/api/v1/hardware` GET endpoint with multi-tag support
-  - Now tagged with: Hardware, PSUs, Hashboards, Fans
+  - Now tagged with: Hardware, PSUs, Hashboards
   - Improves discoverability across related hardware component categories
   - Maintains backward compatibility with existing functionality
 
