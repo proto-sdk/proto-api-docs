@@ -7,40 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
-## [1.6.2] - 2025-11-13
-
-### Fixed
-- **Tags Cleanup**: Removed unused 'Fans' tag from API specification
-  - 'Fans' tag had no associated endpoints (0 endpoints)
-  - Fan functionality is available through `/api/v1/cooling` endpoint (tagged as 'Cooling')
-  - Reduced tag count from 19 to 18 active tags
-  - Improves API documentation accuracy and cleanliness
-  - All existing endpoints and functionality remain unchanged
-
-### Technical Notes
-- No breaking changes to API functionality
-- Swagger UI now displays only tags with active endpoints
-- Validated: spec.json is valid OpenAPI 3.0.3
-- Backup created: spec.json.backup.20251113_094915
-
-## [1.6.1] - 2025-11-04
-
-### Changed
-- **Tags Structure**: Updated API specification with comprehensive 19-tag organization system
-  - Added detailed descriptions for all endpoint groups
-  - Improved API documentation organization and navigation
-  - Enhanced Swagger UI tag grouping for better user experience
-- **Hardware Endpoint**: Updated `/api/v1/hardware` GET endpoint with multi-tag support
-  - Now tagged with: Hardware, PSUs, Hashboards
-  - Improves discoverability across related hardware component categories
-  - Maintains backward compatibility with existing functionality
-
-### Technical Notes
-- No breaking changes to API functionality
-- All endpoints, schemas, and responses remain unchanged
-- Update improves documentation clarity and navigation only
-- Backup created: spec.json.backup.20251104_074912
-
 ## [1.6.0] - 2025-10-30
 
 ### Added
@@ -51,23 +17,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Generate cURL commands with authentication headers
   - Client-side only, no backend required
   - Mobile-responsive with orange accent theme
-- Expanded API spec under Tags and below with updated endpoints and schemas (Pools, Authentication, System, Mining, Hashboards, Hashrate, Temperature, Power, Efficiency, Cooling, Network, Errors, System Tag, Telemetry, Time Series, Hardware, PSUs, Fans)
-- Pools: Added hashrate field to Pool schema with HashrateWindow items (duration_minutes, hashrate_ths)
-- Pools: Protocol enum labels changed to "Stratum V1" and "Stratum V2" (spaced) for display consistency
-- Telemetry: Added support for psu level via level=psu and clarified level semantics (miner, hashboard, asic implicitly includes hashboard, psu)
-- Time Series: Added PSU level configuration and response shape
+- **API Specification Enhancements**:
+  - Expanded API spec with updated endpoints and schemas
+  - Comprehensive 18-tag organization system with detailed descriptions
+  - Improved API documentation organization and navigation
+  - Enhanced Swagger UI tag grouping for better user experience
+- **Pools Enhancements**:
+  - Added hashrate field to Pool schema with HashrateWindow items (duration_minutes, hashrate_ths)
+  - Protocol enum labels changed to "Stratum V1" and "Stratum V2" (spaced) for display consistency
+- **Telemetry Enhancements**:
+  - Added support for psu level via level=psu
+  - Clarified level semantics (miner, hashboard, asic implicitly includes hashboard, psu)
+- **Time Series Enhancements**:
+  - Added PSU level configuration and response shape
 
 ### Changed
-- Bumped API version to 1.6.0 in spec.json and UI header
-- Normalized temperature unit to "°C" in MetricUnit enum for consistency
-- Updated contact email from mining.support@block.xyz to mining@block.xyz
+- **API Version**: Bumped to 1.6.0 in spec.json and UI header
+- **Hardware Endpoint**: Updated `/api/v1/hardware` GET endpoint with improved tag support
+  - Tagged with: Hardware, PSUs, Hashboards
+  - Improves discoverability across related hardware component categories
+- **Temperature Unit**: Normalized to "°C" in MetricUnit enum for consistency
+- **Contact Email**: Updated from mining.support@block.xyz to mining@block.xyz
 
+### Fixed
+- **Tags Cleanup**: Removed unused 'Fans' tag from API specification
+  - 'Fans' tag had no associated endpoints (0 endpoints)
+  - Fan functionality is available through `/api/v1/cooling` endpoint (tagged as 'Cooling')
+  - Reduced tag count to 18 active tags for cleaner documentation
 
 ### Technical Notes
-- This change only affects the mock server URL version number
-- API specification version remains at 1.5.0
-- All endpoints, schemas, and functionality remain unchanged
-- Change improves compatibility with SwaggerHub's auto-mocking service
+- No breaking changes to API functionality
+- All endpoints, schemas, and responses remain unchanged
+- Swagger UI now displays only tags with active endpoints
+- Validated: spec.json is valid OpenAPI 3.0.3
+- Updates improve documentation clarity, navigation, and compatibility with SwaggerHub's auto-mocking service
+- Maintains backward compatibility with existing functionality
 
 ## [1.5.0] - 2024-10-10
 
