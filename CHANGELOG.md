@@ -5,6 +5,22 @@ All notable changes to the Proto API documentation will be documented in this fi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.0] - 2025-11-20
+
+### Added
+- **New Endpoint Groups**: System Tag, Telemetry (real-time metrics)
+- **Enhanced Tag Descriptions**: All 18 endpoint groups now have comprehensive descriptions
+- **Comprehensive API Documentation**: Updated all tag descriptions for better clarity
+
+### Changed
+- **API Version**: Bumped to 1.7.0
+- **Tag Organization**: Enhanced descriptions for Mining, System, Network, Errors, Pools, Cooling, Authentication, Hashboards, Hashrate, Temperature, Power, Efficiency, System Information, Hardware, PSUs, Time Series, Telemetry, and System Tag groups
+
+### Technical Notes
+- Maintains OpenAPI 3.0.3 compatibility
+- No breaking changes to existing endpoints
+- All updates are additive and backward compatible
+
 
 
 ## [1.6.0] - 2025-10-30
