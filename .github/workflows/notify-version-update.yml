@@ -1,0 +1,159 @@
+name: Notify API Version Update
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'spec.json'
+
+jobs:
+  notify-slack:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2  # Fetch last 2 commits to compare
+      
+      - name: Extract version information
+        id: version
+        run: |
+          # Get current version
+          CURRENT_VERSION=$(jq -r '.info.version' spec.json)
+          echo "current=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          
+          # Get previous version
+          git checkout HEAD~1 -- spec.json 2>/dev/null || echo "First commit"
+          PREVIOUS_VERSION=$(jq -r '.info.version' spec.json 2>/dev/null || echo "unknown")
+          echo "previous=$PREVIOUS_VERSION" >> $GITHUB_OUTPUT
+          
+          # Restore current version
+          git checkout HEAD -- spec.json
+          
+          # Count endpoints and tags
+          ENDPOINT_COUNT=$(jq '.paths | length' spec.json)
+          TAG_COUNT=$(jq '.tags | length' spec.json)
+          echo "endpoints=$ENDPOINT_COUNT" >> $GITHUB_OUTPUT
+          echo "tags=$TAG_COUNT" >> $GITHUB_OUTPUT
+          
+          # Get commit info
+          COMMIT_MESSAGE=$(git log -1 --pretty=%B | head -1)
+          COMMIT_AUTHOR=$(git log -1 --pretty=%an)
+          COMMIT_SHA=$(git log -1 --pretty=%h)
+          echo "commit_message=$COMMIT_MESSAGE" >> $GITHUB_OUTPUT
+          echo "commit_author=$COMMIT_AUTHOR" >> $GITHUB_OUTPUT
+          echo "commit_sha=$COMMIT_SHA" >> $GITHUB_OUTPUT
+      
+      - name: Send Slack notification
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          CURRENT_VERSION="${{ steps.version.outputs.current }}"
+          PREVIOUS_VERSION="${{ steps.version.outputs.previous }}"
+          ENDPOINT_COUNT="${{ steps.version.outputs.endpoints }}"
+          TAG_COUNT="${{ steps.version.outputs.tags }}"
+          COMMIT_MESSAGE="${{ steps.version.outputs.commit_message }}"
+          COMMIT_AUTHOR="${{ steps.version.outputs.commit_author }}"
+          COMMIT_SHA="${{ steps.version.outputs.commit_sha }}"
+          
+          # Determine if version changed
+          if [ "$CURRENT_VERSION" != "$PREVIOUS_VERSION" ] && [ "$PREVIOUS_VERSION" != "unknown" ]; then
+            VERSION_CHANGE="$PREVIOUS_VERSION ‚Üí $CURRENT_VERSION"
+            EMOJI="üöÄ"
+            TITLE="Proto API Version Updated!"
+          else
+            VERSION_CHANGE="$CURRENT_VERSION (content updated)"
+            EMOJI="üìù"
+            TITLE="Proto API Documentation Updated"
+          fi
+          
+          # Build Slack message
+          curl -X POST "$SLACK_WEBHOOK" \
+            -H 'Content-Type: application/json' \
+            -d @- << EOF
+          {
+            "blocks": [
+              {
+                "type": "header",
+                "text": {
+                  "type": "plain_text",
+                  "text": "$EMOJI $TITLE",
+                  "emoji": true
+                }
+              },
+              {
+                "type": "section",
+                "fields": [
+                  {
+                    "type": "mrkdwn",
+                    "text": "*Version:*\n$VERSION_CHANGE"
+                  },
+                  {
+                    "type": "mrkdwn",
+                    "text": "*Endpoints:*\n$ENDPOINT_COUNT"
+                  },
+                  {
+                    "type": "mrkdwn",
+                    "text": "*Tags:*\n$TAG_COUNT"
+                  },
+                  {
+                    "type": "mrkdwn",
+                    "text": "*Author:*\n$COMMIT_AUTHOR"
+                  }
+                ]
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "*Commit:* $COMMIT_MESSAGE"
+                }
+              },
+              {
+                "type": "actions",
+                "elements": [
+                  {
+                    "type": "button",
+                    "text": {
+                      "type": "plain_text",
+                      "text": "View API Docs",
+                      "emoji": true
+                    },
+                    "url": "https://proto-sdk.github.io/proto-api-docs/",
+                    "style": "primary"
+                  },
+                  {
+                    "type": "button",
+                    "text": {
+                      "type": "plain_text",
+                      "text": "View Commit",
+                      "emoji": true
+                    },
+                    "url": "https://github.com/proto-sdk/proto-api-docs/commit/$COMMIT_SHA"
+                  },
+                  {
+                    "type": "button",
+                    "text": {
+                      "type": "plain_text",
+                      "text": "View Changelog",
+                      "emoji": true
+                    },
+                    "url": "https://github.com/proto-sdk/proto-api-docs/blob/main/CHANGELOG.md"
+                  }
+                ]
+              },
+              {
+                "type": "context",
+                "elements": [
+                  {
+                    "type": "mrkdwn",
+                    "text": "üïê <!date^${{ github.event.head_commit.timestamp }}^{date_num} {time_secs}|${{ github.event.head_commit.timestamp }}>"
+                  }
+                ]
+              }
+            ]
+          }
+          EOF
+          
+          echo "‚úì Slack notification sent successfully"
