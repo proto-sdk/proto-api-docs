@@ -86,10 +86,6 @@
       "description": "The PSUs endpoint group provides information about the power supply units in the mining device."
     },
     {
-      "name": "Fans",
-      "description": "The fans endpoint group provides information about the cooling fans in the mining device."
-    },
-    {
       "name": "Time Series",
       "description": "The time series endpoint provides unified access to historical data for multiple metrics including hashrate, temperature, power, and efficiency in a single request."
     },

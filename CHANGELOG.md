@@ -16,11 +16,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `PsuUpdateStatus`: Firmware update status tracking
   - `PsuUpdateResultStatus`: Enum for update status values (scheduled, success, timeout, failed, unknown)
   - `AvailablePsuFirmware`: Information about available firmware files with SHA-256 verification
-- **Enhanced Tag Organization**: Added "Fans" tag for better categorization of fan-related endpoints
 
 ### Changed
 - **API Version**: Bumped to 1.7.1
-- **Hardware Endpoint**: `/api/v1/hardware` now includes "Fans" tag for improved organization
 
 ### Technical Notes
 - Maintains OpenAPI 3.0.3 compatibility
