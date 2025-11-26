@@ -5,6 +5,37 @@ All notable changes to the Proto API documentation will be documented in this fi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.1] - 2024-11-26
+
+### Added
+- **PSU Firmware Management**: New endpoints for managing PSU firmware updates
+  - `GET /api/v1/power-supplies`: Returns PSU information including firmware update status and available firmware updates
+  - `POST /api/v1/power-supplies/update`: Schedules PSU firmware updates to run on next reboot with optional force parameter
+- **New Schemas**: 
+  - `PowerSuppliesResponse`: Combined PSU info and firmware update status
+  - `PsuUpdateStatus`: Firmware update status tracking
+  - `PsuUpdateResultStatus`: Enum for update status values (scheduled, success, timeout, failed, unknown)
+  - `AvailablePsuFirmware`: Information about available firmware files with SHA-256 verification
+- **Enhanced Tag Organization**: Added "Fans" tag for better categorization of fan-related endpoints
+
+### Changed
+- **API Version**: Bumped to 1.7.1
+- **Hardware Endpoint**: `/api/v1/hardware` now includes "Fans" tag for improved organization
+
+### Technical Notes
+- Maintains OpenAPI 3.0.3 compatibility
+- No breaking changes to existing endpoints
+- All updates are additive and backward compatible
+- PSU firmware updates run automatically on next reboot for system stability
+- Firmware verification via SHA-256 hashing ensures update integrity
+
+### Security
+- PSU firmware update endpoint requires Bearer authentication
+- Force parameter allows bypassing version checks when needed (authenticated only)
+
+
+
+
 ## [1.7.0] - 2025-11-20
 
 ### Added
