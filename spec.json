@@ -10,7 +10,7 @@
       "name": "MIT",
       "url": "https://opensource.org/license/mit"
     },
-    "version": "1.7.0"
+    "version": "1.7.1"
   },
   "servers": [
     {
@@ -84,6 +84,10 @@
     {
       "name": "PSUs",
       "description": "The PSUs endpoint group provides information about the power supply units in the mining device."
+    },
+    {
+      "name": "Fans",
+      "description": "The fans endpoint group provides information about the cooling fans in the mining device."
     },
     {
       "name": "Time Series",
@@ -3237,6 +3241,108 @@
           }
         }
       }
+    },
+    "/api/v1/power-supplies": {
+      "get": {
+        "tags": [
+          "PSUs"
+        ],
+        "description": "Returns information about all PSUs including firmware update status and available firmware updates.",
+        "operationId": "GetPowerSupplies",
+        "responses": {
+          "200": {
+            "description": "Power supply information with firmware update status retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PowerSuppliesResponse"
+                },
+                "example": {
+                  "psus_info": [
+                    {
+                      "psu_sn": "CHI123456789",
+                      "slot": 1,
+                      "manufacturer": "Chicony",
+                      "hw_revision": "A1",
+                      "model": "S24",
+                      "vendor": "Chicony"
+                    }
+                  ],
+                  "psu_update_status": {
+                    "available_firmware": [
+                      {
+                        "filename": "chicony-s24-1.18.22.bin",
+                        "firmware_version": "1.18.22",
+                        "size_bytes": 1048576,
+                        "sha256": "b5f8a2f4e5c19ac7e2e4d0a87f3a1a6b6e0c8b991f2e99a4f5cd5e512a5f4d1e3",
+                        "model": "S24"
+                      }
+                    ],
+                    "last_update": "2025-11-10T12:42:19Z",
+                    "status": "success"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/v1/power-supplies/update": {
+      "post": {
+        "tags": [
+          "PSUs"
+        ],
+        "description": "Schedules a PSU firmware update. This command enables the PSU update service so that the update will automatically run on the next reboot of the miner. Use the `force` parameter to bypass scheduling checks and allow re-flashing the same firmware version.",
+        "operationId": "PostUpdatePsu",
+        "parameters": [
+          {
+            "name": "force",
+            "in": "query",
+            "description": "Force update even if already scheduled and bypass version checks during execution",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "The PSU update has been successfully scheduled to run on next reboot.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
+          "409": {
+            "$ref": "#/components/responses/UpdateAlreadyInProgress"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
     }
   },
   "components": {
@@ -6057,6 +6163,96 @@
           "duration_minutes",
           "hashrate_ths"
         ]
+      },
+      "PowerSuppliesResponse": {
+        "description": "Power supply information including firmware update status",
+        "type": "object",
+        "properties": {
+          "psus_info": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PsuInfo"
+            }
+          },
+          "psu_update_status": {
+            "$ref": "#/components/schemas/PsuUpdateStatus"
+          }
+        }
+      },
+      "PsuUpdateStatus": {
+        "description": "PSU firmware update status information",
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "properties": {
+          "available_firmware": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AvailablePsuFirmware"
+            }
+          },
+          "last_update": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp of the last PSU firmware update",
+            "example": "2025-11-10T12:42:19Z"
+          },
+          "status": {
+            "$ref": "#/components/schemas/PsuUpdateResultStatus",
+            "description": "Current status of PSU firmware update"
+          }
+        }
+      },
+      "PsuUpdateResultStatus": {
+        "description": "Status of PSU firmware update",
+        "type": "string",
+        "enum": [
+          "scheduled",
+          "success",
+          "timeout",
+          "failed",
+          "unknown"
+        ]
+      },
+      "AvailablePsuFirmware": {
+        "description": "Information about an available PSU firmware file",
+        "type": "object",
+        "required": [
+          "filename",
+          "firmware_version",
+          "size_bytes",
+          "sha256",
+          "model"
+        ],
+        "properties": {
+          "filename": {
+            "type": "string",
+            "description": "Firmware file name",
+            "example": "chicony-s24-1.18.22.bin"
+          },
+          "firmware_version": {
+            "type": "string",
+            "description": "Firmware version string",
+            "example": "1.18.22"
+          },
+          "size_bytes": {
+            "type": "integer",
+            "format": "int64",
+            "description": "File size in bytes",
+            "example": 1048576
+          },
+          "sha256": {
+            "type": "string",
+            "description": "SHA-256 hash of the firmware file",
+            "example": "b5f8a2f4e5c19ac7e2e4d0a87f3a1a6b6e0c8b991f2e99a4f5cd5e512a5f4d1e3"
+          },
+          "model": {
+            "type": "string",
+            "description": "Compatible PSU model",
+            "example": "S24"
+          }
+        }
       }
     },
     "parameters": {
