@@ -1,0 +1,49 @@
+Proto API v1.7.2 - Quick Summary
+=================================
+
+Release Date: December 17, 2024
+Status: ✅ Live
+
+What Changed:
+-------------
+1. Enhanced all 19 API tag descriptions for clarity
+2. Added "Fans" tag to GET /api/v1/hardware endpoint
+
+Impact:
+-------
+✅ Zero breaking changes - fully backward compatible
+✅ Documentation only - no API behavior changes
+✅ No action required from teams
+✅ Improved developer experience
+
+Technical:
+----------
+- Version: 1.7.2
+- OpenAPI: 3.0.3 (maintained)
+- Backward Compatibility: 100%
+- Downtime: None
+
+Fans Endpoint:
+--------------
+GET /api/v1/hardware now appears in both:
+- Hardware section (complete hardware info)
+- Fans section (focused fan access)
+
+Returns fans-info array with:
+- id (integer): Fan identifier
+- name (string): Fan name
+- min_rpm (integer): Minimum RPM
+- max_rpm (integer): Maximum RPM
+
+Resources:
+----------
+Docs: https://proto-sdk.github.io/proto-api-docs/
+Fans: https://proto-sdk.github.io/proto-api-docs/#/Fans
+Repo: https://github.com/proto-sdk/proto-api-docs
+
+TL;DR:
+------
+Documentation-only update. No action needed. 
+Clearer docs + better organization = improved developer experience.
+
+Support: mining.support@block.xyz
