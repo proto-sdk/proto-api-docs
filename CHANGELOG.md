@@ -1,3 +1,33 @@
+## [1.7.2] - 2024-12-17
+
+### Changed
+- **Tag Descriptions**: Updated all API tag descriptions for improved clarity and consistency
+  - Mining: Enhanced description for mining control and configuration
+  - System: Clarified system information and actions
+  - Network: Updated network configuration description
+  - Errors: Improved error reporting description
+  - Pools: Enhanced pool configuration description
+  - Cooling: Updated cooling system description
+  - Authentication: Clarified authentication functions
+  - Hashboards: Enhanced hashboard information description
+  - Hashrate: Updated historical hashrate description
+  - Temperature: Improved temperature data description
+  - Power: Enhanced power information description
+  - Efficiency: Updated efficiency data description
+  - System Information: Clarified system status description
+  - Hardware: Enhanced hardware components description
+  - PSUs: Updated power supply units description
+  - Fans: Improved cooling fans description
+  - Time Series: Enhanced unified data access description
+  - Telemetry: Updated real-time metrics description
+  - System Tag: Clarified custom tag functionality
+
+### Technical Notes
+- Maintains OpenAPI 3.0.3 compatibility
+- No breaking changes to existing endpoints
+- Documentation improvements only
+- All API functionality remains unchanged
+
 # Proto API Documentation Changelog
 
 All notable changes to the Proto API documentation will be documented in this file.

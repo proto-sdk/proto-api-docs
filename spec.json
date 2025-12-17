@@ -10,7 +10,7 @@
       "name": "MIT",
       "url": "https://opensource.org/license/mit"
     },
-    "version": "1.7.1"
+    "version": "1.7.2"
   },
   "servers": [
     {
@@ -84,6 +84,10 @@
     {
       "name": "PSUs",
       "description": "The PSUs endpoint group provides information about the power supply units in the mining device."
+    },
+    {
+      "name": "Fans",
+      "description": "The fans endpoint group provides information about the cooling fans in the mining device."
     },
     {
       "name": "Time Series",
