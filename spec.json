@@ -1778,7 +1778,8 @@
     "/api/v1/hardware": {
       "get": {
         "tags": [
-          "Hardware"
+          "Hardware",
+          "Fans"
         ],
         "description": "The hardware endpoint provides information about the hardware components of the miner. This includes hashboards, power supplies, and fans.",
         "operationId": "GetHardware",
