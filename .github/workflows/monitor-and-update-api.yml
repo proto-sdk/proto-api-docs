@@ -1,0 +1,262 @@
+name: Monitor and Update Proto API
+
+on:
+  schedule:
+    # Run daily at 9 AM UTC (1 AM PST / 4 AM EST)
+    - cron: '0 9 * * *'
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  check-and-update:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout proto-api-docs
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+      
+      - name: Fetch upstream API spec
+        id: fetch
+        run: |
+          echo "📥 Fetching latest API spec from miner-firmware..."
+          
+          # Download the latest MDK-API.json from miner-firmware
+          curl -s https://raw.githubusercontent.com/btc-mining/miner-firmware/main/crates/miner-api-server/docs/MDK-API.json \
+            -o /tmp/upstream-spec.json
+          
+          # Validate it's valid JSON
+          if ! jq empty /tmp/upstream-spec.json 2>/dev/null; then
+            echo "❌ Invalid JSON from upstream"
+            exit 1
+          fi
+          
+          # Extract versions
+          UPSTREAM_VERSION=$(jq -r '.info.version' /tmp/upstream-spec.json)
+          CURRENT_VERSION=$(jq -r '.info.version' spec.json)
+          
+          echo "upstream_version=$UPSTREAM_VERSION" >> $GITHUB_OUTPUT
+          echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          
+          echo "📊 Current version: $CURRENT_VERSION"
+          echo "📊 Upstream version: $UPSTREAM_VERSION"
+          
+          # Check if version changed
+          if [ "$UPSTREAM_VERSION" != "$CURRENT_VERSION" ]; then
+            echo "version_changed=true" >> $GITHUB_OUTPUT
+            echo "✅ Version changed: $CURRENT_VERSION → $UPSTREAM_VERSION"
+          else
+            echo "version_changed=false" >> $GITHUB_OUTPUT
+            echo "ℹ️  No version change detected"
+          fi
+      
+      - name: Notify version change detected
+        if: steps.fetch.outputs.version_changed == 'true'
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          CURRENT_VERSION="${{ steps.fetch.outputs.current_version }}"
+          UPSTREAM_VERSION="${{ steps.fetch.outputs.upstream_version }}"
+          
+          curl -X POST "$SLACK_WEBHOOK" \
+            -H 'Content-Type: application/json' \
+            -d @- << EOF
+          {
+            "blocks": [
+              {
+                "type": "header",
+                "text": {
+                  "type": "plain_text",
+                  "text": "🔔 New Proto API Version Detected!",
+                  "emoji": true
+                }
+              },
+              {
+                "type": "section",
+                "fields": [
+                  {
+                    "type": "mrkdwn",
+                    "text": "*Current Version:*\n$CURRENT_VERSION"
+                  },
+                  {
+                    "type": "mrkdwn",
+                    "text": "*New Version:*\n$UPSTREAM_VERSION"
+                  }
+                ]
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "🤖 Starting automatic documentation update..."
+                }
+              }
+            ]
+          }
+          EOF
+      
+      - name: Update API specification
+        if: steps.fetch.outputs.version_changed == 'true'
+        run: |
+          echo "📝 Updating spec.json..."
+          
+          # Backup current spec
+          cp spec.json spec.json.backup.$(date +%Y%m%d_%H%M%S)
+          
+          # Update the spec - rename title to match our branding
+          jq '.info.title = "Proto Mining API"' /tmp/upstream-spec.json > spec.json
+          
+          echo "✅ spec.json updated"
+      
+      - name: Update CHANGELOG
+        if: steps.fetch.outputs.version_changed == 'true'
+        run: |
+          echo "📝 Updating CHANGELOG.md..."
+          
+          UPSTREAM_VERSION="${{ steps.fetch.outputs.upstream_version }}"
+          CURRENT_VERSION="${{ steps.fetch.outputs.current_version }}"
+          DATE=$(date +%Y-%m-%d)
+          
+          # Create changelog entry
+          cat > /tmp/changelog_entry.md << EOF
+          ## [$UPSTREAM_VERSION] - $DATE
+
+          ### Changed
+          - Updated API specification from miner-firmware upstream
+          - Version bump: $CURRENT_VERSION → $UPSTREAM_VERSION
+          - Automatically synchronized with btc-mining/miner-firmware
+
+          EOF
+          
+          # Prepend to CHANGELOG (after the title)
+          if [ -f CHANGELOG.md ]; then
+            # Insert after the first line (title)
+            sed -i '1 r /tmp/changelog_entry.md' CHANGELOG.md
+          else
+            # Create new changelog
+            echo "# Changelog" > CHANGELOG.md
+            cat /tmp/changelog_entry.md >> CHANGELOG.md
+          fi
+          
+          echo "✅ CHANGELOG.md updated"
+      
+      - name: Commit and push changes
+        if: steps.fetch.outputs.version_changed == 'true'
+        run: |
+          git config user.name "Proto API Bot"
+          git config user.email "mining@block.xyz"
+          
+          git add spec.json CHANGELOG.md spec.json.backup.*
+          git commit -m "🤖 Auto-update: Proto API v${{ steps.fetch.outputs.upstream_version }}
+
+          - Updated from miner-firmware upstream
+          - Previous version: ${{ steps.fetch.outputs.current_version }}
+          - New version: ${{ steps.fetch.outputs.upstream_version }}
+          - Auto-generated by monitor-and-update-api workflow"
+          
+          git push
+          
+          echo "✅ Changes pushed to main branch"
+      
+      - name: Wait for GitHub Pages deployment
+        if: steps.fetch.outputs.version_changed == 'true'
+        run: |
+          echo "⏳ Waiting 60 seconds for GitHub Pages to deploy..."
+          sleep 60
+      
+      - name: Notify completion to #proto-documentation
+        if: steps.fetch.outputs.version_changed == 'true'
+        env:
+          SLACK_WEBHOOK_DOCS: ${{ secrets.SLACK_WEBHOOK_DOCS_CHANNEL }}
+        run: |
+          UPSTREAM_VERSION="${{ steps.fetch.outputs.upstream_version }}"
+          CURRENT_VERSION="${{ steps.fetch.outputs.current_version }}"
+          COMMIT_SHA=$(git rev-parse --short HEAD)
+          
+          curl -X POST "$SLACK_WEBHOOK_DOCS" \
+            -H 'Content-Type: application/json' \
+            -d @- << EOF
+          {
+            "blocks": [
+              {
+                "type": "header",
+                "text": {
+                  "type": "plain_text",
+                  "text": "✅ Proto Mining API Documentation Updated!",
+                  "emoji": true
+                }
+              },
+              {
+                "type": "section",
+                "fields": [
+                  {
+                    "type": "mrkdwn",
+                    "text": "*Version:*\n$CURRENT_VERSION → $UPSTREAM_VERSION"
+                  },
+                  {
+                    "type": "mrkdwn",
+                    "text": "*Status:*\n✅ Live"
+                  }
+                ]
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "The Proto Mining API documentation has been automatically updated with the latest version from the miner-firmware repository."
+                }
+              },
+              {
+                "type": "actions",
+                "elements": [
+                  {
+                    "type": "button",
+                    "text": {
+                      "type": "plain_text",
+                      "text": "📖 View API Docs",
+                      "emoji": true
+                    },
+                    "url": "https://proto-sdk.github.io/proto-api-docs/",
+                    "style": "primary"
+                  },
+                  {
+                    "type": "button",
+                    "text": {
+                      "type": "plain_text",
+                      "text": "📝 View Changelog",
+                      "emoji": true
+                    },
+                    "url": "https://github.com/proto-sdk/proto-api-docs/blob/main/CHANGELOG.md"
+                  },
+                  {
+                    "type": "button",
+                    "text": {
+                      "type": "plain_text",
+                      "text": "🔍 View Commit",
+                      "emoji": true
+                    },
+                    "url": "https://github.com/proto-sdk/proto-api-docs/commit/$COMMIT_SHA"
+                  }
+                ]
+              },
+              {
+                "type": "context",
+                "elements": [
+                  {
+                    "type": "mrkdwn",
+                    "text": "🤖 Automatically updated by Proto API Monitor"
+                  }
+                ]
+              }
+            ]
+          }
+          EOF
+          
+          echo "✅ Notification sent to #proto-documentation"
+      
+      - name: No changes detected
+        if: steps.fetch.outputs.version_changed == 'false'
+        run: |
+          echo "ℹ️  No version changes detected. Documentation is up to date."
+          echo "Current version: ${{ steps.fetch.outputs.current_version }}"
