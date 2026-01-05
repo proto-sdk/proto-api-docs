@@ -19,11 +19,14 @@ jobs:
       
       - name: Fetch upstream API spec
         id: fetch
+        env:
+          GITHUB_TOKEN: ${{ secrets.PRIVATE_REPO_TOKEN }}
         run: |
           echo "📥 Fetching latest API spec from miner-firmware..."
           
-          # Download the latest MDK-API.json from miner-firmware
-          curl -s https://raw.githubusercontent.com/btc-mining/miner-firmware/main/crates/miner-api-server/docs/MDK-API.json \
+          # Download the latest MDK-API.json from miner-firmware (private repo)
+          curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            https://raw.githubusercontent.com/btc-mining/miner-firmware/main/crates/miner-api-server/docs/MDK-API.json \
             -o /tmp/upstream-spec.json
           
           # Validate it's valid JSON
