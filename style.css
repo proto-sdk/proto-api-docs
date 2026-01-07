@@ -96,6 +96,8 @@ body {
     background-color: var(--secondary-color);
     padding: 0;
     border-radius: 0;
+    margin-left: -2rem;
+    margin-right: -2rem;
 }
 
 /* Swagger UI Customization */
@@ -645,7 +647,9 @@ footer p {
     
     /* API docs section */
     .api-docs {
-        padding: 1rem;
+        padding: 0;
+        margin-left: -1rem;
+        margin-right: -1rem;
     }
     
     /* Swagger UI mobile optimizations */
