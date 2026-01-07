@@ -1,9 +1,5 @@
 # Proto API Documentation
 
-![Version](https://img.shields.io/badge/version-1.7.3-blue.svg)
-![API](https://img.shields.io/badge/API-Proto%20Mining-orange.svg)
-![Status](https://img.shields.io/badge/status-active-success.svg)
-
 Interactive API documentation for the Proto mining device API. This documentation provides complete information about all available endpoints and allows testing them directly through the browser.
 
 ## Features
