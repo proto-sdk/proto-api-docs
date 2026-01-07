@@ -30,7 +30,7 @@
         <span>Proto API Assistant</span>
         <button id="chat-close" style="background:none;border:none;color:#000;font-size:20px;cursor:pointer;padding:0;width:24px;height:24px;">×</button>
       </div>
-      <div id="chat-messages" style="flex:1;overflow-y:auto;padding:16px;color:#fff;font-family:monospace;font-size:13px;line-height:1.5;"></div>
+      <div id="chat-messages" style="flex:1;overflow-y:auto;padding:16px;color:#fff;font-family:monospace;font-size:13px;line-height:1.5;display:flex;flex-direction:column-reverse;"></div>
       <div style="padding:12px;border-top:1px solid #333;display:flex;gap:8px;">
         <input id="chat-input" type="text" placeholder="Ask about the API..." style="flex:1;padding:10px;background:#2a2a2a;border:1px solid #444;color:#fff;border-radius:6px;font-size:14px;" />
         <button id="chat-send" style="padding:10px 20px;background:#FF6B35;color:#000;border:none;border-radius:6px;cursor:pointer;font-weight:bold;font-size:14px;">Send</button>
@@ -57,10 +57,10 @@
 
   function addMessage(text, isUser) {
     const msg = document.createElement('div');
-    msg.style.cssText = `margin-bottom:12px;padding:10px 14px;background:${isUser ? '#FF6B35' : '#2a2a2a'};color:${isUser ? '#000' : '#fff'};border-radius:8px;white-space:pre-wrap;word-break:break-word;line-height:1.4;`;
+    msg.style.cssText = `margin-top:12px;padding:10px 14px;background:${isUser ? '#FF6B35' : '#2a2a2a'};color:${isUser ? '#000' : '#fff'};border-radius:8px;white-space:pre-wrap;word-break:break-word;line-height:1.4;`;
     msg.textContent = text;
-    messages.appendChild(msg);
-    messages.scrollTop = messages.scrollHeight;
+    messages.prepend(msg);
+    messages.scrollTop = 0;
   }
 
   function sendQuery() {
