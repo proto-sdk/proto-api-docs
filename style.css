@@ -105,6 +105,15 @@ body {
     color: var(--text-color);
 }
 
+/* Remove all padding from Swagger UI wrapper */
+.swagger-ui .wrapper {
+    padding: 0 !important;
+}
+
+.swagger-ui .information-container {
+    padding: 0 !important;
+}
+
 .swagger-ui .opblock {
     background-color: var(--primary-color);
     border: 1px solid var(--accent-color);
@@ -765,6 +774,21 @@ footer p {
 }
 
 .swagger-ui .scheme-container {
+    display: none !important;
+}
+
+/* Hide the Authorize section completely */
+.swagger-ui .auth-wrapper,
+.swagger-ui .authorization,
+.swagger-ui .authorization__btn,
+.swagger-ui .auth-btn-wrapper,
+.swagger-ui .authorize,
+.swagger-ui .btn.authorize {
+    display: none !important;
+}
+
+/* Hide authorization in info section */
+.swagger-ui .info .auth-wrapper {
     display: none !important;
 }
 
