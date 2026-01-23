@@ -90,7 +90,7 @@ CHANGELOG_EOF
         run: |
           AUTHOR=$(curl -H "Authorization: token ${{ secrets.PROTO_API_AUTOMATION }}" \
             -s "https://api.github.com/repos/btc-mining/miner-firmware/commits?path=crates/miner-api-server/docs/MDK-API.json&per_page=1" \
-            | jq -r '.[0].commit.author.name')
+            | jq -r '.[0].commit.committer.name // .[0].commit.author.name')
           
           if [ -z "$AUTHOR" ] || [ "$AUTHOR" = "null" ]; then
             AUTHOR="Proto API Bot"
