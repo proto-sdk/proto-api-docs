@@ -1,8 +1,8 @@
 {
-  "openapi": "3.1.1",
+  "openapi": "3.0.3",
   "info": {
     "title": "Proto Mining API",
-    "description": "The Mining Development Kit API serves as a means to access information from the mining device and make necessary adjustments to its settings.",
+    "description": "The Proto API serves as a means to access information from the mining device and make necessary adjustments to its settings.",
     "contact": {
       "email": "mining.support@block.xyz"
     },
@@ -10,12 +10,18 @@
       "name": "MIT",
       "url": "https://opensource.org/license/mit"
     },
-    "version": "1.7.3"
+    "version": "1.7.2"
   },
   "servers": [
     {
-      "url": "https://virtserver.swaggerhub.com/kkurucz/mining_development_kit_api/1.0.0",
-      "description": "SwaggerHub API Auto Mocking"
+      "url": "http://{miner_ip}",
+      "description": "Proto Mining Device",
+      "variables": {
+        "miner_ip": {
+          "default": "192.168.1.100",
+          "description": "IP address or hostname of your Proto mining device"
+        }
+      }
     }
   ],
   "tags": [
@@ -111,6 +117,20 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PoolsList"
+                },
+                "example": {
+                  "pools": [
+                    {
+                      "url": "stratum+tcp://pool.example.com:4334",
+                      "username": "miner.001",
+                      "password": "x"
+                    },
+                    {
+                      "url": "stratum+tcp://backup.pool.com:4334",
+                      "username": "miner.001",
+                      "password": "x"
+                    }
+                  ]
                 }
               }
             }
@@ -132,12 +152,19 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/PoolConfig"
-              }
+              },
+              "example": [
+                {
+                  "url": "stratum+tcp://pool.example.com:4334",
+                  "username": "miner.001",
+                  "password": "x"
+                }
+              ]
             }
           }
         },
         "responses": {
-          "200": {
+          "201": {
             "description": "The pool configuration has been successfully created.",
             "content": {
               "application/json": {
@@ -245,8 +272,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MessageResponse"
-                }
+                  "$ref": "#/components/schemas/PoolConfigResponse"
+                },
+                "example": [
+                  {
+                    "message": "Pool configuration updated successfully"
+                  }
+                ]
               }
             }
           },
@@ -289,7 +321,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "204": {
             "description": "The pool configuration has been successfully deleted.",
             "content": {
               "application/json": {
@@ -377,6 +409,9 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/PasswordRequest"
+              },
+              "example": {
+                "password": "newSecurePassword123"
               }
             }
           },
@@ -467,6 +502,9 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/PasswordRequest"
+              },
+              "example": {
+                "password": "adminPassword123"
               }
             }
           },
@@ -601,6 +639,17 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/SystemInfo"
+                },
+                "example": {
+                  "hardware-info": {
+                    "model": "Example Miner",
+                    "serial_number": "CB1234567890",
+                    "mac_address": "aa:bb:cc:dd:ee:ff"
+                  },
+                  "software-info": {
+                    "firmware_version": "2.0.1",
+                    "api_version": "1.0.0"
+                  }
                 }
               }
             }
@@ -949,8 +998,15 @@
         "description": "Initiates a check with the update server to determine whether a new version of the miner software is available. This request does not perform a download or installation, only a version availability check.",
         "operationId": "UpdateCheck",
         "responses": {
-          "200": {
-            "description": "The mining device has successfully started system update check."
+          "202": {
+            "description": "The mining device has successfully started system update check.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                }
+              }
+            }
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
@@ -959,7 +1015,7 @@
             "$ref": "#/components/responses/UnprocessableEntity"
           },
           "409": {
-            "$ref": "#/components/responses/UpdateAlreadyInProgress"
+            "$ref": "#/components/responses/SystemUpdateAlreadyInProgress"
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
@@ -976,7 +1032,14 @@
         "operationId": "PostUpdateSystem",
         "responses": {
           "202": {
-            "description": "The mining device has successfully started the update process."
+            "description": "The mining device has successfully started the update process.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                }
+              }
+            }
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
@@ -988,7 +1051,7 @@
             "$ref": "#/components/responses/UnprocessableEntity"
           },
           "409": {
-            "$ref": "#/components/responses/UpdateAlreadyInProgress"
+            "$ref": "#/components/responses/SystemUpdateAlreadyInProgress"
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
@@ -1033,7 +1096,14 @@
         },
         "responses": {
           "200": {
-            "description": "The firmware update file has been successfully uploaded."
+            "description": "The firmware update file has been successfully uploaded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                }
+              }
+            }
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
@@ -1042,7 +1112,7 @@
             "$ref": "#/components/responses/Unauthorized"
           },
           "409": {
-            "$ref": "#/components/responses/UpdateAlreadyInProgress"
+            "$ref": "#/components/responses/SystemUpdateAlreadyInProgress"
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
@@ -1211,6 +1281,26 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/HashboardsInfo"
+                },
+                "example": {
+                  "hashboards-info": [
+                    {
+                      "serial_number": "HB001001",
+                      "slot": 0,
+                      "asic_count": 120,
+                      "firmware_version": "2.0.1",
+                      "mcu_fw_version": "1.5.0",
+                      "api_version": "1.0"
+                    },
+                    {
+                      "serial_number": "HB001002",
+                      "slot": 1,
+                      "asic_count": 120,
+                      "firmware_version": "2.0.1",
+                      "mcu_fw_version": "1.5.0",
+                      "api_version": "1.0"
+                    }
+                  ]
                 }
               }
             }
@@ -1240,6 +1330,9 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/HashboardStats"
+                },
+                "example": {
+                  "$ref": "#/components/examples/HashboardStatsResponse"
                 }
               }
             }
@@ -1321,6 +1414,23 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/HashrateResponse"
+                },
+                "example": {
+                  "hashrate-data": {
+                    "duration": "12h",
+                    "data": [
+                      {
+                        "timestamp": 1642780800,
+                        "hashrate": 95000000000000,
+                        "unit": "TH/s"
+                      },
+                      {
+                        "timestamp": 1642784400,
+                        "hashrate": 94500000000000,
+                        "unit": "TH/s"
+                      }
+                    ]
+                  }
                 }
               }
             }
@@ -1356,6 +1466,23 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/HashrateResponse"
+                },
+                "example": {
+                  "hashrate-data": {
+                    "duration": "12h",
+                    "data": [
+                      {
+                        "timestamp": 1642780800,
+                        "hashrate": 31666666666666,
+                        "unit": "TH/s"
+                      },
+                      {
+                        "timestamp": 1642784400,
+                        "hashrate": 31500000000000,
+                        "unit": "TH/s"
+                      }
+                    ]
+                  }
                 }
               }
             }
@@ -1405,6 +1532,21 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/HashrateResponse"
+                },
+                "example": {
+                  "hashrate-data": {
+                    "duration": "12h",
+                    "data": [
+                      {
+                        "datetime": 1642780800,
+                        "value": 98
+                      },
+                      {
+                        "datetime": 1642784400,
+                        "value": 97
+                      }
+                    ]
+                  }
                 }
               }
             }
@@ -1437,6 +1579,23 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/TemperatureResponse"
+                },
+                "example": {
+                  "temperature-data": {
+                    "duration": "12h",
+                    "data": [
+                      {
+                        "timestamp": 1642780800,
+                        "temperature": 65.5,
+                        "unit": "°C"
+                      },
+                      {
+                        "timestamp": 1642784400,
+                        "temperature": 67.2,
+                        "unit": "°C"
+                      }
+                    ]
+                  }
                 }
               }
             }
@@ -1472,6 +1631,21 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/TemperatureResponse"
+                },
+                "example": {
+                  "temperature-data": {
+                    "duration": "12h",
+                    "data": [
+                      {
+                        "datetime": 1642780800,
+                        "value": 65
+                      },
+                      {
+                        "datetime": 1642784400,
+                        "value": 66
+                      }
+                    ]
+                  }
                 }
               }
             }
@@ -1524,6 +1698,21 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/TemperatureResponse"
+                },
+                "example": {
+                  "temperature-data": {
+                    "duration": "24h",
+                    "data": [
+                      {
+                        "datetime": 1642780800,
+                        "value": 68
+                      },
+                      {
+                        "datetime": 1642780860,
+                        "value": 68
+                      }
+                    ]
+                  }
                 }
               }
             }
@@ -1556,6 +1745,23 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PowerResponse"
+                },
+                "example": {
+                  "power-data": {
+                    "duration": "12h",
+                    "data": [
+                      {
+                        "timestamp": 1642780800,
+                        "power": 3200.5,
+                        "unit": "W"
+                      },
+                      {
+                        "timestamp": 1642784400,
+                        "power": 3180.2,
+                        "unit": "W"
+                      }
+                    ]
+                  }
                 }
               }
             }
@@ -1573,8 +1779,6 @@
       "get": {
         "tags": [
           "Hardware",
-          "PSUs",
-          "Hashboards",
           "Fans"
         ],
         "description": "The hardware endpoint provides information about the hardware components of the miner. This includes hashboards, power supplies, and fans.",
@@ -1586,6 +1790,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/HardwareInfo"
+                },
+                "example": {
+                  "hardware-info": {
+                    "model": "Example Miner",
+                    "serial_number": "CB1234567890",
+                    "hashboards": 3,
+                    "fans": 4,
+                    "power_supplies": 1
+                  }
                 }
               }
             }
@@ -1605,12 +1818,21 @@
         "operationId": "ListPowerSupplies",
         "responses": {
           "200": {
-            "description": "PSU information retrieved successfully.",
+            "description": "The list of psus was successfully returned.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PsusInfo"
-                }
+                },
+                "example": [
+                  {
+                    "model": "APW12-1600-B2",
+                    "serial_number": "PSU001234",
+                    "power_rating": 1600,
+                    "efficiency": 94.5,
+                    "status": "active"
+                  }
+                ]
               }
             }
           },
@@ -1618,83 +1840,6 @@
             "$ref": "#/components/responses/InternalServerError"
           }
         }
-      }
-    },
-    "/api/v1/power-supplies": {
-      "get": {
-        "tags": [
-          "PSUs"
-        ],
-        "description": "Returns information about all PSUs including firmware update status and available firmware updates.",
-        "operationId": "GetPowerSupplies",
-        "responses": {
-          "200": {
-            "description": "Power supply information with firmware update status retrieved successfully.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PowerSuppliesResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalServerError"
-          }
-        }
-      }
-    },
-    "/api/v1/power-supplies/update": {
-      "post": {
-        "tags": [
-          "PSUs"
-        ],
-        "description": "Schedules a PSU firmware update. This command enables the PSU update service so that the update will automatically run on the next reboot of the miner. Use the `force` parameter to bypass scheduling checks and allow re-flashing the same firmware version.",
-        "operationId": "PostUpdatePsu",
-        "parameters": [
-          {
-            "name": "force",
-            "in": "query",
-            "description": "Force update even if already scheduled and bypass version checks during execution",
-            "required": false,
-            "schema": {
-              "type": "boolean",
-              "default": false
-            }
-          }
-        ],
-        "responses": {
-          "202": {
-            "description": "The PSU update has been successfully scheduled to run on next reboot.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MessageResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "422": {
-            "$ref": "#/components/responses/UnprocessableEntity"
-          },
-          "409": {
-            "$ref": "#/components/responses/UpdateAlreadyInProgress"
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalServerError"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
       }
     },
     "/api/v1/power/{hb_sn}": {
@@ -1719,6 +1864,21 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PowerResponse"
+                },
+                "example": {
+                  "power-data": {
+                    "duration": "12h",
+                    "data": [
+                      {
+                        "datetime": 1700038800,
+                        "value": 3200
+                      },
+                      {
+                        "datetime": 1700042400,
+                        "value": 3180
+                      }
+                    ]
+                  }
                 }
               }
             }
@@ -1751,6 +1911,23 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/EfficiencyResponse"
+                },
+                "example": {
+                  "efficiency-data": {
+                    "duration": "12h",
+                    "data": [
+                      {
+                        "timestamp": 1642780800,
+                        "efficiency": 29.7,
+                        "unit": "J/TH"
+                      },
+                      {
+                        "timestamp": 1642784400,
+                        "efficiency": 30.1,
+                        "unit": "J/TH"
+                      }
+                    ]
+                  }
                 }
               }
             }
@@ -1786,6 +1963,21 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/EfficiencyResponse"
+                },
+                "example": {
+                  "efficiency-data": {
+                    "duration": "12h",
+                    "data": [
+                      {
+                        "datetime": 1642780800,
+                        "value": 95
+                      },
+                      {
+                        "datetime": 1642784400,
+                        "value": 94
+                      }
+                    ]
+                  }
                 }
               }
             }
@@ -1966,7 +2158,19 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorListResponse"
-                }
+                },
+                "example": [
+                  {
+                    "severity": "error",
+                    "message": "Temperature threshold exceeded on hashboard HB001",
+                    "timestamp": "2023-11-15T10:30:00Z"
+                  },
+                  {
+                    "severity": "warning",
+                    "message": "Fan speed below optimal range",
+                    "timestamp": "2023-11-15T10:25:00Z"
+                  }
+                ]
               }
             }
           },
@@ -2322,6 +2526,42 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/TimeSeriesRequest"
+              },
+              "example": {
+                "start_time": "2024-01-15T00:00:00Z",
+                "duration": "PT6H",
+                "interval": "PT15M",
+                "levels": [
+                  {
+                    "type": "miner",
+                    "fields": [
+                      "hashrate",
+                      "temperature",
+                      "power"
+                    ]
+                  },
+                  {
+                    "type": "hashboard",
+                    "fields": [
+                      "hashrate",
+                      "inletTemp",
+                      "outletTemp"
+                    ],
+                    "indexes": [
+                      0,
+                      1
+                    ]
+                  },
+                  {
+                    "type": "psu",
+                    "fields": [
+                      "inputVoltage",
+                      "outputPower",
+                      "hotspotTemp"
+                    ]
+                  }
+                ],
+                "aggregation": "mean"
               }
             }
           },
@@ -2334,6 +2574,208 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/TimeSeriesResponse"
+                },
+                "example": {
+                  "meta": {
+                    "start_time": "2024-01-15T00:00:00Z",
+                    "end_time": "2024-01-15T06:00:00Z",
+                    "interval": "PT15M",
+                    "levels": [
+                      {
+                        "type": "miner",
+                        "fields": [
+                          "hashrate",
+                          "temperature"
+                        ]
+                      },
+                      {
+                        "type": "hashboard",
+                        "fields": [
+                          "hashrate",
+                          "temperature"
+                        ]
+                      }
+                    ],
+                    "aggregation": "mean"
+                  },
+                  "data": {
+                    "miner": {
+                      "hashrate": {
+                        "unit": "TH/s",
+                        "values": [
+                          95.0,
+                          94.5,
+                          94.8
+                        ],
+                        "aggregates": {
+                          "min": 94.0,
+                          "avg": 94.75,
+                          "max": 95.5
+                        }
+                      },
+                      "temperature": {
+                        "unit": "°C",
+                        "values": [
+                          65.5,
+                          65.7,
+                          66.0
+                        ],
+                        "aggregates": {
+                          "min": 65.0,
+                          "avg": 65.8,
+                          "max": 67.2
+                        }
+                      }
+                    },
+                    "hashboards": [
+                      {
+                        "serial_number": "HB001",
+                        "hashrate": {
+                          "unit": "TH/s",
+                          "values": [
+                            31.5,
+                            31.45,
+                            31.52
+                          ],
+                          "aggregates": {
+                            "min": 31.0,
+                            "avg": 31.49,
+                            "max": 32.0
+                          }
+                        },
+                        "temperature": {
+                          "unit": "°C",
+                          "values": [
+                            66.0,
+                            66.2,
+                            66.1
+                          ],
+                          "aggregates": {
+                            "min": 65.5,
+                            "avg": 66.1,
+                            "max": 67.0
+                          }
+                        },
+                        "index": 0
+                      },
+                      {
+                        "serial_number": "HB002",
+                        "hashrate": {
+                          "unit": "TH/s",
+                          "values": [
+                            31.75,
+                            31.7,
+                            31.78
+                          ],
+                          "aggregates": {
+                            "min": 31.5,
+                            "avg": 31.74,
+                            "max": 32.1
+                          }
+                        },
+                        "temperature": {
+                          "unit": "°C",
+                          "values": [
+                            65.0,
+                            65.1,
+                            65.2
+                          ],
+                          "aggregates": {
+                            "min": 64.8,
+                            "avg": 65.1,
+                            "max": 65.5
+                          }
+                        }
+                      },
+                      {
+                        "serial_number": "HB003",
+                        "hashrate": {
+                          "unit": "TH/s",
+                          "values": [
+                            31.75,
+                            31.35,
+                            31.5
+                          ],
+                          "aggregates": {
+                            "min": 31.0,
+                            "avg": 31.53,
+                            "max": 31.9
+                          }
+                        },
+                        "temperature": {
+                          "unit": "°C",
+                          "values": [
+                            65.5,
+                            65.6,
+                            65.7
+                          ],
+                          "aggregates": {
+                            "min": 65.0,
+                            "avg": 65.6,
+                            "max": 66.0
+                          }
+                        }
+                      }
+                    ],
+                    "psus": [
+                      {
+                        "index": 0,
+                        "serial_number": "PSU001",
+                        "inputVoltage": {
+                          "unit": "V",
+                          "values": [
+                            240.0,
+                            240.1,
+                            239.9
+                          ],
+                          "aggregates": {
+                            "min": 239.5,
+                            "avg": 240.0,
+                            "max": 240.5
+                          }
+                        },
+                        "outputVoltage": {
+                          "unit": "V",
+                          "values": [
+                            12.1,
+                            12.09,
+                            12.11
+                          ],
+                          "aggregates": {
+                            "min": 12.0,
+                            "avg": 12.1,
+                            "max": 12.2
+                          }
+                        },
+                        "outputPower": {
+                          "unit": "W",
+                          "values": [
+                            3250,
+                            3245,
+                            3255
+                          ],
+                          "aggregates": {
+                            "min": 3200,
+                            "avg": 3250,
+                            "max": 3300
+                          }
+                        },
+                        "hotspotTemp": {
+                          "unit": "°C",
+                          "values": [
+                            65.5,
+                            65.7,
+                            65.6
+                          ],
+                          "aggregates": {
+                            "min": 65.0,
+                            "avg": 65.6,
+                            "max": 66.0
+                          }
+                        }
+                      }
+                    ]
+                  }
                 }
               }
             }
@@ -2412,8 +2854,8 @@
                       }
                     }
                   },
-                  "mienr_hashboard_and_psu": {
-                    "summary": "Response with level=miner,hashboard,psu: Includes miner-level, per-hashboard, and per-PSU metrics",
+                  "hashboard": {
+                    "summary": "Response when level=hashboard: Includes miner-level and per-hashboard metrics",
                     "value": {
                       "timestamp": "2024-01-15T14:30:00Z",
                       "miner": {
@@ -2525,38 +2967,11 @@
                             "unit": "A"
                           }
                         }
-                      ],
-                      "psus": [
-                        {
-                          "index": 0,
-                          "serial_number": "PSU001234",
-                          "voltage": {
-                            "unit": "V",
-                            "input": 240.0,
-                            "output": 12.1
-                          },
-                          "current": {
-                            "unit": "A",
-                            "input": 14.5,
-                            "output": 268.6
-                          },
-                          "power": {
-                            "unit": "W",
-                            "input": 3480,
-                            "output": 3250
-                          },
-                          "temperature": {
-                            "unit": "°C",
-                            "hotspot": 65.5,
-                            "ambient": 45.2,
-                            "average": 55.4
-                          }
-                        }
                       ]
                     }
                   },
-                  "all_data": {
-                    "summary": "Response with level=miner,hashboard,asic,psu: Full detail including miner, hashboard (with ASIC data), and PSU metrics",
+                  "asic": {
+                    "summary": "Response when level=asic: Full detail including miner, hashboard, and ASIC-level metrics",
                     "value": {
                       "timestamp": "2024-01-15T14:30:00Z",
                       "miner": {
@@ -2659,6 +3074,161 @@
                         }
                       ]
                     }
+                  },
+                  "all_data": {
+                    "summary": "Response with level=miner,hashboard,asic,psu: Full detail including miner, hashboard (with ASIC data), and PSU metrics",
+                    "value": {
+                      "timestamp": "2024-01-15T14:30:00Z",
+                      "miner": {
+                        "hashrate": {
+                          "value": 95.5,
+                          "unit": "TH/s"
+                        },
+                        "temperature": {
+                          "value": 65.5,
+                          "unit": "°C"
+                        },
+                        "power": {
+                          "value": 3250,
+                          "unit": "W"
+                        },
+                        "efficiency": {
+                          "value": 34.03,
+                          "unit": "J/TH"
+                        }
+                      },
+                      "hashboards": [
+                        {
+                          "index": 0,
+                          "serial_number": "HB001",
+                          "hashrate": {
+                            "value": 31.8,
+                            "unit": "TH/s"
+                          },
+                          "temperature": {
+                            "unit": "°C",
+                            "inlet": 45.2,
+                            "outlet": 68.5,
+                            "average": 56.85
+                          },
+                          "power": {
+                            "value": 1080,
+                            "unit": "W"
+                          },
+                          "efficiency": {
+                            "value": 33.96,
+                            "unit": "J/TH"
+                          },
+                          "voltage": {
+                            "value": 12.1,
+                            "unit": "V"
+                          },
+                          "current": {
+                            "value": 89.3,
+                            "unit": "A"
+                          },
+                          "asics": {
+                            "hashrate": {
+                              "unit": "TH/s",
+                              "values": [
+                                0.265,
+                                0.264
+                              ]
+                            },
+                            "temperature": {
+                              "unit": "°C",
+                              "values": [
+                                72.5,
+                                73.0
+                              ]
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "mienr_hashboard_and_psu": {
+                    "summary": "Response with level=miner,hashboard,psu: Includes miner-level, per-hashboard, and per-PSU metrics",
+                    "value": {
+                      "timestamp": "2024-01-15T14:30:00Z",
+                      "miner": {
+                        "hashrate": {
+                          "value": 95.5,
+                          "unit": "TH/s"
+                        },
+                        "temperature": {
+                          "value": 65.5,
+                          "unit": "°C"
+                        },
+                        "power": {
+                          "value": 3250,
+                          "unit": "W"
+                        },
+                        "efficiency": {
+                          "value": 34.03,
+                          "unit": "J/TH"
+                        }
+                      },
+                      "hashboards": [
+                        {
+                          "index": 0,
+                          "serial_number": "HB001",
+                          "hashrate": {
+                            "value": 31.8,
+                            "unit": "TH/s"
+                          },
+                          "temperature": {
+                            "unit": "°C",
+                            "inlet": 45.2,
+                            "outlet": 68.5,
+                            "average": 56.85
+                          },
+                          "power": {
+                            "value": 1080,
+                            "unit": "W"
+                          },
+                          "efficiency": {
+                            "value": 33.96,
+                            "unit": "J/TH"
+                          },
+                          "voltage": {
+                            "value": 12.1,
+                            "unit": "V"
+                          },
+                          "current": {
+                            "value": 89.3,
+                            "unit": "A"
+                          }
+                        }
+                      ],
+                      "psus": [
+                        {
+                          "index": 0,
+                          "serial_number": "PSU001234",
+                          "voltage": {
+                            "unit": "V",
+                            "input": 240.0,
+                            "output": 12.1
+                          },
+                          "current": {
+                            "unit": "A",
+                            "input": 14.5,
+                            "output": 268.6
+                          },
+                          "power": {
+                            "unit": "W",
+                            "input": 3480,
+                            "output": 3250
+                          },
+                          "temperature": {
+                            "unit": "°C",
+                            "hotspot": 65.5,
+                            "ambient": 45.2,
+                            "average": 55.4
+                          }
+                        }
+                      ]
+                    }
                   }
                 }
               }
@@ -2671,6 +3241,108 @@
             "$ref": "#/components/responses/InternalServerError"
           }
         }
+      }
+    },
+    "/api/v1/power-supplies": {
+      "get": {
+        "tags": [
+          "PSUs"
+        ],
+        "description": "Returns information about all PSUs including firmware update status and available firmware updates.",
+        "operationId": "GetPowerSupplies",
+        "responses": {
+          "200": {
+            "description": "Power supply information with firmware update status retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PowerSuppliesResponse"
+                },
+                "example": {
+                  "psus_info": [
+                    {
+                      "psu_sn": "CHI123456789",
+                      "slot": 1,
+                      "manufacturer": "Chicony",
+                      "hw_revision": "A1",
+                      "model": "S24",
+                      "vendor": "Chicony"
+                    }
+                  ],
+                  "psu_update_status": {
+                    "available_firmware": [
+                      {
+                        "filename": "chicony-s24-1.18.22.bin",
+                        "firmware_version": "1.18.22",
+                        "size_bytes": 1048576,
+                        "sha256": "b5f8a2f4e5c19ac7e2e4d0a87f3a1a6b6e0c8b991f2e99a4f5cd5e512a5f4d1e3",
+                        "model": "S24"
+                      }
+                    ],
+                    "last_update": "2025-11-10T12:42:19Z",
+                    "status": "success"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/v1/power-supplies/update": {
+      "post": {
+        "tags": [
+          "PSUs"
+        ],
+        "description": "Schedules a PSU firmware update. This command enables the PSU update service so that the update will automatically run on the next reboot of the miner. Use the `force` parameter to bypass scheduling checks and allow re-flashing the same firmware version.",
+        "operationId": "PostUpdatePsu",
+        "parameters": [
+          {
+            "name": "force",
+            "in": "query",
+            "description": "Force update even if already scheduled and bypass version checks during execution",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "The PSU update has been successfully scheduled to run on next reboot.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
+          "409": {
+            "$ref": "#/components/responses/UpdateAlreadyInProgress"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
       }
     }
   },
@@ -2707,28 +3379,46 @@
         "properties": {
           "source": {
             "type": "string",
-            "example": "rig",
+            "example": "Miner",
             "enum": [
-              "rig",
-              "fan",
-              "psu",
-              "hashboard"
+              "Miner",
+              "Hashboard",
+              "ASIC"
             ]
           },
-          "slot": {
+          "component_index": {
+            "type": "integer"
+          },
+          "hashboard_index": {
+            "type": "integer"
+          },
+          "asic_index": {
             "type": "integer"
           },
           "error_code": {
             "type": "string",
             "example": "FanSlow"
           },
-          "timestamp": {
-            "type": "integer",
-            "example": 1764160757
+          "inserted_at": {
+            "type": "integer"
+          },
+          "expired_at": {
+            "type": "integer"
+          },
+          "error_level": {
+            "type": "string",
+            "enum": [
+              "Error",
+              "Warning"
+            ]
           },
           "message": {
             "type": "string",
-            "example": "Fan 3 has stalled. Target RPM: 100, Actual RPM: 0"
+            "example": "Fan 1 is not operating correctly."
+          },
+          "details": {
+            "type": "string",
+            "example": "{\"FanSlow\":{\"fan_rpm_target\":1000,\"fan_rpm_tach\":900}}"
           }
         }
       },
@@ -2745,10 +3435,9 @@
         "properties": {
           "mode": {
             "type": "string",
-            "description": "Parameter to define the cooling mode.  Modes:\n - Unknown: Cooling mode is not yet determined.\n - Off: Fans will be set to off for immersion cooling.\n - Auto: Fans will be controlled based on miner temperature.\n - Manual: Fans run at a specified percentage of their maximum speed.",
+            "description": "Parameter to define the cooling mode.  Modes:\n - Off: Fans will be set to off for immersion cooling.\n - Auto: Fans will be controlled based on miner temperature.\n - Manual: Fans run at a specified percentage of their maximum speed.",
             "example": "Auto",
             "enum": [
-              "Unknown",
               "Off",
               "Auto",
               "Manual"
@@ -2820,11 +3509,6 @@
             "description": "Each pool has a unique ID from 0 to 2, with 0 representing the highest priority and 2 representing the lowest priority.",
             "example": 0
           },
-          "name": {
-            "type": "string",
-            "description": "User-defined display name for this pool. Empty string if not set.",
-            "example": "Primary Pool"
-          },
           "priority": {
             "type": "integer",
             "description": "Connection priority for this pool. Lower numbers are higher priorities, with 0 being the maximum. Duplicate priorities are not allowed."
@@ -2868,11 +3552,6 @@
             "type": "integer",
             "description": "The number of shares the pool interface rejected due to being too low difficulty (did not forward to the pool).",
             "example": 10
-          },
-          "duplicate": {
-            "type": "integer",
-            "description": "The number of duplicate shares that were detected and dropped by the pool interface.",
-            "example": 5
           },
           "notifys_received": {
             "type": "integer",
@@ -2929,7 +3608,25 @@
             "description": "Hashrate calculated over different time windows. This field provides a flexible array format for future extensions.",
             "items": {
               "$ref": "#/components/schemas/HashrateWindow"
-            }
+            },
+            "example": [
+              {
+                "duration_minutes": 5,
+                "hashrate_ths": 120.5
+              },
+              {
+                "duration_minutes": 10,
+                "hashrate_ths": 118.3
+              },
+              {
+                "duration_minutes": 60,
+                "hashrate_ths": 115.7
+              },
+              {
+                "duration_minutes": 180,
+                "hashrate_ths": 116.2
+              }
+            ]
           }
         }
       },
@@ -2939,6 +3636,18 @@
         "properties": {
           "pools": {
             "type": "array",
+            "example": [
+              {
+                "url": "stratum+tcp://pool.example.com:4334",
+                "username": "miner.001",
+                "password": "x"
+              },
+              {
+                "url": "stratum+tcp://backup.pool.com:4334",
+                "username": "miner.001",
+                "password": "x"
+              }
+            ],
             "items": {
               "$ref": "#/components/schemas/Pool"
             }
@@ -2959,6 +3668,13 @@
         "type": "array",
         "items": {
           "$ref": "#/components/schemas/PoolConfig_inner"
+        }
+      },
+      "PoolConfigResponse": {
+        "description": "Response containing pool configuration results",
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/PoolConfigResponse_inner"
         }
       },
       "MiningStatus": {
@@ -2983,9 +3699,9 @@
         "description": "Statistics and performance data for an individual ASIC chip",
         "type": "object",
         "properties": {
-          "index": {
+          "id": {
             "type": "integer",
-            "description": "Zero-based index of the ASIC on the hashboard (first ASIC is 0).",
+            "description": "Unique identifier assigned to each ASIC located on a hashboard, starting from 0.",
             "example": 0
           },
           "row": {
@@ -3001,27 +3717,22 @@
           "freq_mhz": {
             "type": "number",
             "description": "The frequency of the ASIC measured in megahertz.",
-            "example": 650.05
+            "example": 650
           },
           "temp_c": {
             "type": "number",
             "description": "Current temperature of the ASIC in celsius",
             "example": 45.5
           },
-          "voltage_mv": {
-            "type": "number",
-            "description": "The present voltage being supplied to the ASIC in millivolts.",
-            "example": 308.44
-          },
           "hashrate_ghs": {
             "type": "number",
             "description": "The current hash rate of the ASIC, measured in GH/s.",
-            "example": 300.05
+            "example": 300
           },
           "ideal_hashrate_ghs": {
             "type": "number",
             "description": "The expected hashrate determined by the clock frequency of the ASIC, measured in GH/s.",
-            "example": 300.05
+            "example": 300
           },
           "error_rate": {
             "type": "number",
@@ -3052,10 +3763,10 @@
         "description": "Current status and performance metrics for individual cooling fans",
         "type": "object",
         "properties": {
-          "slot": {
+          "id": {
             "type": "integer",
-            "description": "Each fan is assigned a unique identifier starting from 1.",
-            "example": 1
+            "description": "Each fan is assigned a unique identifier starting from 0.",
+            "example": 0
           },
           "rpm": {
             "type": "integer",
@@ -3086,36 +3797,36 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/HashboardInfo"
-            }
+            },
+            "example": [
+              {
+                "hb_sn": "HB001234567890",
+                "api_version": "1.0",
+                "board": "PROTO0_B",
+                "mining_asic": "BZM",
+                "mining_asic_count": 126,
+                "temp_sensor_count": 3,
+                "slot": 0
+              }
+            ]
           }
         }
       },
       "PsusInfo": {
         "description": "Information about all power supply units in the mining device",
-        "type": "object",
-        "properties": {
-          "psus-info": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PsuInfo"
-            }
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/PsuInfo"
+        },
+        "example": [
+          {
+            "serial_number": "PSU001234567890",
+            "model": "Example PSU 1",
+            "wattage": 1600,
+            "efficiency": 94.5,
+            "status": "online"
           }
-        }
-      },
-      "PowerSuppliesResponse": {
-        "description": "Power supply information including firmware update status",
-        "type": "object",
-        "properties": {
-          "psus_info": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PsuInfo"
-            }
-          },
-          "psu_update_status": {
-            "$ref": "#/components/schemas/PsuUpdateStatus"
-          }
-        }
+        ]
       },
       "SystemInfo": {
         "description": "Complete system information including hardware, software, and OS details",
@@ -3330,10 +4041,10 @@
         "description": "Individual fan information including status and RPM data",
         "type": "object",
         "properties": {
-          "slot": {
+          "id": {
             "type": "integer",
-            "description": "Each cooling device is assigned a unique identifier starting from 1.",
-            "example": 1
+            "description": "Each cooling device is assigned a unique identifier starting from 0.",
+            "example": 0
           },
           "name": {
             "type": "string",
@@ -3341,18 +4052,12 @@
             "example": "CPU Cooler"
           },
           "min_rpm": {
-            "type": [
-              "integer",
-              "null"
-            ],
+            "type": "integer",
             "description": "The minimum RPM of the cooling device.",
             "example": 1000
           },
           "max_rpm": {
-            "type": [
-              "integer",
-              "null"
-            ],
+            "type": "integer",
             "description": "The maximum RPM of the cooling device.",
             "example": 1000
           }
@@ -3440,31 +4145,15 @@
             "example": 1704067200
           },
           "value": {
-            "type": "number",
-            "description": "Value of data requested at the given datetime.",
-            "example": 95.5
-          }
-        }
-      },
-      "HashrateWindow": {
-        "description": "Hashrate calculated over a specific time window",
-        "type": "object",
-        "properties": {
-          "duration_minutes": {
             "type": "integer",
-            "description": "Duration of the time window in minutes",
-            "example": 5
-          },
-          "hashrate_ths": {
-            "type": "number",
-            "description": "Hashrate in TH/s over the time window",
-            "example": 120.5
+            "description": "Value of data requested at the given datetime.",
+            "example": 98765432
           }
         },
-        "required": [
-          "duration_minutes",
-          "hashrate_ths"
-        ]
+        "example": {
+          "datetime": 1704067200,
+          "value": 98765432
+        }
       },
       "HashrateResponse": {
         "description": "Response containing historical hashrate data over time",
@@ -3506,11 +4195,6 @@
         "description": "Individual pool configuration with connection details",
         "type": "object",
         "properties": {
-          "name": {
-            "type": "string",
-            "description": "User-defined display name for this pool.",
-            "example": "Primary Pool"
-          },
           "url": {
             "$ref": "#/components/schemas/PoolUrl"
           },
@@ -3519,6 +4203,21 @@
           },
           "password": {
             "$ref": "#/components/schemas/PoolPassword"
+          },
+          "priority": {
+            "$ref": "#/components/schemas/PoolPriority"
+          }
+        }
+      },
+      "PoolConfigResponse_inner": {
+        "description": "Response data for individual pool configuration operations",
+        "type": "object",
+        "properties": {
+          "url": {
+            "$ref": "#/components/schemas/PoolUrl"
+          },
+          "username": {
+            "$ref": "#/components/schemas/PoolUsername"
           },
           "priority": {
             "$ref": "#/components/schemas/PoolPriority"
@@ -3574,13 +4273,9 @@
             "description": "Amount of power in watts for the system to target.",
             "example": 3120
           },
-          "average_hb_efficiency_jth": {
+          "average_efficiency_jth": {
             "type": "number",
-            "description": "The average hashboard efficiency in joules per terahash, since the device started mining."
-          },
-          "power_efficiency_jth": {
-            "type": "number",
-            "description": "The power efficiency in joules per terahash, calculated from total PSU input power and current hashrate."
+            "description": "The average efficiency in joules per terahash, since the device started mining."
           },
           "average_asic_temp_c": {
             "type": "number",
@@ -3588,10 +4283,7 @@
             "example": 60
           },
           "average_hb_temp_c": {
-            "type": [
-              "number",
-              "null"
-            ],
+            "type": "number",
             "description": "Average temperature of the mining device.",
             "example": 60
           },
@@ -3599,6 +4291,10 @@
             "type": "integer",
             "description": "The number of hardware errors that have occurred during the mining operation.",
             "example": 100
+          },
+          "message": {
+            "type": "string",
+            "example": "This reserved space can be utilized to include additional debug information."
           }
         }
       },
@@ -3610,9 +4306,9 @@
             "type": "string",
             "description": "Manufacturing serial number of the hashboard, used for subsequent API calls."
           },
-          "slot": {
+          "hb_id": {
             "type": "integer",
-            "description": "The physical slot where the Hashboard is inserted in the system.",
+            "description": "Internal ID of the hashboard, assigned to each hashboard starting from 1.",
             "example": 3
           },
           "status": {
@@ -3630,37 +4326,37 @@
           "power_usage_watts": {
             "type": "number",
             "description": "The power consumption of the hashboard in watts.",
-            "example": 1000.05
+            "example": 1000
           },
           "voltage_mv": {
             "type": "number",
             "description": "The present voltage being supplied to the hashboard in millivolts.",
-            "example": 16200.05
+            "example": 16200
           },
           "avg_asic_temp_c": {
             "type": "number",
             "description": "Current average temperature of the hashboard in celsius.",
-            "example": 75.05
+            "example": 75
           },
           "max_asic_temp_c": {
             "type": "number",
             "description": "Current maximum temperature of the hashboard in celsius.",
-            "example": 75.05
+            "example": 75
           },
           "hashrate_ghs": {
             "type": "number",
             "description": "The current hash rate of the hashboard, measured in GH/s. It will be sum of all ASIC hashrate_ghs values.",
-            "example": 300.05
+            "example": 300
           },
           "ideal_hashrate_ghs": {
             "type": "number",
             "description": "The expected hashrate is determined by the clock frequency of the all ASIC on the hash board, measured in GH/s.",
-            "example": 300.05
+            "example": 300
           },
           "efficiency_jth": {
             "type": "number",
             "description": "The efficiency of the hashboard in joules per terahash.",
-            "example": 40.05
+            "example": 40
           },
           "inlet_temp_c": {
             "type": "number",
@@ -3678,6 +4374,9 @@
               "$ref": "#/components/schemas/AsicStats"
             }
           }
+        },
+        "example": {
+          "$ref": "#/components/examples/HashboardStatsResponse"
         }
       },
       "CoolingStatus_coolingstatus": {
@@ -3686,10 +4385,9 @@
         "properties": {
           "fan_mode": {
             "type": "string",
-            "description": "Current fan control mode.\n - Unknown: Cooling mode is not yet determined.\n - Off: Fans are disabled.\n - Auto: Fans are controlled automatically based on temperature.\n - Manual: Fans are set to a fixed speed percentage.",
+            "description": "Current fan control mode.\n - Off: Fans are disabled.\n - Auto: Fans are controlled automatically based on temperature.\n - Manual: Fans are set to a fixed speed percentage.",
             "example": "Auto",
             "enum": [
-              "Unknown",
               "Off",
               "Auto",
               "Manual"
@@ -3736,6 +4434,12 @@
           "cb-info": {
             "$ref": "#/components/schemas/ControlBoardInfo"
           }
+        },
+        "example": {
+          "hashboards-info": [],
+          "psus-info": [],
+          "fans-info": [],
+          "cb-info": {}
         }
       },
       "HashboardInfo": {
@@ -3759,15 +4463,17 @@
           },
           "board": {
             "type": "string",
-            "example": "B3a",
+            "example": "PROTO0_B",
             "enum": [
-              "CpuSimulated",
-              "B2",
-              "B3a",
-              "B3b",
-              "B3bSim",
-              "B4",
-              "B4Sim"
+              "NOT_SET",
+              "PROTO0_A",
+              "PROTO0_B",
+              "EVT",
+              "DVT",
+              "PVT",
+              "EVB",
+              "EPIC",
+              "EE_TEST"
             ]
           },
           "chip_id": {
@@ -3808,6 +4514,20 @@
             "description": "The physical slot where the hashboard is inserted in the system.",
             "example": 1
           }
+        },
+        "example": {
+          "hb_sn": "HB001001",
+          "firmware": {},
+          "bootloader": {},
+          "api_version": "1.0",
+          "board": "PROTO0_B",
+          "chip_id": "ABC123",
+          "mining_asic": "BZM",
+          "mining_asic_count": 120,
+          "temp_sensor_count": 3,
+          "port": 0,
+          "ec_logs_path": "/var/log/ec_logs",
+          "slot": 0
         }
       },
       "PsuInfo": {
@@ -3900,100 +4620,27 @@
               "$ref": "#/components/schemas/TemperatureMeasurement"
             }
           }
-        }
-      },
-      "PsuUpdateResultStatus": {
-        "description": "Status of PSU firmware update",
-        "type": "string",
-        "enum": [
-          "scheduled",
-          "success",
-          "timeout",
-          "failed",
-          "unknown"
-        ],
-        "x-enum-descriptions": {
-          "scheduled": "Update is scheduled to run on next reboot",
-          "success": "Last update completed successfully",
-          "timeout": "Last update timed out",
-          "failed": "Last update failed",
-          "unknown": "Status unknown (service never ran)"
-        }
-      },
-      "PsuUpdateStatus": {
-        "description": "PSU firmware update status information",
-        "type": "object",
-        "required": [
-          "status"
-        ],
-        "properties": {
-          "available_firmware": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AvailablePsuFirmware"
-            }
-          },
-          "last_update": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Timestamp of the last PSU firmware update",
-            "example": "2025-11-10T12:42:19Z"
-          },
-          "status": {
-            "$ref": "#/components/schemas/PsuUpdateResultStatus"
-          }
         },
         "example": {
-          "available_firmware": [
-            {
-              "filename": "chicony-s24-1.18.22.bin",
-              "firmware_version": "1.18.22",
-              "size_bytes": 1048576,
-              "sha256": "b5f8a2f4e5c19ac7e2e4d0a87f3a1a6b6e0c8b991f2e99a4f5cd5e512a5f4d1e3",
-              "model": "S24"
-            }
-          ],
-          "last_update": "2025-11-10T12:42:19Z",
-          "status": "success"
-        }
-      },
-      "AvailablePsuFirmware": {
-        "description": "Information about an available PSU firmware file",
-        "type": "object",
-        "required": [
-          "filename",
-          "firmware_version",
-          "size_bytes",
-          "sha256",
-          "model"
-        ],
-        "properties": {
-          "filename": {
-            "type": "string",
-            "description": "Firmware file name",
-            "example": "chicony-s24-1.18.22.bin"
+          "psu_sn": "517CP81302000721",
+          "slot": 2,
+          "manufacturer": "Chicony",
+          "hw_revision": "v1.0",
+          "model": "PSU3200",
+          "vendor": "Chicony",
+          "firmware": {
+            "app_version": "1.0",
+            "bootloader_version": "1.0"
           },
-          "firmware_version": {
-            "type": "string",
-            "description": "Firmware version string",
-            "example": "1.18.22"
+          "power": {
+            "input_voltage": 240.0,
+            "output_voltage": 15.38,
+            "input_current": 20.34,
+            "output_current": 251.5,
+            "input_power": 3868,
+            "output_power": 4000
           },
-          "size_bytes": {
-            "type": "integer",
-            "format": "int64",
-            "description": "File size in bytes",
-            "example": 1048576
-          },
-          "sha256": {
-            "type": "string",
-            "description": "SHA-256 hash of the firmware file",
-            "example": "b5f8a2f4e5c19ac7e2e4d0a87f3a1a6b6e0c8b991f2e99a4f5cd5e512a5f4d1e3"
-          },
-          "model": {
-            "type": "string",
-            "description": "Compatible PSU model",
-            "example": "S24"
-          }
+          "temperatures": []
         }
       },
       "SystemInfo_systeminfo": {
@@ -4029,12 +4676,13 @@
           },
           "board": {
             "type": "string",
-            "example": "C3",
+            "example": "c1-evt",
             "enum": [
-              "C1",
-              "C2",
-              "C3",
-              "Unknown"
+              "stm32mp157d-dk1",
+              "stm32mp157f-dk2",
+              "c1-p0",
+              "c1-evt",
+              "unknown"
             ]
           },
           "soc": {
@@ -4146,10 +4794,38 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/TimeSeriesData"
-            }
+            },
+            "example": [
+              {
+                "datetime": 1704067200,
+                "value": 98765432
+              },
+              {
+                "datetime": 1704070800,
+                "value": 99123456
+              }
+            ]
           },
           "aggregates": {
             "$ref": "#/components/schemas/Aggregates"
+          }
+        },
+        "example": {
+          "duration": "24h",
+          "data": [
+            {
+              "datetime": 1704067200,
+              "value": 98765432
+            },
+            {
+              "datetime": 1704070800,
+              "value": 99123456
+            }
+          ],
+          "aggregates": {
+            "min": 95000000,
+            "avg": 98944444,
+            "max": 100000000
           }
         }
       },
@@ -4180,10 +4856,38 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/TimeSeriesData"
-            }
+            },
+            "example": [
+              {
+                "datetime": 1704067200,
+                "value": 68
+              },
+              {
+                "datetime": 1704070800,
+                "value": 72
+              }
+            ]
           },
           "aggregates": {
             "$ref": "#/components/schemas/Aggregates"
+          }
+        },
+        "example": {
+          "duration": "24h",
+          "data": [
+            {
+              "datetime": 1704067200,
+              "value": 68
+            },
+            {
+              "datetime": 1704070800,
+              "value": 72
+            }
+          ],
+          "aggregates": {
+            "min": 65,
+            "avg": 70,
+            "max": 75
           }
         }
       },
@@ -4198,10 +4902,38 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/TimeSeriesData"
-            }
+            },
+            "example": [
+              {
+                "datetime": 1704067200,
+                "value": 3250
+              },
+              {
+                "datetime": 1704070800,
+                "value": 3300
+              }
+            ]
           },
           "aggregates": {
             "$ref": "#/components/schemas/Aggregates"
+          }
+        },
+        "example": {
+          "duration": "24h",
+          "data": [
+            {
+              "datetime": 1704067200,
+              "value": 3250
+            },
+            {
+              "datetime": 1704070800,
+              "value": 3300
+            }
+          ],
+          "aggregates": {
+            "min": 3200,
+            "avg": 3275,
+            "max": 3350
           }
         }
       },
@@ -4216,10 +4948,38 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/TimeSeriesData"
-            }
+            },
+            "example": [
+              {
+                "datetime": 1704067200,
+                "value": 30
+              },
+              {
+                "datetime": 1704070800,
+                "value": 32
+              }
+            ]
           },
           "aggregates": {
             "$ref": "#/components/schemas/Aggregates"
+          }
+        },
+        "example": {
+          "duration": "24h",
+          "data": [
+            {
+              "datetime": 1704067200,
+              "value": 30
+            },
+            {
+              "datetime": 1704070800,
+              "value": 32
+            }
+          ],
+          "aggregates": {
+            "min": 28,
+            "avg": 31,
+            "max": 34
           }
         }
       },
@@ -4228,20 +4988,25 @@
         "description": "Statistical aggregates for time series data",
         "properties": {
           "min": {
-            "type": "number",
+            "type": "integer",
             "description": "Minimum value in data.",
-            "example": 0.5
+            "example": 28
           },
           "avg": {
-            "type": "number",
+            "type": "integer",
             "description": "Average value in data.",
-            "example": 50.5
+            "example": 31
           },
           "max": {
-            "type": "number",
+            "type": "integer",
             "description": "Maximum value in data.",
-            "example": 100.5
+            "example": 34
           }
+        },
+        "example": {
+          "min": 28,
+          "avg": 31,
+          "max": 34
         }
       },
       "MessageResponse": {
@@ -4250,7 +5015,7 @@
         "properties": {
           "message": {
             "type": "string",
-            "example": "info"
+            "example": "Operation completed successfully"
           }
         }
       },
@@ -4487,7 +5252,7 @@
       "PoolUrl": {
         "type": "string",
         "description": "The pool URL is used to establish communication with the mining pool and it is essential that it includes the port information.",
-        "example": "stratum+tcp://myuser.worker1:x@btc.pool.com:3333"
+        "example": "pool1.com:3333"
       },
       "PoolUsername": {
         "type": "string",
@@ -4554,7 +5319,29 @@
             "items": {
               "$ref": "#/components/schemas/TimeSeriesLevelConfig"
             },
-            "minItems": 1
+            "minItems": 1,
+            "example": [
+              {
+                "type": "miner",
+                "fields": [
+                  "hashrate",
+                  "temperature",
+                  "power"
+                ]
+              },
+              {
+                "type": "hashboard",
+                "fields": [
+                  "hashrate",
+                  "inletTemp",
+                  "outletTemp"
+                ],
+                "indexes": [
+                  0,
+                  2
+                ]
+              }
+            ]
           },
           "aggregation": {
             "type": "string",
@@ -4605,21 +5392,6 @@
         "enum": [
           "hashrate",
           "temperature"
-        ]
-      },
-      "PsuFieldType": {
-        "type": "string",
-        "description": "Available field types for PSU-level data",
-        "enum": [
-          "outputVoltage",
-          "outputCurrent",
-          "outputPower",
-          "inputVoltage",
-          "inputCurrent",
-          "inputPower",
-          "hotspotTemp",
-          "ambientTemp",
-          "averageTemp"
         ]
       },
       "TimeSeriesLevelConfig": {
@@ -4828,17 +5600,9 @@
                   "properties": {
                     "index": {
                       "type": "integer",
-                      "description": "Zero-based index of the ASIC within its hashboard"
-                    },
-                    "hashboard_index": {
-                      "type": "integer",
-                      "description": "Zero-based index of the hashboard this ASIC belongs to"
+                      "description": "Zero-based index of the ASIC"
                     }
                   },
-                  "required": [
-                    "index",
-                    "hashboard_index"
-                  ],
                   "additionalProperties": {
                     "$ref": "#/components/schemas/TimeSeriesMetricData"
                   }
@@ -4864,6 +5628,67 @@
                   }
                 }
               }
+            },
+            "example": {
+              "miner": {
+                "hashrate": {
+                  "unit": "TH/s",
+                  "values": [
+                    95.0,
+                    94.5,
+                    94.8
+                  ],
+                  "aggregates": {
+                    "min": 94.0,
+                    "avg": 94.75,
+                    "max": 95.5
+                  }
+                },
+                "temperature": {
+                  "unit": "°C",
+                  "values": [
+                    65.5,
+                    65.7,
+                    66.0
+                  ],
+                  "aggregates": {
+                    "min": 65.0,
+                    "avg": 65.8,
+                    "max": 67.2
+                  }
+                }
+              },
+              "hashboards": [
+                {
+                  "serial_number": "HB001",
+                  "hashrate": {
+                    "unit": "TH/s",
+                    "values": [
+                      31.5,
+                      31.45,
+                      31.52
+                    ],
+                    "aggregates": {
+                      "min": 31.0,
+                      "avg": 31.49,
+                      "max": 32.0
+                    }
+                  },
+                  "temperature": {
+                    "unit": "°C",
+                    "values": [
+                      66.0,
+                      66.2,
+                      66.1
+                    ],
+                    "aggregates": {
+                      "min": 65.5,
+                      "avg": 66.1,
+                      "max": 67.0
+                    }
+                  }
+                }
+              ]
             }
           }
         }
@@ -4933,9 +5758,9 @@
               "type": "number"
             },
             "example": [
-              95.00,
-              94.50,
-              94.80
+              95.0,
+              94.5,
+              94.8
             ]
           },
           "aggregates": {
@@ -4950,7 +5775,7 @@
           "min": {
             "type": "number",
             "description": "Minimum value in the series",
-            "example": 94.00
+            "example": 94.0
           },
           "avg": {
             "type": "number",
@@ -4960,13 +5785,13 @@
           "max": {
             "type": "number",
             "description": "Maximum value in the series",
-            "example": 95.50
+            "example": 95.5
           }
         }
       },
       "TelemetryData": {
         "type": "object",
-        "description": "Current telemetry data response. Contains 'miner' field with aggregated metrics (included when level=miner or by default if no level specified), 'hashboards' array with per-hashboard data (included when level=hashboard or level=asic), 'psus' array with per-PSU data (included when level=psu). ASIC data is nested within each hashboard when level=asic is specified. All fields except 'timestamp' are optional based on requested levels.",
+        "description": "Current telemetry data response. Contains 'miner' field with aggregated metrics (always present) and 'hashboards' array with per-hashboard data (only included when level is 'hashboard' or 'asic'). ASIC data is nested within each hashboard when level is 'asic'",
         "properties": {
           "timestamp": {
             "type": "string",
@@ -4979,7 +5804,7 @@
           },
           "hashboards": {
             "type": "array",
-            "description": "Array of per-hashboard telemetry data. Included when level=hashboard or level=asic is specified. Each hashboard object contains its metrics, with ASIC-level data nested within when level=asic is specified.",
+            "description": "Array of per-hashboard telemetry data. Only included when level parameter is 'hashboard' or 'asic'. Each hashboard object contains its metrics, with ASIC-level data nested within when level is 'asic'",
             "items": {
               "$ref": "#/components/schemas/HashboardTelemetry"
             },
@@ -5037,34 +5862,7 @@
             "description": "Array of per-PSU telemetry data. Included when level=psu is specified.",
             "items": {
               "$ref": "#/components/schemas/PsuTelemetry"
-            },
-            "example": [
-              {
-                "index": 0,
-                "serial_number": "PSU001234",
-                "voltage": {
-                  "unit": "V",
-                  "input": 240.0,
-                  "output": 12.1
-                },
-                "current": {
-                  "unit": "A",
-                  "input": 14.5,
-                  "output": 268.6
-                },
-                "power": {
-                  "unit": "W",
-                  "input": 3480,
-                  "output": 3250
-                },
-                "temperature": {
-                  "unit": "°C",
-                  "hotspot": 65.5,
-                  "ambient": 45.2,
-                  "average": 55.4
-                }
-              }
-            ]
+            }
           }
         },
         "required": [
@@ -5173,7 +5971,7 @@
           },
           "average": {
             "type": "number",
-            "description": "Average temperature value of all temperature sensors on hashboard"
+            "description": "Average temperature value"
           }
         },
         "required": [
@@ -5197,6 +5995,56 @@
         "required": [
           "hashrate",
           "temperature"
+        ]
+      },
+      "MetricUnit": {
+        "type": "string",
+        "enum": [
+          "TH/s",
+          "°C",
+          "W",
+          "J/TH",
+          "V",
+          "A"
+        ],
+        "description": "Unit of measurement for metrics",
+        "example": "TH/s"
+      },
+      "MetricValue": {
+        "type": "object",
+        "description": "A metric value with its unit",
+        "properties": {
+          "value": {
+            "type": "number",
+            "description": "The numeric value of the metric"
+          },
+          "unit": {
+            "$ref": "#/components/schemas/MetricUnit"
+          }
+        },
+        "required": [
+          "value",
+          "unit"
+        ]
+      },
+      "MetricArray": {
+        "type": "object",
+        "description": "An array of metric values with a shared unit",
+        "properties": {
+          "unit": {
+            "$ref": "#/components/schemas/MetricUnit"
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "Array of values where index corresponds to ASIC index"
+          }
+        },
+        "required": [
+          "unit",
+          "values"
         ]
       },
       "PsuInputOutputMetric": {
@@ -5282,55 +6130,130 @@
           "temperature"
         ]
       },
-      "MetricUnit": {
+      "PsuFieldType": {
         "type": "string",
+        "description": "Available field types for PSU-level data",
         "enum": [
-          "TH/s",
-          "°C",
-          "W",
-          "J/TH",
-          "V",
-          "A"
-        ],
-        "description": "Unit of measurement for metrics",
-        "example": "TH/s"
+          "outputVoltage",
+          "outputCurrent",
+          "outputPower",
+          "inputVoltage",
+          "inputCurrent",
+          "inputPower",
+          "hotspotTemp",
+          "ambientTemp",
+          "averageTemp"
+        ]
       },
-      "MetricValue": {
+      "HashrateWindow": {
+        "description": "Hashrate calculated over a specific time window",
         "type": "object",
-        "description": "A metric value with its unit",
         "properties": {
-          "value": {
-            "type": "number",
-            "description": "The numeric value of the metric"
+          "duration_minutes": {
+            "type": "integer",
+            "description": "Duration of the time window in minutes",
+            "example": 5
           },
-          "unit": {
-            "$ref": "#/components/schemas/MetricUnit"
+          "hashrate_ths": {
+            "type": "number",
+            "description": "Hashrate in TH/s over the time window",
+            "example": 120.5
           }
         },
         "required": [
-          "value",
-          "unit"
+          "duration_minutes",
+          "hashrate_ths"
         ]
       },
-      "MetricArray": {
+      "PowerSuppliesResponse": {
+        "description": "Power supply information including firmware update status",
         "type": "object",
-        "description": "An array of metric values with a shared unit",
         "properties": {
-          "unit": {
-            "$ref": "#/components/schemas/MetricUnit"
-          },
-          "values": {
+          "psus_info": {
             "type": "array",
             "items": {
-              "type": "number"
-            },
-            "description": "Array of values where index corresponds to ASIC index"
+              "$ref": "#/components/schemas/PsuInfo"
+            }
+          },
+          "psu_update_status": {
+            "$ref": "#/components/schemas/PsuUpdateStatus"
           }
-        },
+        }
+      },
+      "PsuUpdateStatus": {
+        "description": "PSU firmware update status information",
+        "type": "object",
         "required": [
-          "unit",
-          "values"
+          "status"
+        ],
+        "properties": {
+          "available_firmware": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AvailablePsuFirmware"
+            }
+          },
+          "last_update": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp of the last PSU firmware update",
+            "example": "2025-11-10T12:42:19Z"
+          },
+          "status": {
+            "$ref": "#/components/schemas/PsuUpdateResultStatus",
+            "description": "Current status of PSU firmware update"
+          }
+        }
+      },
+      "PsuUpdateResultStatus": {
+        "description": "Status of PSU firmware update",
+        "type": "string",
+        "enum": [
+          "scheduled",
+          "success",
+          "timeout",
+          "failed",
+          "unknown"
         ]
+      },
+      "AvailablePsuFirmware": {
+        "description": "Information about an available PSU firmware file",
+        "type": "object",
+        "required": [
+          "filename",
+          "firmware_version",
+          "size_bytes",
+          "sha256",
+          "model"
+        ],
+        "properties": {
+          "filename": {
+            "type": "string",
+            "description": "Firmware file name",
+            "example": "chicony-s24-1.18.22.bin"
+          },
+          "firmware_version": {
+            "type": "string",
+            "description": "Firmware version string",
+            "example": "1.18.22"
+          },
+          "size_bytes": {
+            "type": "integer",
+            "format": "int64",
+            "description": "File size in bytes",
+            "example": 1048576
+          },
+          "sha256": {
+            "type": "string",
+            "description": "SHA-256 hash of the firmware file",
+            "example": "b5f8a2f4e5c19ac7e2e4d0a87f3a1a6b6e0c8b991f2e99a4f5cd5e512a5f4d1e3"
+          },
+          "model": {
+            "type": "string",
+            "description": "Compatible PSU model",
+            "example": "S24"
+          }
+        }
       }
     },
     "parameters": {
@@ -5380,6 +6303,49 @@
             "5m",
             "15m"
           ]
+        }
+      }
+    },
+    "examples": {
+      "HashboardStatsResponse": {
+        "summary": "HashboardStats Response Example",
+        "description": "Example of hashboard statistics including performance metrics and ASIC details",
+        "value": {
+          "hashboard-stats": {
+            "hb_sn": "HB001001",
+            "hb_id": 2,
+            "status": "Running",
+            "power_usage_watts": 2.35,
+            "voltage_mv": 11631.11,
+            "avg_asic_temp_c": 0,
+            "hashrate_ghs": 0,
+            "ideal_hashrate_ghs": 0,
+            "efficiency_jth": 40,
+            "inlet_temp_c": 36.19,
+            "outlet_temp_c": 78.64,
+            "asics": [
+              {
+                "id": 0,
+                "row": 1,
+                "column": 11,
+                "freq_mhz": 0,
+                "temp_c": 0,
+                "hashrate_ghs": 0,
+                "ideal_hashrate_ghs": 0,
+                "error_rate": 0
+              },
+              {
+                "id": 1,
+                "row": 1,
+                "column": 10,
+                "freq_mhz": 0,
+                "temp_c": 0,
+                "hashrate_ghs": 0,
+                "ideal_hashrate_ghs": 0,
+                "error_rate": 0
+              }
+            ]
+          }
         }
       }
     },
@@ -5444,8 +6410,8 @@
           }
         }
       },
-      "UpdateAlreadyInProgress": {
-        "description": "The update request was rejected because another update is already in progress.",
+      "SystemUpdateAlreadyInProgress": {
+        "description": "The system update request was rejected because another update is already in progress..",
         "content": {
           "application/json": {
             "schema": {
