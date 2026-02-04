@@ -370,7 +370,7 @@ footer p {
 /* Override Swagger UI's default black arrows in schemas */
 .swagger-ui .model-box button.model-box-control {
     background: transparent !important;
-    border: 1px solid var(--accent-color) !important;
+    border: none !important;
 }
 
 .swagger-ui .model-box button.model-box-control svg {
@@ -867,4 +867,82 @@ footer p {
 
 .swagger-ui .response-control-media-type--accept-controller {
     max-width: 140px !important;
+}
+
+/* ============================================
+   REMOVE WHITE BORDER AROUND SCHEMA TITLES
+   ============================================ */
+
+/* Ensure no white borders on any schema-related elements */
+.swagger-ui .model-title,
+.swagger-ui .models h4,
+.swagger-ui .models h5,
+.swagger-ui section.models h4,
+.swagger-ui section.models h5,
+.swagger-ui .model-container h4,
+.swagger-ui .model-container h5,
+.swagger-ui .model-box h4,
+.swagger-ui .model-box h5,
+.swagger-ui .model h4,
+.swagger-ui .model h5 {
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    background: transparent !important;
+}
+
+/* Remove any potential white borders from schema title wrappers */
+.swagger-ui .model-title-wrapper,
+.swagger-ui .model-box-control,
+.swagger-ui .model-container > div,
+.swagger-ui .models .model-container > div {
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+/* Additional comprehensive rules to remove white borders from all schema elements */
+.swagger-ui .model-container,
+.swagger-ui section.models .model-container,
+.swagger-ui .models-control,
+.swagger-ui .model-box,
+.swagger-ui .model-box > div,
+.swagger-ui .model-container > span,
+.swagger-ui .model-container > div > span,
+.swagger-ui .model-title > span,
+.swagger-ui section.models h4 > span,
+.swagger-ui .models h4 > span {
+    border: none !important;
+    border-top: none !important;
+    border-bottom: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    background: transparent !important;
+}
+
+/* Remove padding/margin that might create visual borders */
+.swagger-ui .model-container {
+    padding: 0 !important;
+    margin: 10px 0 !important;
+}
+
+/* Ensure schema section headers have no borders */
+.swagger-ui section.models {
+    border: none !important;
+}
+
+.swagger-ui section.models .model-container {
+    border: none !important;
+    background: transparent !important;
+}
+
+/* Remove any borders from model title spans */
+.swagger-ui .model-title span,
+.swagger-ui .models h4 span,
+.swagger-ui section.models h4 span {
+    border: none !important;
+    padding: 0 !important;
+    background: transparent !important;
 }
