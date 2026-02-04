@@ -1024,3 +1024,12 @@ footer p {
     border: none !important;
     background: transparent !important;
 }
+
+/* Fix for Swagger UI 5.10.5 - remove border-bottom from schema titles */
+.swagger-ui section.models h4,
+.swagger-ui section.models h5,
+.swagger-ui .models h4,
+.swagger-ui .models h5 {
+    border-bottom: 0 !important;
+    border-top: 0 !important;
+}
