@@ -946,3 +946,81 @@ footer p {
     padding: 0 !important;
     background: transparent !important;
 }
+
+/* ============================================
+   AGGRESSIVE FIX: REMOVE ALL WHITE BORDERS
+   ============================================ */
+
+/* Target ALL possible elements that could have white borders */
+.swagger-ui .model-container *,
+.swagger-ui .model-box *,
+.swagger-ui .models *,
+.swagger-ui section.models *,
+.swagger-ui .model *,
+.swagger-ui .model-title *,
+.swagger-ui .models h4 *,
+.swagger-ui .models h5 * {
+    border-color: transparent !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+/* Force all schema-related backgrounds to be transparent or dark */
+.swagger-ui .model-container,
+.swagger-ui .model-container > *,
+.swagger-ui .model-box,
+.swagger-ui .model-box > *,
+.swagger-ui .models,
+.swagger-ui .models > *,
+.swagger-ui section.models,
+.swagger-ui section.models > *,
+.swagger-ui .model-title,
+.swagger-ui .models h4,
+.swagger-ui .models h5 {
+    background-color: transparent !important;
+    background: transparent !important;
+}
+
+/* Remove any potential white/light colored borders using wildcard */
+.swagger-ui [class*="model"] {
+    border-color: transparent !important;
+}
+
+/* Ensure no element within schemas has a white background */
+.swagger-ui section.models [style*="background"],
+.swagger-ui .model-container [style*="background"],
+.swagger-ui .model-box [style*="background"] {
+    background: transparent !important;
+}
+
+/* Override any inline styles that might add borders */
+.swagger-ui section.models [style*="border"],
+.swagger-ui .model-container [style*="border"],
+.swagger-ui .model-box [style*="border"] {
+    border: none !important;
+}
+
+/* Nuclear option: remove borders from everything in the models section */
+.swagger-ui section.models,
+.swagger-ui section.models *,
+.swagger-ui .models,
+.swagger-ui .models * {
+    border: 0 !important;
+    border-width: 0 !important;
+    border-style: none !important;
+}
+
+/* Ensure model wrapper has no borders */
+.swagger-ui .model-wrapper,
+.swagger-ui .model-wrapper * {
+    border: none !important;
+    background: transparent !important;
+}
+
+/* Target specific Swagger UI classes that might have borders */
+.swagger-ui .model-box-control,
+.swagger-ui .model-title__text,
+.swagger-ui .models-control {
+    border: none !important;
+    background: transparent !important;
+}
