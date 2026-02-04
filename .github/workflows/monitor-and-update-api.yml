@@ -94,6 +94,21 @@ jobs:
                   "type": "mrkdwn",
                   "text": "🤖 Starting automatic documentation update..."
                 }
+              },
+              {
+                "type": "actions",
+                "elements": [
+                  {
+                    "type": "button",
+                    "text": {
+                      "type": "plain_text",
+                      "text": "📖 View API Docs",
+                      "emoji": true
+                    },
+                    "url": "https://proto-sdk.github.io/proto-api-docs/",
+                    "style": "primary"
+                  }
+                ]
               }
             ]
           }
