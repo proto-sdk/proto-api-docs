@@ -10,7 +10,7 @@
       "name": "MIT",
       "url": "https://opensource.org/license/mit"
     },
-    "version": "1.7.4"
+    "version": "1.7.3"
   },
   "servers": [
     {
@@ -706,55 +706,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/MiningTargetResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "422": {
-            "$ref": "#/components/responses/UnprocessableEntity"
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalServerError"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/v1/mining/tuning": {
-      "put": {
-        "tags": [
-          "Mining"
-        ],
-        "description": "The mining tuning endpoint can be used to set a hashboard level optimization algorithm",
-        "operationId": "EditMiningTuning",
-        "requestBody": {
-          "description": "The tuning algorithm to run on the hashboards",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/MiningTuningConfig"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "The mining tuning algorithm has been successfully updated.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MiningTuningConfig"
                 }
               }
             }
@@ -2859,28 +2810,6 @@
             "example": 2500
           }
         }
-      },
-      "MiningTuning": {
-        "type": "string",
-        "description": "The hashboard performance tuning algorithm",
-        "example": "None",
-        "enum": [
-          "None",
-          "VoltageImbalanceCompensation",
-          "Fuzzing"
-        ]
-      },
-      "MiningTuningConfig": {
-        "type": "object",
-        "description": "Mining tuning configuration for setting hashboard optimization algorithms",
-        "properties": {
-          "algorithm": {
-            "$ref": "#/components/schemas/MiningTuning"
-          }
-        },
-        "required": [
-          "algorithm"
-        ]
       },
       "Pool": {
         "description": "Mining pool configuration with connection details and priorities",

@@ -1,4 +1,11 @@
 ## [1.7.2] - 2024-12-17
+## [1.7.4] - 2026-02-05
+
+### Changed
+- Updated API specification from miner-firmware upstream
+- Version bump: 1.7.3 → 1.7.4
+- Automatically synchronized with btc-mining/miner-firmware
+
 ## [1.7.3] - 2026-02-04
 
 ### Changed
