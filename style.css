@@ -873,6 +873,17 @@ footer p {
    REMOVE WHITE BORDER AROUND SCHEMA TITLES
    ============================================ */
 
+/* Target the exact Swagger UI classes that create borders */
+.swagger-ui section.models,
+.swagger-ui section.models.is-open {
+    border: none !important;
+}
+
+.swagger-ui section.models.is-open h4,
+.swagger-ui section.models h4 {
+    border-bottom: none !important;
+}
+
 /* Ensure no white borders on any schema-related elements */
 .swagger-ui .model-title,
 .swagger-ui .models h4,
