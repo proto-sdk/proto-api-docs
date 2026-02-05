@@ -1,53 +1,84 @@
-## [1.7.2] - 2024-12-17
-## [1.7.4] - 2026-02-05
-
-### Changed
-- Updated API specification from miner-firmware upstream
-- Version bump: 1.7.3 → 1.7.4
-- Automatically synchronized with btc-mining/miner-firmware
-
-## [1.7.3] - 2026-02-04
-
-### Changed
-- Updated API specification from miner-firmware upstream
-- Version bump: 1.7.2 → 1.7.3
-- Automatically synchronized with btc-mining/miner-firmware
-
-
-### Changed
-- **Tag Descriptions**: Updated all API tag descriptions for improved clarity and consistency
-  - Mining: Enhanced description for mining control and configuration
-  - System: Clarified system information and actions
-  - Network: Updated network configuration description
-  - Errors: Improved error reporting description
-  - Pools: Enhanced pool configuration description
-  - Cooling: Updated cooling system description
-  - Authentication: Clarified authentication functions
-  - Hashboards: Enhanced hashboard information description
-  - Hashrate: Updated historical hashrate description
-  - Temperature: Improved temperature data description
-  - Power: Enhanced power information description
-  - Efficiency: Updated efficiency data description
-  - System Information: Clarified system status description
-  - Hardware: Enhanced hardware components description
-  - PSUs: Updated power supply units description
-  - Fans: Improved cooling fans description
-  - Time Series: Enhanced unified data access description
-  - Telemetry: Updated real-time metrics description
-  - System Tag: Clarified custom tag functionality
-
-### Technical Notes
-- Maintains OpenAPI 3.0.3 compatibility
-- No breaking changes to existing endpoints
-- Documentation improvements only
-- All API functionality remains unchanged
-
 # Proto API Documentation Changelog
 
 All notable changes to the Proto API documentation will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [1.7.4] - 2026-02-05
+
+### Added
+- **Mining Tuning Endpoint**: New endpoint for hashboard optimization algorithms
+  - `PUT /api/v1/mining/tuning`: Configure hashboard-level performance tuning
+  - Supports three optimization algorithms:
+    - `None`: No optimization (default)
+    - `VoltageImbalanceCompensation`: Compensates for voltage imbalances across ASICs
+    - `Fuzzing`: Experimental performance testing algorithm
+  - Useful for performance optimization and hardware testing
+- **New Schemas**:
+  - `MiningTuning`: Enum for tuning algorithm selection
+  - `MiningTuningConfig`: Configuration object for tuning settings
+
+### Changed
+- **API Version**: Bumped to 1.7.4
+- Updated API specification from miner-firmware upstream
+
+### Technical Notes
+- Maintains OpenAPI 3.0.3 compatibility
+- No breaking changes to existing endpoints
+- All updates are additive and backward compatible
+- Requires Bearer authentication
+- Automatically synchronized with btc-mining/miner-firmware
+
+## [1.7.3] - 2026-02-04
+
+### Added
+- **ASIC Voltage Monitoring**: New `voltage_mv` field in AsicStats schema
+  - Exposes per-ASIC voltage values in millivolts (mV)
+  - Available in hashboard endpoints:
+    - `GET /api/v1/hashboards/{sn}`: Returns voltage_mv for all ASICs on the hashboard
+    - `GET /api/v1/hashboards/{sn}/{asic_index}`: Returns voltage_mv for individual ASIC
+  - Useful for debugging voltage-related issues and monitoring ASIC health
+  - Field format matches existing hashboard-level voltage_mv format for consistency
+
+### Changed
+- **API Version**: Bumped to 1.7.3
+- Updated API specification from miner-firmware upstream (PR #3059)
+
+### Technical Notes
+- Maintains OpenAPI 3.0.3 compatibility
+- No breaking changes to existing endpoints
+- All updates are additive and backward compatible
+- Voltage values are reported in millivolts for precision
+- Automatically synchronized with btc-mining/miner-firmware
+
+## [1.7.2] - 2026-01-30
+
+### Added
+- **Pool Name Support**: New `name` field for user-defined pool display names
+  - Added `name` field to Pool schema (optional string)
+  - Added `name` field to PoolConfig_inner schema
+  - Allows users to assign custom display names to mining pools
+  - Backward compatible with existing pool configurations
+  - Available in pool configuration and status endpoints
+
+### Changed
+- **Cooling Mode Enum**: Updated CoolingMode enum values to REST-friendly format
+  - Changed from RPC-style naming (COOLING_MODE_*) to REST-friendly values
+  - New enum values: "Unknown", "Off", "Auto", "Manual"
+  - Added "Unknown" variant to CoolingConfig.mode for better error handling
+  - Improves consistency with REST API conventions
+  - Fixes frontend type generation issues
+- **API Version**: Bumped to 1.7.2
+- Updated API specification from miner-firmware upstream (PRs #3002, #3012)
+
+### Technical Notes
+- Maintains OpenAPI 3.0.3 compatibility
+- No breaking changes to existing endpoints
+- All updates are additive and backward compatible
+- Pool name field is optional and does not affect existing configurations
+- Cooling mode enum changes improve API usability and frontend integration
+- Automatically synchronized with btc-mining/miner-firmware
 
 ## [1.7.1] - 2024-11-26
 
