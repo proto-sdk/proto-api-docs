@@ -946,3 +946,39 @@ footer p {
     padding: 0 !important;
     background: transparent !important;
 }
+
+/* Override Swagger UI default borders that may appear on Schema titles */
+.swagger-ui .model-box,
+.swagger-ui .model-container,
+.swagger-ui section.models .model-container {
+    border-color: transparent !important;
+    border-width: 0 !important;
+}
+
+/* Ensure Schema title text is readable - orange for titles, white for content */
+.swagger-ui .model-title,
+.swagger-ui .models h4,
+.swagger-ui section.models h4 {
+    color: var(--accent-color) !important;
+    background-color: transparent !important;
+    border: 0 !important;
+}
+
+/* All Schema content text in white */
+.swagger-ui .model,
+.swagger-ui .model .property,
+.swagger-ui .model-box .model {
+    color: var(--text-color) !important;
+}
+
+/* Remove any underlines or decorative borders from Schema section */
+.swagger-ui section.models::before,
+.swagger-ui section.models::after,
+.swagger-ui .model-container::before,
+.swagger-ui .model-container::after,
+.swagger-ui .model-title::before,
+.swagger-ui .model-title::after {
+    display: none !important;
+    border: none !important;
+    content: none !important;
+}
