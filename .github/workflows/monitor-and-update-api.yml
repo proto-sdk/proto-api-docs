@@ -183,6 +183,60 @@ jobs:
           echo "⏳ Waiting 60 seconds for GitHub Pages to deploy..."
           sleep 60
       
+      - name: Extract changelog details
+        if: steps.fetch.outputs.version_changed == 'true'
+        id: changelog
+        run: |
+          UPSTREAM_VERSION="${{ steps.fetch.outputs.upstream_version }}"
+          
+          # Extract the changelog section for the new version
+          # This captures everything between the version header and the next version header
+          CHANGELOG_SECTION=$(awk -v version="$UPSTREAM_VERSION" '
+            /^## \[/ {
+              if (found) exit;
+              if ($0 ~ "\\[" version "\\]") {
+                found=1;
+                next;
+              }
+            }
+            found && /^## \[/ { exit }
+            found { print }
+          ' CHANGELOG.md)
+          
+          # Extract "Added" section
+          ADDED=$(echo "$CHANGELOG_SECTION" | awk '
+            /^### Added/ { found=1; next }
+            /^### / { found=0 }
+            found && NF { print }
+          ' | head -20)
+          
+          # Extract "Changed" section
+          CHANGED=$(echo "$CHANGELOG_SECTION" | awk '
+            /^### Changed/ { found=1; next }
+            /^### / { found=0 }
+            found && NF { print }
+          ' | head -20)
+          
+          # Format for Slack (escape special characters and convert to bullet points)
+          format_for_slack() {
+            echo "$1" | sed 's/"/\\"/g' | sed 's/^- /• /' | sed 's/^  - /  ◦ /' | head -10
+          }
+          
+          ADDED_FORMATTED=$(format_for_slack "$ADDED")
+          CHANGED_FORMATTED=$(format_for_slack "$CHANGED")
+          
+          # Save to output using delimiter for multiline
+          {
+            echo "added<<EOF_ADDED"
+            echo "$ADDED_FORMATTED"
+            echo "EOF_ADDED"
+            echo "changed<<EOF_CHANGED"
+            echo "$CHANGED_FORMATTED"
+            echo "EOF_CHANGED"
+          } >> $GITHUB_OUTPUT
+          
+          echo "✅ Changelog details extracted"
+      
       - name: Notify completion to #proto-documentation
         if: steps.fetch.outputs.version_changed == 'true'
         env:
@@ -191,6 +245,41 @@ jobs:
           UPSTREAM_VERSION="${{ steps.fetch.outputs.upstream_version }}"
           CURRENT_VERSION="${{ steps.fetch.outputs.current_version }}"
           COMMIT_SHA=$(git rev-parse --short HEAD)
+          ADDED="${{ steps.changelog.outputs.added }}"
+          CHANGED="${{ steps.changelog.outputs.changed }}"
+          
+          # Build changelog section dynamically
+          CHANGELOG_BLOCKS=""
+          
+          if [ -n "$ADDED" ]; then
+            CHANGELOG_BLOCKS="$CHANGELOG_BLOCKS
+              {
+                \"type\": \"section\",
+                \"text\": {
+                  \"type\": \"mrkdwn\",
+                  \"text\": \"*✨ What's New:*\n$ADDED\"
+                }
+              },"
+          fi
+          
+          if [ -n "$CHANGED" ]; then
+            CHANGELOG_BLOCKS="$CHANGELOG_BLOCKS
+              {
+                \"type\": \"section\",
+                \"text\": {
+                  \"type\": \"mrkdwn\",
+                  \"text\": \"*🔄 Changes:*\n$CHANGED\"
+                }
+              },"
+          fi
+          
+          # Add divider if we have changelog content
+          if [ -n "$CHANGELOG_BLOCKS" ]; then
+            CHANGELOG_BLOCKS="$CHANGELOG_BLOCKS
+              {
+                \"type\": \"divider\"
+              },"
+          fi
           
           curl -X POST "$SLACK_WEBHOOK_DOCS" \
             -H 'Content-Type: application/json' \
@@ -219,12 +308,9 @@ jobs:
                 ]
               },
               {
-                "type": "section",
-                "text": {
-                  "type": "mrkdwn",
-                  "text": "The Proto Mining API documentation has been automatically updated with the latest version from the miner-firmware repository."
-                }
+                "type": "divider"
               },
+              $CHANGELOG_BLOCKS
               {
                 "type": "actions",
                 "elements": [
