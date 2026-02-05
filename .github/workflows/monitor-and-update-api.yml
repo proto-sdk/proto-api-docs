@@ -217,9 +217,9 @@ jobs:
             found && NF { print }
           ' | head -20)
           
-          # Format for Slack (escape special characters and convert to bullet points)
+          # Format for Slack - convert bullets and limit lines
           format_for_slack() {
-            echo "$1" | sed 's/"/\\"/g' | sed 's/^- /• /' | sed 's/^  - /  ◦ /' | head -10
+            echo "$1" | sed 's/^- /• /' | sed 's/^  - /  ◦ /' | head -10
           }
           
           ADDED_FORMATTED=$(format_for_slack "$ADDED")
@@ -245,117 +245,129 @@ jobs:
           UPSTREAM_VERSION="${{ steps.fetch.outputs.upstream_version }}"
           CURRENT_VERSION="${{ steps.fetch.outputs.current_version }}"
           COMMIT_SHA=$(git rev-parse --short HEAD)
-          ADDED="${{ steps.changelog.outputs.added }}"
-          CHANGED="${{ steps.changelog.outputs.changed }}"
           
-          # Build changelog section dynamically
-          CHANGELOG_BLOCKS=""
+          # Read changelog outputs (properly escaped by GitHub Actions)
+          ADDED=$(cat << 'ADDED_EOF'
+          ${{ steps.changelog.outputs.added }}
+          ADDED_EOF
+          )
           
-          if [ -n "$ADDED" ]; then
-            CHANGELOG_BLOCKS="$CHANGELOG_BLOCKS
-              {
-                \"type\": \"section\",
-                \"text\": {
-                  \"type\": \"mrkdwn\",
-                  \"text\": \"*✨ What's New:*\n$ADDED\"
-                }
-              },"
+          CHANGED=$(cat << 'CHANGED_EOF'
+          ${{ steps.changelog.outputs.changed }}
+          CHANGED_EOF
+          )
+          
+          # Build the Slack message using jq for proper JSON escaping
+          ADDED_JSON=$(echo "$ADDED" | jq -Rs .)
+          CHANGED_JSON=$(echo "$CHANGED" | jq -Rs .)
+          
+          # Build changelog blocks array
+          CHANGELOG_BLOCKS="[]"
+          
+          if [ -n "$ADDED" ] && [ "$ADDED" != "" ]; then
+            CHANGELOG_BLOCKS=$(echo "$CHANGELOG_BLOCKS" | jq --arg text "*✨ What's New:*\n$ADDED" '. += [{
+              "type": "section",
+              "text": {
+                "type": "mrkdwn",
+                "text": $text
+              }
+            }]')
           fi
           
-          if [ -n "$CHANGED" ]; then
-            CHANGELOG_BLOCKS="$CHANGELOG_BLOCKS
-              {
-                \"type\": \"section\",
-                \"text\": {
-                  \"type\": \"mrkdwn\",
-                  \"text\": \"*🔄 Changes:*\n$CHANGED\"
-                }
-              },"
+          if [ -n "$CHANGED" ] && [ "$CHANGED" != "" ]; then
+            CHANGELOG_BLOCKS=$(echo "$CHANGELOG_BLOCKS" | jq --arg text "*🔄 Changes:*\n$CHANGED" '. += [{
+              "type": "section",
+              "text": {
+                "type": "mrkdwn",
+                "text": $text
+              }
+            }]')
           fi
           
           # Add divider if we have changelog content
-          if [ -n "$CHANGELOG_BLOCKS" ]; then
-            CHANGELOG_BLOCKS="$CHANGELOG_BLOCKS
-              {
-                \"type\": \"divider\"
-              },"
+          if [ "$(echo "$CHANGELOG_BLOCKS" | jq 'length')" -gt 0 ]; then
+            CHANGELOG_BLOCKS=$(echo "$CHANGELOG_BLOCKS" | jq '. += [{"type": "divider"}]')
           fi
           
-          curl -X POST "$SLACK_WEBHOOK_DOCS" \
-            -H 'Content-Type: application/json' \
-            -d @- << EOF
-          {
-            "blocks": [
-              {
-                "type": "header",
-                "text": {
-                  "type": "plain_text",
-                  "text": "✅ Proto Mining API Documentation Updated!",
-                  "emoji": true
+          # Build the complete Slack message
+          jq -n \
+            --arg current "$CURRENT_VERSION" \
+            --arg upstream "$UPSTREAM_VERSION" \
+            --arg commit "$COMMIT_SHA" \
+            --argjson changelog "$CHANGELOG_BLOCKS" \
+            '{
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "✅ Proto Mining API Documentation Updated!",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Version:*\n\($current) → \($upstream)"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Status:*\n✅ Live"
+                    }
+                  ]
+                },
+                {
+                  "type": "divider"
                 }
-              },
-              {
-                "type": "section",
-                "fields": [
-                  {
-                    "type": "mrkdwn",
-                    "text": "*Version:*\n$CURRENT_VERSION → $UPSTREAM_VERSION"
-                  },
-                  {
-                    "type": "mrkdwn",
-                    "text": "*Status:*\n✅ Live"
-                  }
-                ]
-              },
-              {
-                "type": "divider"
-              },
-              $CHANGELOG_BLOCKS
-              {
-                "type": "actions",
-                "elements": [
-                  {
-                    "type": "button",
-                    "text": {
-                      "type": "plain_text",
-                      "text": "📖 View API Docs",
-                      "emoji": true
+              ] + $changelog + [
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "📖 View API Docs",
+                        "emoji": true
+                      },
+                      "url": "https://proto-sdk.github.io/proto-api-docs/",
+                      "style": "primary"
                     },
-                    "url": "https://proto-sdk.github.io/proto-api-docs/",
-                    "style": "primary"
-                  },
-                  {
-                    "type": "button",
-                    "text": {
-                      "type": "plain_text",
-                      "text": "📝 View Changelog",
-                      "emoji": true
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "📝 View Changelog",
+                        "emoji": true
+                      },
+                      "url": "https://github.com/proto-sdk/proto-api-docs/blob/main/CHANGELOG.md"
                     },
-                    "url": "https://github.com/proto-sdk/proto-api-docs/blob/main/CHANGELOG.md"
-                  },
-                  {
-                    "type": "button",
-                    "text": {
-                      "type": "plain_text",
-                      "text": "🔍 View Commit",
-                      "emoji": true
-                    },
-                    "url": "https://github.com/proto-sdk/proto-api-docs/commit/$COMMIT_SHA"
-                  }
-                ]
-              },
-              {
-                "type": "context",
-                "elements": [
-                  {
-                    "type": "mrkdwn",
-                    "text": "🤖 Automatically updated by Proto API Monitor"
-                  }
-                ]
-              }
-            ]
-          }
-          EOF
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "🔍 View Commit",
+                        "emoji": true
+                      },
+                      "url": "https://github.com/proto-sdk/proto-api-docs/commit/\($commit)"
+                    }
+                  ]
+                },
+                {
+                  "type": "context",
+                  "elements": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "🤖 Automatically updated by Proto API Monitor"
+                    }
+                  ]
+                }
+              ]
+            }' | curl -X POST "$SLACK_WEBHOOK_DOCS" \
+              -H 'Content-Type: application/json' \
+              -d @-
           
           echo "✅ Notification sent to #proto-documentation"
       
