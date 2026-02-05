@@ -623,6 +623,35 @@ footer p {
     background-color: var(--hover-color) !important;
 }
 
+/* ============================================
+   REMOVE WHITE BORDER FROM SCHEMA SECTION
+   ============================================ */
+
+/* Remove main border from Schema section */
+.swagger-ui section.models,
+.swagger-ui section.models.is-open {
+    border: none !important;
+    border-color: transparent !important;
+}
+
+/* Remove border from Schema title when expanded */
+.swagger-ui section.models.is-open h4 {
+    border-bottom: none !important;
+    border-bottom-color: transparent !important;
+}
+
+/* Remove any borders from model containers */
+.swagger-ui .model-container {
+    border: none !important;
+}
+
+/* Remove borders from control elements */
+.swagger-ui .models-control,
+.swagger-ui .model-box-control {
+    border: none !important;
+    border-bottom: none !important;
+}
+
 /* Enhanced Mobile Responsiveness */
 @media (max-width: 768px) {
     /* Header adjustments */
