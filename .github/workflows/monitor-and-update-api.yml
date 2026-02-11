@@ -14,6 +14,7 @@ jobs:
       - name: Checkout proto-api-docs
         uses: actions/checkout@v4
         with:
+          ref: staging
           token: ${{ secrets.PRIVATE_REPO_TOKEN }}
           fetch-depth: 0
       
@@ -175,13 +176,13 @@ jobs:
           
           git push
           
-          echo "✅ Changes pushed to main branch"
+          echo "✅ Changes pushed to staging branch"
       
-      - name: Wait for GitHub Pages deployment
+      - name: Note about staging deployment
         if: steps.fetch.outputs.version_changed == 'true'
         run: |
-          echo "⏳ Waiting 60 seconds for GitHub Pages to deploy..."
-          sleep 60
+          echo "ℹ️  Changes pushed to staging branch"
+          echo "ℹ️  Merge staging → main to deploy to production (GitHub Pages)"
       
       - name: Extract changelog details
         if: steps.fetch.outputs.version_changed == 'true'
@@ -301,7 +302,7 @@ jobs:
                   "type": "header",
                   "text": {
                     "type": "plain_text",
-                    "text": "✅ Proto Mining API Documentation Updated!",
+                    "text": "🔄 Proto API Update Ready for Review",
                     "emoji": true
                   }
                 },
@@ -314,9 +315,16 @@ jobs:
                     },
                     {
                       "type": "mrkdwn",
-                      "text": "*Status:*\n✅ Live"
+                      "text": "*Status:*\n⏳ Staging (Pending Review)"
                     }
                   ]
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "📋 *Action Required:* Review and merge staging → main to deploy to production"
+                  }
                 },
                 {
                   "type": "divider"
@@ -329,20 +337,20 @@ jobs:
                       "type": "button",
                       "text": {
                         "type": "plain_text",
-                        "text": "📖 View API Docs",
+                        "text": "🔍 Review Changes",
                         "emoji": true
                       },
-                      "url": "https://proto-sdk.github.io/proto-api-docs/",
+                      "url": "https://github.com/proto-sdk/proto-api-docs/compare/main...staging",
                       "style": "primary"
                     },
                     {
                       "type": "button",
                       "text": {
                         "type": "plain_text",
-                        "text": "📝 View Changelog",
+                        "text": "📝 View Staging",
                         "emoji": true
                       },
-                      "url": "https://github.com/proto-sdk/proto-api-docs/blob/main/CHANGELOG.md"
+                      "url": "https://github.com/proto-sdk/proto-api-docs/tree/staging"
                     },
                     {
                       "type": "button",
@@ -360,7 +368,7 @@ jobs:
                   "elements": [
                     {
                       "type": "mrkdwn",
-                      "text": "🤖 Automatically updated by Proto API Monitor"
+                      "text": "🤖 Automatically updated by Proto API Monitor | 📖 <https://proto-sdk.github.io/proto-api-docs/|Current Production Docs>"
                     }
                   ]
                 }
