@@ -1,4 +1,11 @@
 # Proto API Documentation Changelog
+## [1.7.5] - 2026-02-13
+
+### Changed
+- Updated API specification from miner-firmware upstream
+- Version bump: 1.7.4 → 1.7.5
+- Automatically synchronized with btc-mining/miner-firmware
+
 
 All notable changes to the Proto API documentation will be documented in this file.
 
