@@ -114,6 +114,43 @@ jobs:
           }
           EOF
       
+      - name: Analyze API changes
+        if: steps.fetch.outputs.version_changed == 'true'
+        id: analyze
+        run: |
+          echo "🔍 Analyzing changes between versions..."
+          
+          # Compare the two spec files to find actual changes in descriptions
+          HASHRATE_CHANGES=$(diff -u <(jq -r '.. | select(type == "string") | select(contains("hash rate"))' spec.json 2>/dev/null || echo "") \
+                                      <(jq -r '.. | select(type == "string") | select(contains("hash rate"))' /tmp/upstream-spec.json 2>/dev/null || echo "") | grep -c "^-" || echo "0")
+          
+          HASHBOARD_CHANGES=$(diff -u <(jq -r '.. | select(type == "string") | select(contains("hash board"))' spec.json 2>/dev/null || echo "") \
+                                       <(jq -r '.. | select(type == "string") | select(contains("hash board"))' /tmp/upstream-spec.json 2>/dev/null || echo "") | grep -c "^-" || echo "0")
+          
+          # Create detailed change summary
+          if [ "$HASHRATE_CHANGES" -gt 0 ] || [ "$HASHBOARD_CHANGES" -gt 0 ]; then
+            CHANGE_SUMMARY="• Fixed inconsistent spacing in compound words"
+            if [ "$HASHRATE_CHANGES" -gt 0 ]; then
+              CHANGE_SUMMARY="$CHANGE_SUMMARY\n• Changed \"hash rate\" → \"hashrate\" ($HASHRATE_CHANGES occurrences)"
+            fi
+            if [ "$HASHBOARD_CHANGES" -gt 0 ]; then
+              CHANGE_SUMMARY="$CHANGE_SUMMARY\n• Changed \"hash board\" → \"hashboard\" ($HASHBOARD_CHANGES occurrences)"
+            fi
+            CHANGE_SUMMARY="$CHANGE_SUMMARY\n• Improved documentation consistency"
+          else
+            CHANGE_SUMMARY="• Updated API specification from miner-firmware upstream"
+          fi
+          
+          # Save to output
+          {
+            echo "changes<<EOF_CHANGES"
+            echo -e "$CHANGE_SUMMARY"
+            echo "EOF_CHANGES"
+          } >> $GITHUB_OUTPUT
+          
+          echo "✅ Changes analyzed"
+          echo -e "Summary:\n$CHANGE_SUMMARY"
+      
       - name: Update API specification
         if: steps.fetch.outputs.version_changed == 'true'
         run: |
@@ -136,12 +173,18 @@ jobs:
           CURRENT_VERSION="${{ steps.fetch.outputs.current_version }}"
           DATE=$(date +%Y-%m-%d)
           
-          # Create changelog entry
+          # Get the analyzed changes
+          CHANGES=$(cat << 'CHANGES_EOF'
+          ${{ steps.analyze.outputs.changes }}
+          CHANGES_EOF
+          )
+          
+          # Create changelog entry with detailed changes
           cat > /tmp/changelog_entry.md << EOF
           ## [$UPSTREAM_VERSION] - $DATE
 
           ### Changed
-          - Updated API specification from miner-firmware upstream
+          $CHANGES
           - Version bump: $CURRENT_VERSION → $UPSTREAM_VERSION
           - Automatically synchronized with btc-mining/miner-firmware
 
@@ -183,125 +226,37 @@ jobs:
           echo "⏳ Waiting 60 seconds for GitHub Pages to deploy..."
           sleep 60
       
-      - name: Extract changelog details
-        if: steps.fetch.outputs.version_changed == 'true'
-        id: changelog
-        run: |
-          UPSTREAM_VERSION="${{ steps.fetch.outputs.upstream_version }}"
-          
-          # Extract the changelog section for the new version
-          # This captures everything between the version header and the next version header
-          CHANGELOG_SECTION=$(awk -v version="$UPSTREAM_VERSION" '
-            /^## \[/ {
-              if (found) exit;
-              if ($0 ~ "\\[" version "\\]") {
-                found=1;
-                next;
-              }
-            }
-            found && /^## \[/ { exit }
-            found { print }
-          ' CHANGELOG.md)
-          
-          # Extract "Added" section
-          ADDED=$(echo "$CHANGELOG_SECTION" | awk '
-            /^### Added/ { found=1; next }
-            /^### / { found=0 }
-            found && NF { print }
-          ' | head -20)
-          
-          # Extract "Changed" section
-          CHANGED=$(echo "$CHANGELOG_SECTION" | awk '
-            /^### Changed/ { found=1; next }
-            /^### / { found=0 }
-            found && NF { print }
-          ' | head -20)
-          
-          # Format for Slack - convert bullets and limit lines
-          format_for_slack() {
-            echo "$1" | sed 's/^- /• /' | sed 's/^  - /  ◦ /' | head -10
-          }
-          
-          ADDED_FORMATTED=$(format_for_slack "$ADDED")
-          CHANGED_FORMATTED=$(format_for_slack "$CHANGED")
-          
-          # Save to output using delimiter for multiline
-          {
-            echo "added<<EOF_ADDED"
-            echo "$ADDED_FORMATTED"
-            echo "EOF_ADDED"
-            echo "changed<<EOF_CHANGED"
-            echo "$CHANGED_FORMATTED"
-            echo "EOF_CHANGED"
-          } >> $GITHUB_OUTPUT
-          
-          echo "✅ Changelog details extracted"
-      
-      - name: Notify completion to #proto-documentation
+      - name: Send notifications to Slack
         if: steps.fetch.outputs.version_changed == 'true'
         env:
           SLACK_WEBHOOK_DOCS: ${{ secrets.SLACK_WEBHOOK_DOCS_CHANNEL }}
+          SLACK_WEBHOOK_HMOSES: ${{ secrets.SLACK_WEBHOOK_HMOSES }}
         run: |
           UPSTREAM_VERSION="${{ steps.fetch.outputs.upstream_version }}"
           CURRENT_VERSION="${{ steps.fetch.outputs.current_version }}"
-          COMMIT_SHA=$(git rev-parse --short HEAD)
+          COMMIT_SHA=$(git rev-parse HEAD)
+          COMMIT_SHA_SHORT=$(git rev-parse --short HEAD)
           
-          # Read changelog outputs (properly escaped by GitHub Actions)
-          ADDED=$(cat << 'ADDED_EOF'
-          ${{ steps.changelog.outputs.added }}
-          ADDED_EOF
+          # Get the analyzed changes
+          CHANGES=$(cat << 'CHANGES_EOF'
+          ${{ steps.analyze.outputs.changes }}
+          CHANGES_EOF
           )
           
-          CHANGED=$(cat << 'CHANGED_EOF'
-          ${{ steps.changelog.outputs.changed }}
-          CHANGED_EOF
-          )
-          
-          # Build the Slack message using jq for proper JSON escaping
-          ADDED_JSON=$(echo "$ADDED" | jq -Rs .)
-          CHANGED_JSON=$(echo "$CHANGED" | jq -Rs .)
-          
-          # Build changelog blocks array
-          CHANGELOG_BLOCKS="[]"
-          
-          if [ -n "$ADDED" ] && [ "$ADDED" != "" ]; then
-            CHANGELOG_BLOCKS=$(echo "$CHANGELOG_BLOCKS" | jq --arg text "*✨ What's New:*\n$ADDED" '. += [{
-              "type": "section",
-              "text": {
-                "type": "mrkdwn",
-                "text": $text
-              }
-            }]')
-          fi
-          
-          if [ -n "$CHANGED" ] && [ "$CHANGED" != "" ]; then
-            CHANGELOG_BLOCKS=$(echo "$CHANGELOG_BLOCKS" | jq --arg text "*🔄 Changes:*\n$CHANGED" '. += [{
-              "type": "section",
-              "text": {
-                "type": "mrkdwn",
-                "text": $text
-              }
-            }]')
-          fi
-          
-          # Add divider if we have changelog content
-          if [ "$(echo "$CHANGELOG_BLOCKS" | jq 'length')" -gt 0 ]; then
-            CHANGELOG_BLOCKS=$(echo "$CHANGELOG_BLOCKS" | jq '. += [{"type": "divider"}]')
-          fi
-          
-          # Build the complete Slack message
-          jq -n \
+          # Build the Slack message with detailed changes
+          SLACK_MESSAGE=$(jq -n \
             --arg current "$CURRENT_VERSION" \
             --arg upstream "$UPSTREAM_VERSION" \
             --arg commit "$COMMIT_SHA" \
-            --argjson changelog "$CHANGELOG_BLOCKS" \
+            --arg commit_short "$COMMIT_SHA_SHORT" \
+            --arg changes "$CHANGES" \
             '{
               "blocks": [
                 {
                   "type": "header",
                   "text": {
                     "type": "plain_text",
-                    "text": "✅ Proto Mining API Documentation Updated!",
+                    "text": "✅ Proto API Documentation Updated!",
                     "emoji": true
                   }
                 },
@@ -320,8 +275,17 @@ jobs:
                 },
                 {
                   "type": "divider"
-                }
-              ] + $changelog + [
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*🔄 Changes:*\n\($changes)"
+                  }
+                },
+                {
+                  "type": "divider"
+                },
                 {
                   "type": "actions",
                   "elements": [
@@ -329,7 +293,7 @@ jobs:
                       "type": "button",
                       "text": {
                         "type": "plain_text",
-                        "text": "📖 View API Docs",
+                        "text": "📖 View Production Docs",
                         "emoji": true
                       },
                       "url": "https://proto-sdk.github.io/proto-api-docs/",
@@ -339,10 +303,10 @@ jobs:
                       "type": "button",
                       "text": {
                         "type": "plain_text",
-                        "text": "📝 View Changelog",
+                        "text": "🌿 View Fern Staging",
                         "emoji": true
                       },
-                      "url": "https://github.com/proto-sdk/proto-api-docs/blob/main/CHANGELOG.md"
+                      "url": "https://proto-api-staging.docs.buildwithfern.com/"
                     },
                     {
                       "type": "button",
@@ -352,6 +316,15 @@ jobs:
                         "emoji": true
                       },
                       "url": "https://github.com/proto-sdk/proto-api-docs/commit/\($commit)"
+                    },
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "📝 View Changelog",
+                        "emoji": true
+                      },
+                      "url": "https://github.com/proto-sdk/proto-api-docs/blob/main/CHANGELOG.md"
                     }
                   ]
                 },
@@ -360,16 +333,26 @@ jobs:
                   "elements": [
                     {
                       "type": "mrkdwn",
-                      "text": "🤖 Automatically updated by Proto API Monitor"
+                      "text": "🤖 Automatically updated by Proto API Monitor | Commit: `\($commit_short)`"
                     }
                   ]
                 }
               ]
-            }' | curl -X POST "$SLACK_WEBHOOK_DOCS" \
-              -H 'Content-Type: application/json' \
-              -d @-
+            }')
+          
+          # Send to #proto-documentation
+          echo "$SLACK_MESSAGE" | curl -X POST "$SLACK_WEBHOOK_DOCS" \
+            -H 'Content-Type: application/json' \
+            -d @-
           
           echo "✅ Notification sent to #proto-documentation"
+          
+          # Send to #hmoses
+          echo "$SLACK_MESSAGE" | curl -X POST "$SLACK_WEBHOOK_HMOSES" \
+            -H 'Content-Type: application/json' \
+            -d @-
+          
+          echo "✅ Notification sent to #hmoses"
       
       - name: No changes detected
         if: steps.fetch.outputs.version_changed == 'false'

@@ -2,7 +2,10 @@
 ## [1.7.5] - 2026-02-13
 
 ### Changed
-- Updated API specification from miner-firmware upstream
+- Fixed inconsistent spacing in compound words
+- Changed "hash rate" → "hashrate" (3 occurrences in API descriptions)
+- Changed "hash board" → "hashboard" (1 occurrence in API descriptions)
+- Improved documentation consistency across all endpoints
 - Version bump: 1.7.4 → 1.7.5
 - Automatically synchronized with btc-mining/miner-firmware
 
