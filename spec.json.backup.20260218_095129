@@ -10,7 +10,7 @@
       "name": "MIT",
       "url": "https://opensource.org/license/mit"
     },
-    "version": "1.7.6"
+    "version": "1.7.5"
   },
   "servers": [
     {
@@ -2841,11 +2841,6 @@
             "type": "boolean",
             "description": "If enabled, will keep power evenly distributed across bays to balance power phases.",
             "example": false
-          },
-          "hash_on_disconnect": {
-            "type": "boolean",
-            "description": "If true, continue mining even when no valid pools are available. If false, stop mining when no valid pools are available.",
-            "example": false
           }
         }
       },
@@ -2876,11 +2871,6 @@
           "default_power_target_watts": {
             "type": "integer",
             "example": 2500
-          },
-          "hash_on_disconnect": {
-            "type": "boolean",
-            "description": "If true, continue mining even when no valid pools are available. If false, stop mining when no valid pools are available.",
-            "example": false
           }
         }
       },
