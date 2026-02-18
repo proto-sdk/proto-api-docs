@@ -1,10 +1,30 @@
 # Proto API Documentation Changelog
 ## [1.7.6] - 2026-02-18
 
+### Added
+- **Pool Disconnection Behavior Control**: New `hash_on_disconnect` configuration option
+  - Added `hash_on_disconnect` boolean field to `MiningTarget` schema
+  - Added `hash_on_disconnect` boolean field to `MiningTargetResponse` schema
+  - Controls miner behavior when no valid pools are available:
+    - `true`: Continue mining even when disconnected from all pools
+    - `false`: Stop mining when no valid pools are available (default behavior)
+  - Available in mining target endpoints:
+    - `GET /api/v1/mining/target`: Returns current hash_on_disconnect setting
+    - `PUT /api/v1/mining/target`: Configure hash_on_disconnect behavior
+  - Useful for testing, development, and specific mining scenarios
+  - Optional field (backward compatible with existing configurations)
+
 ### Changed
-• Updated API specification from miner-firmware upstream
-- Version bump: 1.7.5 → 1.7.6
+- **API Version**: Bumped to 1.7.6
+- Updated API specification from miner-firmware upstream
+
+### Technical Notes
+- Maintains OpenAPI 3.0.3 compatibility
+- No breaking changes to existing endpoints
+- All updates are additive and backward compatible
+- Field is optional and defaults to false (stop mining when disconnected)
 - Automatically synchronized with btc-mining/miner-firmware
+
 
 ## [1.7.5] - 2026-02-13
 
