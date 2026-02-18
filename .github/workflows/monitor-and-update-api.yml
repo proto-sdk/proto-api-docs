@@ -35,7 +35,113 @@ jobs:
             exit 1
           fi
           
-          # Extract versions
+          echo "✅ Fetched upstream spec successfully"
+      
+      - name: Normalize text in API spec
+        id: normalize
+        run: |
+          echo "🔧 Normalizing text in API spec..."
+          
+          # Create a backup of the raw upstream spec
+          cp /tmp/upstream-spec.json /tmp/upstream-spec-raw.json
+          
+          # Apply text normalizations (idempotent)
+          # These fix common malformed text patterns from code generation
+          cat /tmp/upstream-spec.json | \
+            sed 's/Ps Us/PSUs/g' | \
+            sed 's/PsUs/PSUs/g' | \
+            sed 's/Psus/PSUs/g' | \
+            sed 's/\([^A-Z]\)Api\([^a-z]\)/\1API\2/g' | \
+            sed 's/\([^A-Z]\)Api$/\1API/g' | \
+            sed 's/^Api\([^a-z]\)/API\1/g' | \
+            sed 's/ api / API /g' | \
+            sed 's/^api /API /g' | \
+            sed 's/ api$/ API/g' | \
+            sed 's/Psu\([^a-z]\)/PSU\1/g' | \
+            sed 's/Psu$/PSU/g' | \
+            sed -E 's/(^|[^a-zA-Z])psu([^a-zA-Z]|$)/\1PSU\2/g' | \
+            sed -E 's/(^|[^a-zA-Z])psus([^a-zA-Z]|$)/\1PSUs\2/g' > /tmp/upstream-spec-normalized.json
+          
+          # Validate normalized JSON is still valid
+          if ! jq empty /tmp/upstream-spec-normalized.json 2>/dev/null; then
+            echo "❌ Normalization broke JSON structure"
+            exit 1
+          fi
+          
+          # Count what was normalized
+          NORMALIZATION_COUNT=0
+          NORMALIZATION_DETAILS=""
+          
+          # Check for specific normalizations
+          PSU_FIXES=$(diff -u /tmp/upstream-spec-raw.json /tmp/upstream-spec-normalized.json | grep -c "Ps Us\|PsUs" || echo "0")
+          API_FIXES=$(diff -u /tmp/upstream-spec-raw.json /tmp/upstream-spec-normalized.json | grep -c "Api" || echo "0")
+          
+          if [ "$PSU_FIXES" -gt 0 ]; then
+            NORMALIZATION_DETAILS="${NORMALIZATION_DETAILS}• Fixed PSU capitalization (${PSU_FIXES} changes)\n"
+            NORMALIZATION_COUNT=$((NORMALIZATION_COUNT + PSU_FIXES))
+          fi
+          
+          if [ "$API_FIXES" -gt 0 ]; then
+            NORMALIZATION_DETAILS="${NORMALIZATION_DETAILS}• Fixed API capitalization (${API_FIXES} changes)\n"
+            NORMALIZATION_COUNT=$((NORMALIZATION_COUNT + API_FIXES))
+          fi
+          
+          # Save normalization report
+          if [ "$NORMALIZATION_COUNT" -gt 0 ]; then
+            echo "normalization_applied=true" >> $GITHUB_OUTPUT
+            {
+              echo "normalization_report<<EOF_NORM"
+              echo -e "$NORMALIZATION_DETAILS"
+              echo "EOF_NORM"
+            } >> $GITHUB_OUTPUT
+            echo "✅ Applied $NORMALIZATION_COUNT text normalizations"
+            echo -e "$NORMALIZATION_DETAILS"
+          else
+            echo "normalization_applied=false" >> $GITHUB_OUTPUT
+            echo "normalization_report=No text normalizations needed" >> $GITHUB_OUTPUT
+            echo "ℹ️  No text normalizations needed"
+          fi
+          
+          # Use normalized version for comparison
+          mv /tmp/upstream-spec-normalized.json /tmp/upstream-spec.json
+      
+      - name: Setup Node.js for linting
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Validate OpenAPI spec with Redocly
+        id: lint
+        continue-on-error: true
+        run: |
+          echo "🔍 Validating OpenAPI spec with Redocly..."
+          
+          # Install Redocly CLI
+          npm install -g @redocly/cli
+          
+          # Run linting (skip operation-description rule, don't fail workflow)
+          if redocly lint /tmp/upstream-spec.json --skip-rule operation-description 2>&1 | tee /tmp/lint-output.txt; then
+            echo "lint_status=✅ Passed" >> $GITHUB_OUTPUT
+            echo "✅ OpenAPI spec validation passed"
+          else
+            # Extract issues but don't fail
+            LINT_ISSUES=$(cat /tmp/lint-output.txt | grep -E "error|warning" | head -10 || echo "See full output in logs")
+            echo "lint_status=⚠️  Issues found (non-blocking)" >> $GITHUB_OUTPUT
+            {
+              echo "lint_issues<<EOF_LINT"
+              echo "$LINT_ISSUES"
+              echo "EOF_LINT"
+            } >> $GITHUB_OUTPUT
+            echo "⚠️  Validation found issues (non-blocking):"
+            echo "$LINT_ISSUES"
+          fi
+      
+      - name: Compare versions
+        id: compare
+        run: |
+          echo "📊 Comparing versions..."
+          
+          # Extract versions from normalized spec
           UPSTREAM_VERSION=$(jq -r '.info.version' /tmp/upstream-spec.json)
           CURRENT_VERSION=$(jq -r '.info.version' spec.json)
           
@@ -55,12 +161,12 @@ jobs:
           fi
       
       - name: Notify version change detected
-        if: steps.fetch.outputs.version_changed == 'true'
+        if: steps.compare.outputs.version_changed == 'true'
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: |
-          CURRENT_VERSION="${{ steps.fetch.outputs.current_version }}"
-          UPSTREAM_VERSION="${{ steps.fetch.outputs.upstream_version }}"
+          CURRENT_VERSION="${{ steps.compare.outputs.current_version }}"
+          UPSTREAM_VERSION="${{ steps.compare.outputs.upstream_version }}"
           
           curl -X POST "$SLACK_WEBHOOK" \
             -H 'Content-Type: application/json' \
@@ -115,7 +221,7 @@ jobs:
           EOF
       
       - name: Analyze API changes
-        if: steps.fetch.outputs.version_changed == 'true'
+        if: steps.compare.outputs.version_changed == 'true'
         id: analyze
         run: |
           echo "🔍 Analyzing changes between versions..."
@@ -152,7 +258,7 @@ jobs:
           echo -e "Summary:\n$CHANGE_SUMMARY"
       
       - name: Update API specification
-        if: steps.fetch.outputs.version_changed == 'true'
+        if: steps.compare.outputs.version_changed == 'true'
         run: |
           echo "📝 Updating spec.json..."
           
@@ -165,18 +271,24 @@ jobs:
           echo "✅ spec.json updated"
       
       - name: Update CHANGELOG
-        if: steps.fetch.outputs.version_changed == 'true'
+        if: steps.compare.outputs.version_changed == 'true'
         run: |
           echo "📝 Updating CHANGELOG.md..."
           
-          UPSTREAM_VERSION="${{ steps.fetch.outputs.upstream_version }}"
-          CURRENT_VERSION="${{ steps.fetch.outputs.current_version }}"
+          UPSTREAM_VERSION="${{ steps.compare.outputs.upstream_version }}"
+          CURRENT_VERSION="${{ steps.compare.outputs.current_version }}"
           DATE=$(date +%Y-%m-%d)
           
           # Get the analyzed changes
           CHANGES=$(cat << 'CHANGES_EOF'
           ${{ steps.analyze.outputs.changes }}
           CHANGES_EOF
+          )
+          
+          # Get normalization report
+          NORM_REPORT=$(cat << 'NORM_EOF'
+          ${{ steps.normalize.outputs.normalization_report }}
+          NORM_EOF
           )
           
           # Create changelog entry with detailed changes
@@ -187,6 +299,9 @@ jobs:
           $CHANGES
           - Version bump: $CURRENT_VERSION → $UPSTREAM_VERSION
           - Automatically synchronized with btc-mining/miner-firmware
+
+          ### Text Normalizations Applied
+          $NORM_REPORT
 
           EOF
           
@@ -203,17 +318,17 @@ jobs:
           echo "✅ CHANGELOG.md updated"
       
       - name: Commit and push changes
-        if: steps.fetch.outputs.version_changed == 'true'
+        if: steps.compare.outputs.version_changed == 'true'
         run: |
           git config user.name "Proto API Bot"
           git config user.email "mining@block.xyz"
           
           git add spec.json CHANGELOG.md spec.json.backup.*
-          git commit -m "🤖 Auto-update: Proto API v${{ steps.fetch.outputs.upstream_version }}
+          git commit -m "🤖 Auto-update: Proto API v${{ steps.compare.outputs.upstream_version }}
 
           - Updated from miner-firmware upstream
-          - Previous version: ${{ steps.fetch.outputs.current_version }}
-          - New version: ${{ steps.fetch.outputs.upstream_version }}
+          - Previous version: ${{ steps.compare.outputs.current_version }}
+          - New version: ${{ steps.compare.outputs.upstream_version }}
           - Auto-generated by monitor-and-update-api workflow"
           
           git push
@@ -221,19 +336,19 @@ jobs:
           echo "✅ Changes pushed to main branch"
       
       - name: Wait for GitHub Pages deployment
-        if: steps.fetch.outputs.version_changed == 'true'
+        if: steps.compare.outputs.version_changed == 'true'
         run: |
           echo "⏳ Waiting 60 seconds for GitHub Pages to deploy..."
           sleep 60
       
       - name: Send notifications to Slack
-        if: steps.fetch.outputs.version_changed == 'true'
+        if: steps.compare.outputs.version_changed == 'true'
         env:
           SLACK_WEBHOOK_DOCS: ${{ secrets.SLACK_WEBHOOK_DOCS_CHANNEL }}
           SLACK_WEBHOOK_HMOSES: ${{ secrets.SLACK_WEBHOOK_HMOSES }}
         run: |
-          UPSTREAM_VERSION="${{ steps.fetch.outputs.upstream_version }}"
-          CURRENT_VERSION="${{ steps.fetch.outputs.current_version }}"
+          UPSTREAM_VERSION="${{ steps.compare.outputs.upstream_version }}"
+          CURRENT_VERSION="${{ steps.compare.outputs.current_version }}"
           COMMIT_SHA=$(git rev-parse HEAD)
           COMMIT_SHA_SHORT=$(git rev-parse --short HEAD)
           
@@ -243,6 +358,15 @@ jobs:
           CHANGES_EOF
           )
           
+          # Get normalization report
+          NORM_REPORT=$(cat << 'NORM_EOF'
+          ${{ steps.normalize.outputs.normalization_report }}
+          NORM_EOF
+          )
+          
+          # Get lint status
+          LINT_STATUS="${{ steps.lint.outputs.lint_status }}"
+          
           # Build the Slack message with detailed changes
           SLACK_MESSAGE=$(jq -n \
             --arg current "$CURRENT_VERSION" \
@@ -250,6 +374,8 @@ jobs:
             --arg commit "$COMMIT_SHA" \
             --arg commit_short "$COMMIT_SHA_SHORT" \
             --arg changes "$CHANGES" \
+            --arg normalization "$NORM_REPORT" \
+            --arg lint "$LINT_STATUS" \
             '{
               "blocks": [
                 {
@@ -284,6 +410,20 @@ jobs:
                   }
                 },
                 {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*🔧 Text Normalizations:*\n\($normalization)"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*🔍 OpenAPI Validation:*\n\($lint)"
+                  }
+                },
+                {
                   "type": "divider"
                 },
                 {
@@ -298,15 +438,6 @@ jobs:
                       },
                       "url": "https://proto-sdk.github.io/proto-api-docs/",
                       "style": "primary"
-                    },
-                    {
-                      "type": "button",
-                      "text": {
-                        "type": "plain_text",
-                        "text": "🌿 View Fern Staging",
-                        "emoji": true
-                      },
-                      "url": "https://proto-api-staging.docs.buildwithfern.com/"
                     },
                     {
                       "type": "button",
@@ -355,7 +486,7 @@ jobs:
           echo "✅ Notification sent to #hmoses"
       
       - name: No changes detected
-        if: steps.fetch.outputs.version_changed == 'false'
+        if: steps.compare.outputs.version_changed == 'false'
         run: |
           echo "ℹ️  No version changes detected. Documentation is up to date."
-          echo "Current version: ${{ steps.fetch.outputs.current_version }}"
+          echo "Current version: ${{ steps.compare.outputs.current_version }}"
