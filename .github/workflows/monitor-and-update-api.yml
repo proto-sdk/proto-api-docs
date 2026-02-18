@@ -484,6 +484,17 @@ jobs:
             -d @-
           
           echo "✅ Notification sent to #hmoses"
+
+      - name: Notify MCP servers
+        if: steps.compare.outputs.version_changed == 'true'
+        run: |
+          echo "📡 Notifying MCP servers of API update..."
+          
+          # Run the MCP notification script
+          bash .github/scripts/notify-mcp-update.sh             "${{ steps.compare.outputs.upstream_version }}"             "${{ steps.analyze.outputs.changes_summary }}"
+          
+          echo "✅ MCP servers notified"
+
       
       - name: No changes detected
         if: steps.compare.outputs.version_changed == 'false'
