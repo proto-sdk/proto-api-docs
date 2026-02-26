@@ -2,8 +2,8 @@ name: Monitor and Update Proto API
 
 on:
   schedule:
-    # Run daily at 9 AM UTC (1 AM PST / 4 AM EST)
-    - cron: '0 9 * * *'
+    # Run every 3 hours instead of daily to catch updates more quickly
+    - cron: '0 */3 * * *'
   workflow_dispatch:  # Allow manual trigger
 
 jobs:
@@ -17,17 +17,49 @@ jobs:
           token: ${{ secrets.PRIVATE_REPO_TOKEN }}
           fetch-depth: 0
       
-      - name: Fetch upstream API spec
+      - name: Fetch upstream API spec from multiple possible locations
         id: fetch
         env:
           GITHUB_TOKEN: ${{ secrets.PRIVATE_REPO_TOKEN }}
         run: |
-          echo "📥 Fetching latest API spec from miner-firmware..."
+          echo "📥 Attempting to fetch latest API spec from miner-firmware..."
           
-          # Download the latest MDK-API.json from miner-firmware (private repo)
-          curl -s -H "Authorization: token $GITHUB_TOKEN" \
-            https://raw.githubusercontent.com/btc-mining/miner-firmware/main/crates/miner-api-server/docs/MDK-API.json \
-            -o /tmp/upstream-spec.json
+          # Define potential locations to check
+          LOCATIONS=(
+            "main/crates/miner-api-server/docs/MDK-API.json"
+            "master/crates/miner-api-server/docs/MDK-API.json"
+            "develop/crates/miner-api-server/docs/MDK-API.json"
+            "main/crates/miner-api-server/docs/MDK-API.json.v1.7.7"
+            "main/crates/miner-api-server/MDK-API.json"
+            "main/docs/MDK-API.json"
+          )
+          
+          FOUND=false
+          
+          for LOCATION in "${LOCATIONS[@]}"; do
+            echo "Trying: https://raw.githubusercontent.com/btc-mining/miner-firmware/${LOCATION}"
+            
+            # Download from the current location
+            curl -s -H "Authorization: token $GITHUB_TOKEN" \
+              "https://raw.githubusercontent.com/btc-mining/miner-firmware/${LOCATION}" \
+              -o /tmp/upstream-spec.json
+            
+            # Check if we got a valid JSON file with a version field
+            if jq -e '.info.version' /tmp/upstream-spec.json > /dev/null 2>&1; then
+              FOUND=true
+              FOUND_LOCATION="${LOCATION}"
+              echo "✅ Found valid API spec at: ${LOCATION}"
+              echo "found_location=${LOCATION}" >> $GITHUB_OUTPUT
+              break
+            else
+              echo "❌ No valid API spec at: ${LOCATION}"
+            fi
+          done
+          
+          if [ "$FOUND" = false ]; then
+            echo "❌ Could not find valid API spec in any of the checked locations"
+            exit 1
+          fi
           
           # Validate it's valid JSON
           if ! jq empty /tmp/upstream-spec.json 2>/dev/null; then
@@ -35,7 +67,7 @@ jobs:
             exit 1
           fi
           
-          echo "✅ Fetched upstream spec successfully"
+          echo "✅ Fetched upstream spec successfully from ${FOUND_LOCATION}"
       
       - name: Normalize text in API spec
         id: normalize
@@ -145,6 +177,10 @@ jobs:
           UPSTREAM_VERSION=$(jq -r '.info.version' /tmp/upstream-spec.json)
           CURRENT_VERSION=$(jq -r '.info.version' spec.json)
           
+          # Trim any whitespace that might be present
+          UPSTREAM_VERSION=$(echo "$UPSTREAM_VERSION" | xargs)
+          CURRENT_VERSION=$(echo "$CURRENT_VERSION" | xargs)
+          
           echo "upstream_version=$UPSTREAM_VERSION" >> $GITHUB_OUTPUT
           echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
           
@@ -155,6 +191,12 @@ jobs:
           if [ "$UPSTREAM_VERSION" != "$CURRENT_VERSION" ]; then
             echo "version_changed=true" >> $GITHUB_OUTPUT
             echo "✅ Version changed: $CURRENT_VERSION → $UPSTREAM_VERSION"
+            
+            # Log detailed version information for debugging
+            echo "Upstream version (hex): $(echo -n "$UPSTREAM_VERSION" | xxd -p)"
+            echo "Current version (hex): $(echo -n "$CURRENT_VERSION" | xxd -p)"
+            echo "Upstream version length: ${#UPSTREAM_VERSION}"
+            echo "Current version length: ${#CURRENT_VERSION}"
           else
             echo "version_changed=false" >> $GITHUB_OUTPUT
             echo "ℹ️  No version change detected"
@@ -167,6 +209,7 @@ jobs:
         run: |
           CURRENT_VERSION="${{ steps.compare.outputs.current_version }}"
           UPSTREAM_VERSION="${{ steps.compare.outputs.upstream_version }}"
+          FOUND_LOCATION="${{ steps.fetch.outputs.found_location }}"
           
           curl -X POST "$SLACK_WEBHOOK" \
             -H 'Content-Type: application/json' \
@@ -191,6 +234,15 @@ jobs:
                   {
                     "type": "mrkdwn",
                     "text": "*New Version:*\n$UPSTREAM_VERSION"
+                  }
+                ]
+              },
+              {
+                "type": "section",
+                "fields": [
+                  {
+                    "type": "mrkdwn",
+                    "text": "*Source Location:*\n\`$FOUND_LOCATION\`"
                   }
                 ]
               },
@@ -233,9 +285,33 @@ jobs:
           HASHBOARD_CHANGES=$(diff -u <(jq -r '.. | select(type == "string") | select(contains("hash board"))' spec.json 2>/dev/null || echo "") \
                                        <(jq -r '.. | select(type == "string") | select(contains("hash board"))' /tmp/upstream-spec.json 2>/dev/null || echo "") | grep -c "^-" || echo "0")
           
+          # Compare endpoints
+          OLD_ENDPOINTS=$(jq -r '.paths | keys | length' spec.json)
+          NEW_ENDPOINTS=$(jq -r '.paths | keys | length' /tmp/upstream-spec.json)
+          ENDPOINT_DIFF=$((NEW_ENDPOINTS - OLD_ENDPOINTS))
+          
+          # Compare tags
+          OLD_TAGS=$(jq -r '.tags | length' spec.json 2>/dev/null || echo "0")
+          NEW_TAGS=$(jq -r '.tags | length' /tmp/upstream-spec.json 2>/dev/null || echo "0")
+          TAG_DIFF=$((NEW_TAGS - OLD_TAGS))
+          
           # Create detailed change summary
+          CHANGE_SUMMARY="• Updated API specification from miner-firmware upstream"
+          
+          if [ "$ENDPOINT_DIFF" -gt 0 ]; then
+            CHANGE_SUMMARY="$CHANGE_SUMMARY\n• Added $ENDPOINT_DIFF new endpoints"
+          elif [ "$ENDPOINT_DIFF" -lt 0 ]; then
+            CHANGE_SUMMARY="$CHANGE_SUMMARY\n• Removed $((-ENDPOINT_DIFF)) endpoints"
+          fi
+          
+          if [ "$TAG_DIFF" -gt 0 ]; then
+            CHANGE_SUMMARY="$CHANGE_SUMMARY\n• Added $TAG_DIFF new tags"
+          elif [ "$TAG_DIFF" -lt 0 ]; then
+            CHANGE_SUMMARY="$CHANGE_SUMMARY\n• Removed $((-TAG_DIFF)) tags"
+          fi
+          
           if [ "$HASHRATE_CHANGES" -gt 0 ] || [ "$HASHBOARD_CHANGES" -gt 0 ]; then
-            CHANGE_SUMMARY="• Fixed inconsistent spacing in compound words"
+            CHANGE_SUMMARY="$CHANGE_SUMMARY\n• Fixed inconsistent spacing in compound words"
             if [ "$HASHRATE_CHANGES" -gt 0 ]; then
               CHANGE_SUMMARY="$CHANGE_SUMMARY\n• Changed \"hash rate\" → \"hashrate\" ($HASHRATE_CHANGES occurrences)"
             fi
@@ -243,8 +319,6 @@ jobs:
               CHANGE_SUMMARY="$CHANGE_SUMMARY\n• Changed \"hash board\" → \"hashboard\" ($HASHBOARD_CHANGES occurrences)"
             fi
             CHANGE_SUMMARY="$CHANGE_SUMMARY\n• Improved documentation consistency"
-          else
-            CHANGE_SUMMARY="• Updated API specification from miner-firmware upstream"
           fi
           
           # Save to output
@@ -278,6 +352,7 @@ jobs:
           UPSTREAM_VERSION="${{ steps.compare.outputs.upstream_version }}"
           CURRENT_VERSION="${{ steps.compare.outputs.current_version }}"
           DATE=$(date +%Y-%m-%d)
+          FOUND_LOCATION="${{ steps.fetch.outputs.found_location }}"
           
           # Get the analyzed changes
           CHANGES=$(cat << 'CHANGES_EOF'
@@ -299,6 +374,7 @@ jobs:
           $CHANGES
           - Version bump: $CURRENT_VERSION → $UPSTREAM_VERSION
           - Automatically synchronized with btc-mining/miner-firmware
+          - Source: $FOUND_LOCATION
 
           ### Text Normalizations Applied
           $NORM_REPORT
@@ -327,6 +403,7 @@ jobs:
           git commit -m "🤖 Auto-update: Proto API v${{ steps.compare.outputs.upstream_version }}
 
           - Updated from miner-firmware upstream
+          - Source: ${{ steps.fetch.outputs.found_location }}
           - Previous version: ${{ steps.compare.outputs.current_version }}
           - New version: ${{ steps.compare.outputs.upstream_version }}
           - Auto-generated by monitor-and-update-api workflow"
@@ -351,6 +428,7 @@ jobs:
           CURRENT_VERSION="${{ steps.compare.outputs.current_version }}"
           COMMIT_SHA=$(git rev-parse HEAD)
           COMMIT_SHA_SHORT=$(git rev-parse --short HEAD)
+          FOUND_LOCATION="${{ steps.fetch.outputs.found_location }}"
           
           # Get the analyzed changes
           CHANGES=$(cat << 'CHANGES_EOF'
@@ -376,6 +454,7 @@ jobs:
             --arg changes "$CHANGES" \
             --arg normalization "$NORM_REPORT" \
             --arg lint "$LINT_STATUS" \
+            --arg location "$FOUND_LOCATION" \
             '{
               "blocks": [
                 {
@@ -396,6 +475,15 @@ jobs:
                     {
                       "type": "mrkdwn",
                       "text": "*Status:*\n✅ Live"
+                    }
+                  ]
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Source:*\n`\($location)`"
                     }
                   ]
                 },
@@ -491,7 +579,9 @@ jobs:
           echo "📡 Notifying MCP servers of API update..."
           
           # Run the MCP notification script
-          bash .github/scripts/notify-mcp-update.sh             "${{ steps.compare.outputs.upstream_version }}"             "${{ steps.analyze.outputs.changes_summary }}"
+          bash .github/scripts/notify-mcp-update.sh \
+            "${{ steps.compare.outputs.upstream_version }}" \
+            "${{ steps.analyze.outputs.changes_summary }}"
           
           echo "✅ MCP servers notified"
 
