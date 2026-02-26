@@ -1,4 +1,15 @@
 # Proto API Documentation Changelog
+## [1.7.7] - 2026-02-26
+
+### Changed
+• Updated API specification from miner-firmware upstream
+- Version bump: 1.7.6 → 1.7.7
+- Automatically synchronized with btc-mining/miner-firmware
+- Source: main/crates/miner-api-server/docs/MDK-API.json
+
+### Text Normalizations Applied
+No text normalizations needed
+
 ## [1.7.6] - 2026-02-18
 
 ### Added

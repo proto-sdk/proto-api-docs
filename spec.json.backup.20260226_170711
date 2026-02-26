@@ -10,7 +10,7 @@
       "name": "MIT",
       "url": "https://opensource.org/license/mit"
     },
-    "version": "1.7.7"
+    "version": "1.7.6"
   },
   "servers": [
     {
@@ -1645,7 +1645,7 @@
         }
       }
     },
-    "/api/v1/hardware/PSUs": {
+    "/api/v1/hardware/psus": {
       "get": {
         "tags": [
           "PSUs"
@@ -1658,7 +1658,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PSUsInfo"
+                  "$ref": "#/components/schemas/PsusInfo"
                 }
               }
             }
@@ -1699,7 +1699,7 @@
           "PSUs"
         ],
         "description": "Schedules a PSU firmware update. This command enables the PSU update service so that the update will automatically run on the next reboot of the miner. Use the `force` parameter to bypass scheduling checks and allow re-flashing the same firmware version.",
-        "operationId": "PostUpdatePSU",
+        "operationId": "PostUpdatePsu",
         "parameters": [
           {
             "name": "force",
@@ -2419,13 +2419,13 @@
           "Telemetry"
         ],
         "summary": "Get current telemetry data",
-        "description": "Returns current telemetry values. The 'level' parameter is a comma-separated list that controls which data types are included. If not specified, defaults to 'miner'. Note: 'asic' implicitly includes 'hashboard' since ASIC data is nested within hashboards. Examples: no level param (miner only), ?level=hashboard (hashboards only), ?level=asic (hashboards with ASIC data), ?level=miner,asic,PSU (all data).",
+        "description": "Returns current telemetry values. The 'level' parameter is a comma-separated list that controls which data types are included. If not specified, defaults to 'miner'. Note: 'asic' implicitly includes 'hashboard' since ASIC data is nested within hashboards. Examples: no level param (miner only), ?level=hashboard (hashboards only), ?level=asic (hashboards with ASIC data), ?level=miner,asic,psu (all data).",
         "operationId": "GetCurrentTelemetry",
         "parameters": [
           {
             "name": "level",
             "in": "query",
-            "description": "Comma-separated list of data types to include (e.g. ?level=miner,PSU,hashboard). If not specified, defaults to 'miner'. Options: miner (miner-level aggregated data), hashboard (per-hashboard metrics), PSU (per-PSU metrics), asic (ASIC-level data within hashboards, implicitly includes hashboard).",
+            "description": "Comma-separated list of data types to include (e.g. ?level=miner,psu,hashboard). If not specified, defaults to 'miner'. Options: miner (miner-level aggregated data), hashboard (per-hashboard metrics), psu (per-PSU metrics), asic (ASIC-level data within hashboards, implicitly includes hashboard).",
             "required": false,
             "schema": {
               "type": "array",
@@ -2434,7 +2434,7 @@
                 "enum": [
                   "miner",
                   "hashboard",
-                  "PSU",
+                  "psu",
                   "asic"
                 ]
               },
@@ -2475,8 +2475,8 @@
                       }
                     }
                   },
-                  "mienr_hashboard_and_PSU": {
-                    "summary": "Response with level=miner,hashboard,PSU: Includes miner-level, per-hashboard, and per-PSU metrics",
+                  "mienr_hashboard_and_psu": {
+                    "summary": "Response with level=miner,hashboard,psu: Includes miner-level, per-hashboard, and per-PSU metrics",
                     "value": {
                       "timestamp": "2024-01-15T14:30:00Z",
                       "miner": {
@@ -2589,7 +2589,7 @@
                           }
                         }
                       ],
-                      "PSUs": [
+                      "psus": [
                         {
                           "index": 0,
                           "serial_number": "PSU001234",
@@ -2619,7 +2619,7 @@
                     }
                   },
                   "all_data": {
-                    "summary": "Response with level=miner,hashboard,asic,PSU: Full detail including miner, hashboard (with ASIC data), and PSU metrics",
+                    "summary": "Response with level=miner,hashboard,asic,psu: Full detail including miner, hashboard (with ASIC data), and PSU metrics",
                     "value": {
                       "timestamp": "2024-01-15T14:30:00Z",
                       "miner": {
@@ -2690,11 +2690,11 @@
                       ]
                     }
                   },
-                  "PSU": {
-                    "summary": "Response when level=PSU: Only PSU metrics",
+                  "psu": {
+                    "summary": "Response when level=psu: Only PSU metrics",
                     "value": {
                       "timestamp": "2024-01-15T14:30:00Z",
-                      "PSUs": [
+                      "psus": [
                         {
                           "index": 0,
                           "serial_number": "PSU001234",
@@ -2774,7 +2774,7 @@
             "enum": [
               "rig",
               "fan",
-              "PSU",
+              "psu",
               "hashboard"
             ]
           },
@@ -3185,14 +3185,14 @@
           }
         }
       },
-      "PSUsInfo": {
+      "PsusInfo": {
         "description": "Information about all power supply units in the mining device",
         "type": "object",
         "properties": {
-          "PSUs-info": {
+          "psus-info": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/PSUInfo"
+              "$ref": "#/components/schemas/PsuInfo"
             }
           }
         }
@@ -3201,14 +3201,14 @@
         "description": "Power supply information including firmware update status",
         "type": "object",
         "properties": {
-          "PSUs_info": {
+          "psus_info": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/PSUInfo"
+              "$ref": "#/components/schemas/PsuInfo"
             }
           },
-          "PSU_update_status": {
-            "$ref": "#/components/schemas/PSUUpdateStatus"
+          "psu_update_status": {
+            "$ref": "#/components/schemas/PsuUpdateStatus"
           }
         }
       },
@@ -3697,16 +3697,6 @@
             "type": "integer",
             "description": "The number of hardware errors that have occurred during the mining operation.",
             "example": 100
-          },
-          "hashboards_installed": {
-            "type": "integer",
-            "description": "The number of hashboards installed (detected) in the miner.",
-            "example": 4
-          },
-          "hashboards_mining": {
-            "type": "integer",
-            "description": "The number of hashboards currently in the mining state.",
-            "example": 4
           }
         }
       },
@@ -3832,10 +3822,10 @@
               "$ref": "#/components/schemas/HashboardInfo"
             }
           },
-          "PSUs-info": {
+          "psus-info": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/PSUInfo"
+              "$ref": "#/components/schemas/PsuInfo"
             }
           },
           "fans-info": {
@@ -3922,11 +3912,11 @@
           }
         }
       },
-      "PSUInfo": {
+      "PsuInfo": {
         "description": "Power supply unit information and status",
         "type": "object",
         "properties": {
-          "PSU_sn": {
+          "psu_sn": {
             "type": "string",
             "description": "Power supply serial number.",
             "example": "517CP81302000721"
@@ -4014,7 +4004,7 @@
           }
         }
       },
-      "PSUUpdateResultStatus": {
+      "PsuUpdateResultStatus": {
         "description": "Status of PSU firmware update",
         "type": "string",
         "enum": [
@@ -4032,7 +4022,7 @@
           "unknown": "Status unknown (service never ran)"
         }
       },
-      "PSUUpdateStatus": {
+      "PsuUpdateStatus": {
         "description": "PSU firmware update status information",
         "type": "object",
         "required": [
@@ -4042,7 +4032,7 @@
           "available_firmware": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/AvailablePSUFirmware"
+              "$ref": "#/components/schemas/AvailablePsuFirmware"
             }
           },
           "last_update": {
@@ -4052,7 +4042,7 @@
             "example": "2025-11-10T12:42:19Z"
           },
           "status": {
-            "$ref": "#/components/schemas/PSUUpdateResultStatus"
+            "$ref": "#/components/schemas/PsuUpdateResultStatus"
           }
         },
         "example": {
@@ -4069,7 +4059,7 @@
           "status": "success"
         }
       },
-      "AvailablePSUFirmware": {
+      "AvailablePsuFirmware": {
         "description": "Information about an available PSU firmware file",
         "type": "object",
         "required": [
@@ -4725,7 +4715,7 @@
           "temperature"
         ]
       },
-      "PSUFieldType": {
+      "PsuFieldType": {
         "type": "string",
         "description": "Available field types for PSU-level data",
         "enum": [
@@ -4863,7 +4853,7 @@
               "type": {
                 "type": "string",
                 "enum": [
-                  "PSU"
+                  "psu"
                 ],
                 "description": "PSU level type"
               },
@@ -4871,7 +4861,7 @@
                 "type": "array",
                 "description": "List of data types to retrieve for PSU level",
                 "items": {
-                  "$ref": "#/components/schemas/PSUFieldType"
+                  "$ref": "#/components/schemas/PsuFieldType"
                 },
                 "minItems": 1,
                 "example": [
@@ -4962,9 +4952,9 @@
                   }
                 }
               },
-              "PSUs": {
+              "psus": {
                 "type": "array",
-                "description": "Array of PSU-level data with zero-based indexing (present when 'PSU' in levels)",
+                "description": "Array of PSU-level data with zero-based indexing (present when 'psu' in levels)",
                 "items": {
                   "type": "object",
                   "properties": {
@@ -5087,7 +5077,7 @@
       },
       "TelemetryData": {
         "type": "object",
-        "description": "Current telemetry data response. Contains 'miner' field with aggregated metrics (included when level=miner or by default if no level specified), 'hashboards' array with per-hashboard data (included when level=hashboard or level=asic), 'PSUs' array with per-PSU data (included when level=PSU). ASIC data is nested within each hashboard when level=asic is specified. All fields except 'timestamp' are optional based on requested levels.",
+        "description": "Current telemetry data response. Contains 'miner' field with aggregated metrics (included when level=miner or by default if no level specified), 'hashboards' array with per-hashboard data (included when level=hashboard or level=asic), 'psus' array with per-PSU data (included when level=psu). ASIC data is nested within each hashboard when level=asic is specified. All fields except 'timestamp' are optional based on requested levels.",
         "properties": {
           "timestamp": {
             "type": "string",
@@ -5153,11 +5143,11 @@
               }
             ]
           },
-          "PSUs": {
+          "psus": {
             "type": "array",
-            "description": "Array of per-PSU telemetry data. Included when level=PSU is specified.",
+            "description": "Array of per-PSU telemetry data. Included when level=psu is specified.",
             "items": {
-              "$ref": "#/components/schemas/PSUTelemetry"
+              "$ref": "#/components/schemas/PsuTelemetry"
             },
             "example": [
               {
@@ -5320,7 +5310,7 @@
           "temperature"
         ]
       },
-      "PSUInputOutputMetric": {
+      "PsuInputOutputMetric": {
         "type": "object",
         "description": "PSU metric with input and output values",
         "properties": {
@@ -5342,7 +5332,7 @@
           "output"
         ]
       },
-      "PSUTemperature": {
+      "PsuTemperature": {
         "type": "object",
         "description": "PSU temperature measurements",
         "properties": {
@@ -5369,7 +5359,7 @@
           "average"
         ]
       },
-      "PSUTelemetry": {
+      "PsuTelemetry": {
         "type": "object",
         "description": "Individual PSU telemetry metrics",
         "properties": {
@@ -5383,16 +5373,16 @@
             "example": "PSU001234"
           },
           "voltage": {
-            "$ref": "#/components/schemas/PSUInputOutputMetric"
+            "$ref": "#/components/schemas/PsuInputOutputMetric"
           },
           "current": {
-            "$ref": "#/components/schemas/PSUInputOutputMetric"
+            "$ref": "#/components/schemas/PsuInputOutputMetric"
           },
           "power": {
-            "$ref": "#/components/schemas/PSUInputOutputMetric"
+            "$ref": "#/components/schemas/PsuInputOutputMetric"
           },
           "temperature": {
-            "$ref": "#/components/schemas/PSUTemperature"
+            "$ref": "#/components/schemas/PsuTemperature"
           }
         },
         "required": [
