@@ -495,7 +495,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*🔄 Changes:*\n\($changes)"
+                    "text": "*✨ What's New*\n\($changes)"
                   }
                 },
                 {
