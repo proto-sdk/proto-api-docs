@@ -2,8 +2,9 @@ name: Monitor and Update Proto API
 
 on:
   schedule:
-    # Run every 3 hours instead of daily to catch updates more quickly
-    - cron: '0 */3 * * *'
+    # Run every 3 hours in PST (UTC-8) starting at 9 AM PST
+    # This translates to 5pm, 8pm, 11pm, 2am, 5am, 8am, 11am, 2pm UTC
+    - cron: '0 17,20,23,2,5,8,11,14 * * *'
   workflow_dispatch:  # Allow manual trigger
 
 jobs:
